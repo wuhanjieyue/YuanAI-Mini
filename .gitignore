@@ -1,50 +1,33 @@
-# Windows
-[Dd]esktop.ini
-Thumbs.db
-$RECYCLE.BIN/
-
-# macOS
+# Operating system files
 .DS_Store
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
+Thumbs.db
+[Dd]esktop.ini
 
-# Node.js
+# Dependencies and local configuration
 node_modules/
 app_config.private.js
-backend/**/__pycache__/
-backend/**/*.pyc
-.oh-my-ccg/
-.omc/
-.omx/
-.codegraph/
-.understand-anything/
-
-# Local database credentials and offline source exports
-backend/.env.mysql.local
-backend/database/exports/
-
-# Local COS credentials
-backend/.env.cos.local
-backend/.env.server.local
-backend/.venv/
-backend/.runtime-cache/
-
-# Local Agent workspaces
-/tmp/
-backend/mcp_servers.local.json
-
-# Private knowledge service credentials
-backend/.env.knowledge.local
-
-# Private development settings and credentials
 project.private.config.json
-.idea/
-.vscode/
 .env
 .env.*
 !.env.example
 *.pem
 *.p12
 *.key
+
+# Local tooling, reports and workspaces
+.idea/
+.vscode/
+.codegraph/
+.understand-anything/
+.oh-my-ccg/
+.omc/
+.omx/
+/tmp/
+/tests/
+**/AGENTS.md
+/design-qa.md
+/OPEN_SOURCE_MEMO.md
+
+# Keep server code and private runtime data out of this client repository
+/backend/
+/skill/

@@ -12,4 +12,3 @@ function t(t){for(var n=arguments.length,i=new Array(n>1?n-1:0),r=1;r<n;r++)i[r-
 return __REQUIRE__(1743069468718);
 })()
 //miniprogram-npm-outsideDeps=[]
-//# sourceMappingURL=index.js.map

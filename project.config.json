@@ -25,8 +25,24 @@
         "value": ".understand-anything"
       },
       {
-        "type": "folder",
-        "value": "tests"
+        "type": "file",
+        "value": "README.md"
+      },
+      {
+        "type": "file",
+        "value": "THIRD_PARTY_NOTICES.md"
+      },
+      {
+        "type": "file",
+        "value": "THIRD_PARTY_LICENSES.md"
+      },
+      {
+        "type": "file",
+        "value": "project.private.config.example.json"
+      },
+      {
+        "type": "file",
+        "value": "app_config.private.example.js"
       }
     ],
     "include": []

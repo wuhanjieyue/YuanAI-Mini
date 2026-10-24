@@ -27,7 +27,7 @@
 
 ### 1. 准备环境
 
-- Git、Node.js 与 npm。建议使用 Node.js 22 LTS，供依赖安装和 Node 断言测试使用。
+- Git、Node.js 与 npm。建议使用 Node.js 22 LTS，供依赖安装使用。
 - 支持 Skyline、Worklet 的微信开发者工具，建议使用当前稳定版。
 - 自己的微信小程序 AppID 和开发者权限。项目基础库配置为 `3.15.3`，Skyline 版本范围以 `app.json` 为准。
 
@@ -69,7 +69,7 @@ module.exports = {
 4. 配置请求、上传与下载的合法域名。模拟器临时关闭域名校验不等于真机或正式版本可用。
 5. 修改后手动编译。Skyline 热重载存在限制，本地 `project.private.config.json` 的 `compileHotReLoad` 请保持 `false`。
 
-不启动后端也可以阅读源码、执行单元测试及进行部分界面调试。完整业务需要获授权的后端和可用静态资源；后端搭建与接口协议不属于本次开源范围。
+不启动后端也可以阅读源码并进行部分界面调试。完整业务需要获授权的后端和可用静态资源；后端搭建与接口协议不属于本次开源范围。
 
 ## 使用
 
@@ -94,21 +94,10 @@ AI 输出可能有误，重要信息和引用请自行核实。上传资料前�
 ├── store/                       MobX 状态与本地偏好
 ├── static_router/               Skyline 自定义转场
 ├── static_utils/                主题、国际化与工具函数
-├── static_wxss/ / static/        样式与静态素材
-└── tests/                       Node.js 断言回归测试
+└── static_wxss/ / static/        样式与静态素材
 ```
 
-各目录的 `AGENTS.md` 提供模块约束与代码地图。客户端通过 HTTP/SSE 等接口通信，不依赖后端源码目录。
-
-## 测试
-
-```bash
-npm test
-# 只检查帮助中心与声明内容
-node tests/aboutPages.test.js
-```
-
-测试使用 Node.js 内置断言和模拟对象，不要求后台服务运行。它们不能替代微信开发者工具及真机上的 Skyline、手势、Canvas、录音、文件保存与网络验收。
+客户端通过 HTTP/SSE 等接口通信，不依赖后端源码目录。
 
 ## 常见问题
 
@@ -121,9 +110,13 @@ node tests/aboutPages.test.js
 | 模拟器正常、真机失败 | 检查 HTTPS、证书、合法域名、基础库及微信权限；真机不能访问电脑的 `127.0.0.1` |
 | 页面修改未生效 | 手动重新编译，核对 Skyline 与 Worklet 设置 |
 
+## 部署前配置
+
+使用条款与隐私政策是已脱敏的部署模板，保留页面结构和示例条款。正式提供服务前，请按实际数据处理方式审核内容，填写运营方、联系邮箱、地点和日期；示例邮箱不接收用户请求。开源许可证不替代面向终端用户的服务条款。
+
 ## 贡献与反馈
 
-欢迎通过 [Issues](https://github.com/wuhanjieyue/YuanAI-Mini/issues) 提交问题或建议，也欢迎提交聚焦单一问题的 Pull Request。请提供复现步骤、预期与实际结果、基础库和设备版本，以及相关测试结果；截图与日志请先移除个人信息。
+欢迎通过 [Issues](https://github.com/wuhanjieyue/YuanAI-Mini/issues) 提交问题或建议，也欢迎提交聚焦单一问题的 Pull Request。请提供复现步骤、预期与实际结果、基础库和设备版本，以及验证结果；截图与日志请先移除个人信息。
 
 贡献应保持微信原生 Skyline/Worklet 结构，复用已有请求、路由、主题及样式，不引入后端私有文件。提交贡献表示你有权提供这些内容，并按 Apache-2.0 许可提交；第三方内容请保留原许可和来源。
 

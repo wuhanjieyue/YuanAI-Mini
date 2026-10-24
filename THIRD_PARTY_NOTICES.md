@@ -9,7 +9,7 @@ YuanAI 自有代码采用 Apache-2.0。以下代码仍适用各自许可证；�
 | mobx-miniprogram | 6.12.3（根 lockfile） | MIT | 状态管理；[wechat-miniprogram/mobx](https://github.com/wechat-miniprogram/mobx)，安装后由微信工具构建到 miniprogram_npm/ |
 | mobx-miniprogram-bindings | 5.0.0（根 lockfile） | MIT | 页面及组件状态绑定；[wechat-miniprogram/mobx-miniprogram-bindings](https://github.com/wechat-miniprogram/mobx-miniprogram-bindings) |
 
-这两个直接依赖的锁定版本以 package-lock.json 为准；仓库还包含已构建的 npm 代码和 source map，原许可同样适用。
+这两个直接依赖的锁定版本以 package-lock.json 为准；仓库包含已构建的 npm 代码，原许可同样适用。
 
 ## Towxml 及其内嵌代码
 
