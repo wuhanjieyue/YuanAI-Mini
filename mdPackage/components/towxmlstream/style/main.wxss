@@ -1,0 +1,361 @@
+
+.h2w {
+  font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  line-height: 1.8;
+  word-break: break-all;
+  text-align: left;
+}
+
+.h2w__main {
+    margin: 0px;
+    /* padding-top: 40rpx; */
+}
+
+/**标题**/
+.h2w__h1,
+.h2w__h2,
+.h2w__h3,
+.h2w__h4,
+.h2w__h5,
+.h2w__h6 {
+    font-weight: bold;
+}
+
+.h2w__h1 {
+    border-bottom-style: solid;
+    border-bottom-width: 6rpx;
+    font-size: 42rpx;
+    padding-bottom: 10rpx;
+    margin-bottom: 20rpx;
+}
+
+.h2w__h2 {
+    border-bottom-style: solid;
+    border-bottom-width: 1rpx;
+    font-size: 40rpx;
+    padding-bottom: 8rpx;
+    margin-bottom: 18rpx;
+}
+
+.h2w__h3 {
+    font-size: 38rpx;
+    padding-bottom: 6rpx;
+    margin-bottom: 12rpx;
+}
+
+.h2w__h4 {
+    font-size: 36rpx;
+    padding-bottom: 4rpx;
+    margin-bottom: 12rpx;
+}
+
+.h2w__h5 {
+    font-size: 34rpx;
+    padding-bottom: 2rpx;
+    margin-bottom: 12rpx;
+}
+
+.h2w__h6 {
+    margin-bottom: 12rpx;
+}
+
+/**组件父级容器**/
+.h2w__textParent, .h2w__viewParent {
+    display:block;
+}
+.h2w__rich-textParent {
+    width:100%;
+    display:flex;
+    flex-direction:row;
+}
+
+/**表格**/
+.h2w__tableParent {
+    width:100%;
+    overflow:hidden;
+    margin-bottom:40rpx;
+}
+.h2w__tableScroll {
+    width:100%;
+    display:block;
+}
+
+.h2w__table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 100%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.h2w__thead,
+.h2w__tbody,
+.h2w__tfoot {
+    display: flex;
+    flex-direction: column;
+}
+
+.h2w__tr {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    min-width: 100%;
+    min-height:68rpx;
+}
+
+.h2w__table .h2w__tr:nth-child(2n) {
+    background-color: red;
+}
+
+.h2w__th,
+.h2w__td {
+    display: block;
+    flex: 0 0 auto;
+    min-width: 160rpx;
+    box-sizing: border-box;
+    padding: 8rpx 16rpx;
+    font-size: 28rpx;
+    line-height:50rpx;
+    border-width: 1rpx;
+    border-style: solid;
+}
+
+.h2w__th {
+    font-weight: bold;
+}
+
+/**代码块**/
+.h2w__preScroll {
+    width:100%;
+    display:block;
+    margin-bottom:0;
+}
+
+.h2w__pre {
+    width:100%;
+    flex-shrink:0;
+    box-sizing:border-box;
+    display:block;
+    padding:0;
+    font-size: 28rpx;
+    word-break: normal;
+    border-width: 1rpx;
+    border-style: solid;
+    border-radius:16rpx;
+    overflow:hidden;
+    margin-bottom:40rpx;
+    white-space: nowrap;
+}
+.h2w__preHeader {
+    width:100%;
+    height:56rpx;
+    box-sizing:border-box;
+    padding:0 16rpx;
+    color:var(--text);
+    background-color:var(--bg-l1);
+}
+.h2w__preContent {
+    padding:10rpx 14rpx 10rpx 10rpx;
+    background-color:var(--bg-l1);
+}
+.h2w__pre .h2w__p {
+    margin:0;
+}
+
+.h2w__pre .h2w__code {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    width:100%;
+    box-sizing:border-box;
+    display:block;
+    font-size:25rpx;
+    white-space:nowrap;
+}
+
+.h2w__pre,
+.h2w__code {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace, "STHeitiTC-Light", "Microsoft YaHei Light", -apple-system, system-ui, BlinkMacSystemFont;
+
+}
+
+.h2w__code {
+    padding: 6rpx 10rpx;
+    margin: 0 4rpx;
+    border-width: 1rpx;
+    border-style: solid;
+    border-radius: 8rpx;
+    font-size: 32rpx;
+    overflow: visible;
+    white-space: nowrap; /* 保持文本在一行内显示 */
+
+}
+
+.h2w__codeLine {
+    display:block;
+    min-height:45rpx;
+    line-height:45rpx;
+    white-space:nowrap;
+}
+
+.h2w__codeLineText {
+    white-space:nowrap;
+}
+
+/**列表**/
+.h2w__ul,
+.h2w__ol {
+    margin-bottom: 40rpx;
+    padding-left: 32rpx;
+}
+
+.h2w__ul .h2w__ol,
+.h2w__ol .h2w__ul {
+    margin-bottom: 0;
+}
+
+/**todo**/
+.h2w__todogroup {
+    margin-bottom: 40rpx;
+}
+
+.h2w__todogroup .h2w__todogroup {
+    padding-left: 51rpx;
+}
+
+/**块元素**/
+.h2w__p {
+    margin: 20rpx 0 20rpx 0;
+}
+
+.h2w__blockquote {
+    border-left-width: 8rpx;
+    border-left-style: solid;
+    padding: 0 20rpx;
+    font-size:29rpx;
+}
+
+.h2w__b,
+.h2w__strong {
+    font-weight: bold;
+}
+
+.h2w__i,
+.h2w__em {
+    font-style: italic;
+}
+
+/**文本删除线**/
+.h2w__s,
+.h2w__strike,
+.h2w__del {
+    text-decoration: line-through;
+}
+
+/**文本下划线**/
+.h2w__ins,
+.h2w__u {
+    text-decoration: underline;
+}
+
+/**链接**/
+.h2w__a {
+    margin: 0 8rpx;
+    text-decoration-line: underline;
+    line-height: 1;
+}
+
+.h2w__hr {
+    height: 8rpx;
+    margin: 40rpx 0;
+}
+
+/**荧光标记**/
+.h2w__mark {
+    border-radius: 4rpx;
+}
+
+/**上标、下标**/
+.h2w__sup,
+.h2w__sub {
+    font-size: 24rpx;
+    position: relative;
+}
+
+.h2w__sup {
+    top: -16rpx;
+}
+
+.h2w__sub {
+    bottom: -8rpx;
+}
+
+/**emoji表情**/
+.h2w__g-emoji {
+    margin: 0 4rpx;
+    font-family: "Apple Color Emoji", "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/**内置元素**/
+.h2w image,
+.h2w video {
+    max-width: 100%;
+}
+
+.h2w__main image {
+    height:auto;
+}
+
+.h2w__main image{
+    border-radius:12rpx;
+}
+
+.h2w__latex--line {margin:4rpx 8rpx;}
+.h2w__latex--block {display:block; margin:32rpx auto;}
+.h2w__latexError {color:var(--text-hint, #999); margin:4rpx 8rpx;}
+
+.h2w__yuml {display:block;}
+
+.h2w__yumlBox {
+    width:100%;
+    display:flex;
+    flex-direction:row;
+}
+.h2w__yumlView {
+    flex-shrink:0;
+    margin:0 auto; padding-bottom:40rpx;
+}
+
+/**代码行号**/
+.h2w__lineNum {
+    text-align:right; padding:0; margin:0 32rpx 0 0;
+    display:none;
+}
+/**列表标记（Skyline 不依赖 view 的 list-style 绘制标记）**/
+.h2w__li {
+    display:flex;
+    flex-direction:row;
+    align-items:flex-start;
+}
+.h2w__listMarker {
+    flex:0 0 auto;
+    width:44rpx;
+    margin-right:12rpx;
+    text-align:right;
+}
+.h2w__liContent {
+    flex:1;
+    min-width:0;
+}
+
+/* Citation chips remain native inline spans in Skyline. */
+.h2w__citation {
+    font-size: 20rpx;
+    margin: 0 3rpx;
+    padding: 8rpx 12rpx;
+    border-radius: 6rpx;
+    text-decoration-line: none;
+}

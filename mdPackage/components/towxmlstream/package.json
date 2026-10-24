@@ -1,0 +1,14 @@
+{
+  "name": "yuanai-markdown-renderer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YuanAI 小程序 Markdown 流式渲染组件",
+  "main": "./index.js",
+  "scripts": {
+    "build": "node build"
+  },
+  "license": "SEE LICENSE IN NOTICE.md",
+  "dependencies": {
+    "fs-extra": "^8.1.0"
+  }
+}

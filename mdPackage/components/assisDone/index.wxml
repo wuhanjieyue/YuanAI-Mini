@@ -1,0 +1,20 @@
+<view wx:if="{{item.role === 'user'}}" class="dc ae mtb24 mlr36" >
+  <message-attachments language="{{language}}" attachments="{{item.attachments}}" bind:previewFile="previewFile"></message-attachments>
+  <view id="user_{{index}}" class="{{item.attachments && item.attachments.length ? 'mt16' : ''}}" catch:longpress="pressContent">
+    <view class="xlradius ptb24 plr36 user-content accent-user-bubble" >
+        <text><text wx:if="{{item.featureLabel}}" class="chat-feature-label">{{item.featureLabel}} </text>{{item.content}}</text>
+      </view>
+  </view>
+</view>
+<block wx:if="{{item.role === 'assistant'}}" >
+  <view class="plr36 mt24" wx:if="{{item.thinking}}">
+    <think-item turn-status="{{item.status}}" language="{{language}}" think-open="{{item.thinkOpen}}" think-status="{{item.thinkStatus}}" stopped="{{item.status === 'cancelled'}}" think-duration-text="{{item.thinkDurationText}}" process-trace="{{item.processTrace}}" process-duration-ms="{{item.processDurationMs}}" bind:open="openReasoning"></think-item>
+  </view>
+
+  <view class="plr36" >
+    <generated-images language="{{language}}" images="{{item.contentParts}}" content="{{item.content}}" settled="{{true}}" turn-status="{{item.status}}" theme="{{theme}}" bind:unavailable="unavailableImage"/>
+    <towxml nodes="{{article}}" openTyper="{{false}}" catch:artifactlink="previewArtifact" catch:unavailable="unavailableImage" bind:ready="handleTowxmlReady" class="mradius" style="overflow: hidden;" theme="{{theme}}"/>
+    <message-attachments delivery="{{true}}" language="{{language}}" attachments="{{item.attachments}}" bind:previewFile="previewFile"/>
+    <assis-act language="{{language}}" theme="{{theme}}" haptic-feedback="{{hapticFeedback}}" model-name="{{modelName || item.modelName}}" share-enabled="{{shareEnabled}}" share-loading="{{shareLoading}}" branch-loading-turn-id="{{branchLoadingTurnId}}" wx:if="{{showActions && ((item.content && item.content.length) || (item.contentParts && item.contentParts.length))}}" item="{{item}}" bind:copy="copy" bind:openSources="openSources" bind:share="share" bind:moreAction="moreAction"></assis-act>
+  </view>
+</block>

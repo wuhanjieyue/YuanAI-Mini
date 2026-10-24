@@ -1,0 +1,19 @@
+:host { display: block; width: 100%; height: 100%; }
+
+.dot-matrix-loading{
+  width: 100%;
+  height: 100vh;
+  padding: 176rpx 28rpx 28rpx;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.dot-matrix-canvas{
+  width: 100%;
+  height: 100%;
+}
+
+.dot-matrix-contained{
+  height: 100%;
+  padding: 28rpx;
+}

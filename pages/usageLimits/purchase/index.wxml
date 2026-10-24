@@ -1,0 +1,33 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="purchase-backdrop" bind:tap="closePage"></view>
+<draggable-sheet
+  class="purchase-sheet"
+  style="{{themeStyle}};{{accentStyle}};height:{{screenHeight}}px;"
+  initial-child-size="{{sheetSize}}"
+  min-child-size="{{0}}"
+  max-child-size="{{sheetSize}}"
+  snap="{{true}}"
+  worklet:onsizeupdate="onSizeUpdate"
+>
+  <scroll-view
+    class="purchase-scroll bg-l0"
+    scroll-y
+    type="list"
+    show-scrollbar="{{false}}"
+    associative-container="draggable-sheet"
+  >
+    <view class="purchase-card dc ac" style="min-height:{{screenHeight * sheetSize}}px;">
+      <text class="purchase-title tc wt6 text-strong">{{i18n.usageLimits.buyCredits}}</text>
+      <view class="purchase-description dr ac text-l2 mt16">
+        <text>{{i18n.usageLimits.purchaseDescription}}</text>
+      </view>
+      <view class="purchase-plan plr24 ac jb mt24 dr">
+        <text class="purchase-pack ft32">{{grantPoints}} {{i18n.usageLimits.pointsUnit}}</text>
+        <text class="purchase-price wt6 text-strong" aria-label="{{i18n.usageLimits.amountLabel}}">¥{{amountYuan}}</text>
+      </view>
+      <view class="purchase-button wt6 mt24 dc ac jc ft32" bind:tap="purchase" aria-role="button" aria-disabled="{{purchasing}}">
+        <text>{{i18n.usageLimits.purchaseAction}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</draggable-sheet>

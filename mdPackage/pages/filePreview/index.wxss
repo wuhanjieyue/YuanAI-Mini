@@ -1,0 +1,55 @@
+@import "/static_wxss/asset-cards.wxss";
+
+.file-preview-sheet {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+.sheet-pan,
+.file-preview-pan {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+}
+.move-bg {
+  width: 100%;
+  box-sizing: border-box;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  background: linear-gradient(to bottom, var(--glass-86, rgba(255,255,255,0.86)), rgba(255,255,255,0));
+}
+.file-preview-header-side {
+  width: 92rpx;
+  flex-shrink: 0;
+}
+.file-preview-action {
+  width: 92rpx;
+  height: 92rpx;
+}
+.file-preview-action-disabled {
+  opacity: 0.4;
+}
+.file-preview-scroll {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.file-preview-content {
+  min-height: 100%;
+  box-sizing: border-box;
+  padding-top: 156rpx;
+}
+.file-preview-content-loading {
+  display: flex;
+}
+.file-preview-text {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.7;
+}

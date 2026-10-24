@@ -1,0 +1,15 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="conversation-files-sheet" style="{{themeStyle}};{{accentStyle}};height:{{sheetHeight}}px;">
+  <yb-library-view
+    conversation-scope="{{true}}"
+    conversation-files="{{files}}"
+    conversation-loading="{{loading}}"
+    feature-title="{{title}}"
+    sheet-height="{{sheetHeight}}"
+    language="{{language}}"
+    theme-style="{{themeStyle}};{{accentStyle}}"
+    bind:close="closePage"
+    bind:chatAsset="chatAsset"
+    bind:refreshscopedfiles="loadFiles"
+  />
+</view>

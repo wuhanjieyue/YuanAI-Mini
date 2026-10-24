@@ -1,0 +1,53 @@
+@import '/static_wxss/try-it.wxss';
+
+.try-it-actions {
+  width: 100%;
+  margin-top: auto;
+  padding: 0 55rpx 85rpx;
+  box-sizing: border-box;
+}
+.try-it-button {
+  width: 100%;
+  height: 92rpx;
+  margin: 0;
+  padding: 0;
+  border-radius: 999px;
+  color: var(--accent-action-text, #ffffff);
+  background: var(--accent-action-bg, #0d0d0d);
+  font-size: 27rpx;
+  line-height: 92rpx;
+}
+
+.try-it-button::after {
+  border: 0;
+}
+
+.try-it-button-pressed {
+  opacity: 0.82;
+}
+.login-prompt-hero {
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  width: 100%;
+  height: 300rpx;
+  overflow: hidden;
+}
+
+.login-prompt-hero-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.login-prompt-logo {
+  position: relative;
+  z-index: 1;
+  width: 112rpx;
+  height: 112rpx;
+  border-radius: 28rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.12);
+}
+.login-prompt-action {
+  position: relative;
+}

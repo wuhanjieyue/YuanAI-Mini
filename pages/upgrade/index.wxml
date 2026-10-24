@@ -1,0 +1,24 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="upgrade-page info-page" style="{{themeStyle}};{{accentStyle}};visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+  <view class="upgrade-toolbar info-toolbar je">
+    <view class="upgrade-close dc ac jc glass-view cradius" bind:tap="closePage" aria-role="button" aria-label="{{i18n.archive.close}}">
+      <text class="iconfont icon-x ft48 text-l0"></text>
+    </view>
+  </view>
+  <scroll-view class="upgrade-content" scroll-y type="list" associative-container="pop-gesture" show-scrollbar="{{false}}">
+    <view class="upgrade-hero tc dc ac" list-item>
+      <image class="upgrade-logo" src="/static/logs/blog.png" mode="aspectFit" aria-label="YuanAI"></image>
+      <text class="upgrade-title wt6 ft56">{{i18n.upgrade.title}}</text>
+      <text class="text-l1 ft28 mt16">{{i18n.usageLimits.proPrice}}</text>
+    </view>
+    <view class="upgrade-intro mt24 text-l1" list-item>{{i18n.upgrade.intro}}</view>
+    <view class="upgrade-benefit mb16 dr ac" wx:for="{{i18n.upgrade.benefits}}" wx:key="*this" list-item>
+      <text class="upgrade-check mr24 iconfont icon-check text-main-l1" aria-hidden="{{true}}"></text>
+      <text class="upgrade-benefit-text ft32">{{item}}</text>
+    </view>
+  </scroll-view>
+  <view class="upgrade-actions dc ac">
+    <view style="width:75vw;" hover-class="upgrade-pressed" hover-start-time="20" hover-stay-time="70"><button class="upgrade-primary" hover-class="none" bind:tap="getPro" style="width:75vw;margin:0;padding:0;border-radius:999rpx;min-height:104rpx;line-height:104rpx;font-size:32rpx;font-weight:500;background:var(--accent-action-bg);color:var(--accent-action-text);border:0;" plain="{{true}}">{{i18n.upgrade.title}}</button></view>
+    <view style="width:100%;" hover-class="upgrade-pressed" hover-start-time="20" hover-stay-time="70"><button class="upgrade-secondary" hover-class="none" bind:tap="closePage" style="color:var(--text-l1);width:100%;margin:0;padding:0;border-radius:999rpx;margin-top:12rpx;min-height:84rpx;line-height:84rpx;font-size:26rpx;background:transparent;border:0;" plain="{{true}}">{{i18n.upgrade.continueFree}}</button></view>
+  </view>
+</view>

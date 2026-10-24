@@ -1,0 +1,42 @@
+<page-meta page-style="{{themeStyle}}" root-background-color="#ffffff00" />
+<view wx:if="{{!stacked}}" class="full-bg" bind:tap="closePage" style="{{themeStyle}}"></view>
+<view wx:if="{{stacked}}" class="sheet sheet-column" style="{{themeStyle}};{{accentStyle}};"><template is="reportContent" data="{{i18n, stacked, prompt, sheetHeight, content, locked, error, canSend, sending, reviewNotice, shakeToReport}}" /></view>
+<draggable-sheet wx:else class="report-sheet" style="{{themeStyle}};height:{{sheetHeight}}px;" initial-child-size="{{1}}" min-child-size="{{0}}" max-child-size="{{1}}" snap="{{true}}" worklet:onsizeupdate="onSizeUpdate">
+  <template is="reportContent" data="{{i18n, stacked, prompt, sheetHeight, content, locked, error, canSend, sending, reviewNotice, shakeToReport}}" />
+</draggable-sheet>
+<template name="reportContent">
+  <view class="report-panel {{stacked ? 'report-panel-stacked' : 'glass'}}">
+  <scroll-view class="report-scroll" scroll-y type="list" associative-container="{{stacked ? 'pop-gesture' : 'draggable-sheet'}}" show-scrollbar="{{false}}">
+    <view class="report-card plr36 {{prompt ? 'report-prompt-card' : ''}}">
+      <view class="dr ac jb ptb24">
+        <text class="ft36 wt6 text-strong">{{prompt ? i18n.report.promptTitle : i18n.about.report}}</text>
+        <view wx:if="{{!prompt}}" class="file-icon dc ac jc glass-view cradius" bind:tap="closePage" aria-role="button" aria-label="{{i18n.common.close}}"><text class="iconfont icon-x ft48 text-l0"></text></view>
+      </view>
+      <block wx:if="{{prompt}}">
+        <text class="prompt-description ft32 text-l2">{{i18n.report.promptDescription}}</text>
+        <view class="send-btn active dc ac jc lradius mt24" bind:tap="showForm" aria-role="button"><text class="ft32 wt5 text-r0">{{i18n.about.report}}</text></view>
+      </block>
+      <block wx:else>
+        <text class="label mb16 ft30 text-muted">{{i18n.report.whatHappened}}</text>
+        <view class="textarea-box ptb24 bg-l0 lradius">
+          <textarea class="textarea-control ft30 text-strong" maxlength="2000" value="{{content}}" disabled="{{locked}}" placeholder="{{i18n.report.placeholder}}" placeholder-class="input-placeholder" show-confirm-bar="{{false}}" cursor-spacing="32" bindinput="handleInput"></textarea>
+          <text class="char-count mt8 ft24 text-placeholder">{{content.length}} / 2000</text>
+        </view>
+        <text class="hint ft24 text-hint">{{reviewNotice}}</text>
+      </block>
+      <view class="divider mt24"></view>
+      <view class="option-row dr ac jb">
+        <view class="dc"><text class="ft32">{{i18n.report.shake}}</text><text class="ft24 mt4 text-hint">{{i18n.report.shakeOff}}</text></view>
+        <switch checked="{{shakeToReport}}" color="#007AFF" bindchange="toggleShake" aria-label="{{i18n.report.shake}}"></switch>
+      </view>
+      <text wx:if="{{error}}" class="hint ft24 text-l1">{{error}}</text>
+
+    </view>
+  </scroll-view>
+  <view wx:if="{{!prompt}}" class="bottom-bar plr36">
+      <view class="send-btn dc ac jc lradius {{canSend ? 'active' : ''}}" bind:tap="handleSend" aria-role="button" aria-disabled="{{!canSend || sending}}">
+        <text class="ft32 wt5 text-r0">{{sending ? i18n.common.loading : (locked ? i18n.common.retry : i18n.common.send)}}</text>
+      </view>
+  </view>
+  </view>
+</template>

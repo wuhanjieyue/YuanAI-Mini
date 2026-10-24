@@ -1,0 +1,42 @@
+<page-meta page-style="{{themeStyle}}" root-background-color="#ffffff00" />
+<view class="full-bg" bind:tap="closePage" style="{{themeStyle}}"></view>
+
+<draggable-sheet
+  class="sheet"
+  initial-child-size="{{0.5}}"
+  min-child-size="{{0}}"
+  max-child-size="{{1}}"
+  snap="{{true}}"
+  snap-sizes="{{[0.5, 1]}}"
+  worklet:onsizeupdate="onSizeUpdate"
+  style="{{themeStyle}}">
+  <view class="move-box dc ac">
+    <view class="move-bg dc ac ptb24">
+      <view class="sradius move-line"></view>
+    </view>
+  </view>
+
+  <scroll-view
+    associative-container="draggable-sheet"
+    class="scrollable sheet-scroll glass"
+    scroll-y
+    type="list"
+    enable-passive="{{true}}"
+    show-scrollbar="{{false}}"
+  >
+    <view class="sources-header ft28 plr36" list-item>
+      <text class="text-l2">{{i18n.sources.title}}</text>
+    </view>
+    <view wx:for="{{citations}}" wx:key="url" class="source-row plr36" list-item bind:tap="copySource" data-index="{{index}}" aria-role="button" aria-label="{{item.ariaLabel}}">
+      <view wx:if="{{item.showSite}}" class="source-site dr ac text-l0 ft32">
+        <image wx:if="{{item.iconUrl}}" class="source-image lsize cradius" src="{{item.iconUrl}}" mode="aspectFit" data-index="{{index}}" binderror="iconError" />
+        <text wx:else class="iconfont icon-web-search source-icon ft28 text-l1"></text>
+        <text class="source-domain">{{item.siteName || item.domain}}</text>
+      </view>
+      <text wx:if="{{item.showTitle}}" class="source-title mt4 wt6 ft32 text-l0" max-lines="2" overflow="ellipsis">{{item.title}}</text>
+      <text wx:if="{{item.description}}" class="source-description text-l1 ft32" max-lines="2" overflow="ellipsis">{{item.description}}</text>
+      <view class="source-divider bg-l2"></view>
+    </view>
+    <view class="sources-footer pt24 ft24 plr36 text-l2" list-item>{{i18n.sources.hint}}</view>
+  </scroll-view>
+</draggable-sheet>

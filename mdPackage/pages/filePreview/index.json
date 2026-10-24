@@ -1,0 +1,9 @@
+{
+  "usingComponents": {
+    "towxml": "../../components/towxmlstream/towxml",
+    "yb-dot-matrix-loading": "/components/yb-dot-matrix-loading/index"
+  },
+  "navigationStyle": "custom",
+  "backgroundColorContent": "#ffffff00",
+  "disableScroll": true
+}

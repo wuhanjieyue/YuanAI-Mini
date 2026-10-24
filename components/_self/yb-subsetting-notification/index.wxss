@@ -1,0 +1,8 @@
+@import '/static_wxss/skyother.wxss';
+
+.notification-page{
+  width: 90%;
+  margin-left: 5%;
+  padding-bottom: 72rpx;
+  box-sizing: border-box;
+}

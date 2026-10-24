@@ -1,0 +1,10 @@
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+
+.data-control-page{
+  width: 90%;
+  margin-left: 5%;
+  padding-bottom: 72rpx;
+  box-sizing: border-box;
+}

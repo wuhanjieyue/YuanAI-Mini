@@ -1,0 +1,16 @@
+{
+  "component": true,
+  "usingComponents": {
+    "yb-notice-capsule": "/components/yb-notice-capsule/index",
+    "decode": "./decode",
+    "audio-player": "./audio-player/audio-player",
+    "latex": "./latex/latex",
+    "yuml": "./yuml/yuml",
+    "table": "./table/table",
+    "echarts": "./echarts/echarts",
+    "todogroup": "./todogroup/todogroup",
+    "img": "./img/img",
+    "typable-text": "./typable-text/typable-text",
+    "batch": "./batch/batch"
+  }
+}

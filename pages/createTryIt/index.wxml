@@ -1,0 +1,29 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<vertical-drag-gesture-handler
+  tag="try-it-pan"
+  worklet:should-response-on-move="shouldPanResponse"
+  worklet:should-accept-gesture="shouldPanAccept"
+  worklet:ongesture="handleVerticalDrag"
+  class="try-it-gesture"
+>
+  <view class="try-it-sheet" style="{{themeStyle}};visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+    <image
+      class="try-it-hero"
+      src="{{appStaticRoot + '/try-it-image-creation.png'}}"
+      mode="aspectFit"
+    ></image>
+
+    <view class="file-icon dc ac jc glass-view cradius try-it-close" bind:tap="closePage" aria-role="button" aria-label="{{i18n.archive.close}}">
+      <text class="iconfont icon-x ft48 text-l0"></text>
+    </view>
+
+    <view class="try-it-copy">
+      <text class="try-it-title">{{i18n.tryIt.title}}</text>
+      <text class="try-it-description">{{i18n.tryIt.description}}</text>
+    </view>
+
+    <view class="try-it-actions">
+      <view style="width:100%;" hover-class="try-it-button-pressed" hover-start-time="20" hover-stay-time="70"><button class="try-it-button" hover-class="none" bind:tap="closePage" style="width:100%;height:92rpx;margin:0;padding:0;border-radius:999px;color:var(--accent-action-text, #ffffff);background:var(--accent-action-bg, #0d0d0d);font-size:27rpx;line-height:92rpx;font-weight:500;border:0;" plain="{{true}}">{{i18n.tryIt.action}}</button></view>
+    </view>
+  </view>
+</vertical-drag-gesture-handler>

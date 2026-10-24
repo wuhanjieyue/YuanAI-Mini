@@ -1,0 +1,6 @@
+{
+  "usingComponents": { "yb-library-view": "/components/_self/yb-library-view/index" },
+  "backgroundColorContent": "#ffffff00",
+  "navigationStyle": "custom",
+  "disableScroll": true
+}

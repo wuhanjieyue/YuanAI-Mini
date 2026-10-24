@@ -1,0 +1,5 @@
+.conversation-files-sheet{
+  width: 100%;
+  overflow: hidden;
+  border-radius: 25px 25px 0 0;
+}

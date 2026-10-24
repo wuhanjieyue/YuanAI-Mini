@@ -1,0 +1,14 @@
+@import '/static_wxss/skyfontline.wxss';
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+:host { display:block; width:0; height:0; }
+.speech-actions { gap:8rpx; }
+.speech-control { width:56rpx; height:64rpx; flex:0 0 56rpx; }
+.speech-rate { width:80rpx; flex:0 0 80rpx; white-space:nowrap; }
+.speech-play { display:block; font-size:42rpx; color:var(--text-l0); }
+.speech-loading { animation:speech-spin 1.5s linear infinite; }
+@keyframes speech-spin { to { transform:rotate(360deg); } }
+.speech-time { white-space:nowrap; }
+.speech-disabled { opacity:0.35; }
+.speech-arrow { font-size:44rpx; line-height:44rpx; }

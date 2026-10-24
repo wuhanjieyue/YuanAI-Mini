@@ -1,0 +1,66 @@
+
+.think-row {
+  position: relative;
+  max-width: 100%;
+  min-height: 42rpx;
+  line-height: 42rpx;
+}
+.think-title {
+  line-height: 42rpx;
+}
+
+.think-shimmer-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  pointer-events: none;
+}
+
+.think-shimmer-overlay .think-icon,
+.think-shimmer-overlay .think-title {
+  color: transparent;
+}
+
+.think-shimmer-clip {
+  display: inline-flex;
+  position: relative;
+  overflow: hidden;
+  pointer-events: none;
+}
+.think-title-shimmer {
+  left: 0;
+  pointer-events: none;
+  background-image: linear-gradient(126deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.65) 50%, rgba(255, 255, 255, 0) 70%);
+  animation: think-title-sweep 1.8s linear infinite;
+}
+
+@keyframes think-title-sweep {
+  0% { transform: translateX(-100%); }
+  75%, 100% { transform: translateX(100%); }
+}
+.think-status,
+.think-text {
+  line-height: 42rpx;
+}
+
+.think-text {
+  word-break: break-all;
+}
+
+.think-gap {
+  width: 16rpx;
+  height: 1rpx;
+}
+.think-arrow {
+  line-height: 42rpx;
+}
+.think-icon {
+  line-height: 42rpx;
+}
+
+.think-icon-gap {
+  display: inline-flex;
+  width: 8rpx;
+  height: 1rpx;
+}

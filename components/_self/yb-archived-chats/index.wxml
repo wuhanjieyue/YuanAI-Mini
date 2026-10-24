@@ -1,0 +1,89 @@
+<view class="archived-page bg-l0">
+  <vertical-drag-gesture-handler
+    tag="archiveScroll"
+    native-view="scroll-view"
+    simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+    worklet:should-response-on-move="shouldScrollViewResponse"
+  >
+  <scroll-view worklet:onscrollupdate="handleScrollUpdate" class="archived-scroll" scroll-y show-scrollbar="{{false}}" lower-threshold="80" bindscrolltolower="loadMore" bindscroll="handleScroll">
+    <view class="archived-content">
+      <view wx:if="{{loading && !groups.length}}" class="archived-list-skeleton">
+        <view class="archived-group-title wt6 mb24 text-muted archived-skeleton-group skeleton-clip ft32 mradius">
+          <view class="skeleton-shimmer" aria-hidden="true"></view>
+        </view>
+        <view wx:for="{{[72, 48, 84, 60, 76]}}" wx:key="*this" class="archived-row ac">
+          <view class="archived-skeleton-title skeleton-clip" style="width: {{item}}%;">
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+      </view>
+      <block wx:for="{{groups}}" wx:key="label" wx:for-item="group" wx:for-index="groupIndex">
+        <text class="archived-group-title wt6 mb24 text-muted ft32">{{group.label}}</text>
+        <block wx:for="{{group.items}}" wx:key="conversationId">
+          <yb-flyout id="archive-{{groupIndex}}-{{index}}" open-on-trigger-tap="{{false}}"
+            anchor-centered="{{true}}" popup-width-rpx="460" scrollable="{{true}}"
+            popup-class="setting-option-pop-surface" bind:afterclose="handleActionsHidden" theme-style="{{themeStyle}}">
+            <view slot="trigger" class="archived-row ac" data-id="{{item.conversationId}}"
+              data-selector="#archive-{{groupIndex}}-{{index}}" bind:longpress="openActions">
+              <text class="archived-title text-strong" overflow="ellipsis">{{item.title}}</text>
+            </view>
+            <view slot="popup" class="setting-option-pop-list">
+              <view class="setting-option-pop-item archived-action text-strong ac ft32" data-action="view" catch:tap="chooseAction" aria-role="button">
+                <view class="archived-eye ac jc cradius"><view class="archived-eye-pupil cradius"></view></view>
+                <text>{{i18n.archive.view}}</text>
+              </view>
+              <view class="setting-option-pop-item archived-action text-strong ac ft32" data-action="unarchive" catch:tap="chooseAction" aria-role="button">
+                <text class="archived-iconfont icon-archive archived-action-icon"></text><text>{{i18n.archive.unarchive}}</text>
+              </view>
+              <view class="setting-option-pop-item archived-action text-strong ac ft32 archived-action-danger text-danger" data-action="delete" catch:tap="chooseAction" aria-role="button">
+                <text class="archived-iconfont icon-delete archived-action-icon"></text><text>{{i18n.common.delete}}</text>
+              </view>
+            </view>
+          </yb-flyout>
+        </block>
+      </block>
+      <view wx:if="{{loading && groups.length}}" class="archived-loading">
+        <view wx:for="{{[68, 46]}}" wx:key="*this" class="archived-row ac">
+          <view class="archived-skeleton-title skeleton-clip" style="width: {{item}}%;">
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+  </vertical-drag-gesture-handler>
+
+  <view class="archived-status-layer dc ac jc">
+    <view wx:if="{{requestStatus === 'success' && !loading && !groups.length}}" class="archived-status dc ac jc archived-empty text-l1 ft32">
+      <image class="archived-empty-logo" src="/static/logs/glog.png" mode="widthFix"></image>
+      <text class="archived-empty-message mb24 mt32">{{appliedQuery ? i18n.archive.noMatches : i18n.archive.empty}}</text>
+    </view>
+    <view wx:elif="{{!loading && failed && !groups.length}}" class="archived-status dc ac jc archived-error text-l1 ft32">
+      <image class="archived-empty-logo" src="/static/logs/glog.png" mode="widthFix" aria-hidden="true"></image>
+      <text class="archived-empty-message mb24 mt32">{{i18n.archive.loadFailed}}</text>
+    </view>
+  </view>
+
+  <view class="archived-search-row">
+    <view class="archived-search floating-search">
+      <text class="archived-iconfont icon-search floating-search-icon"></text>
+      <input
+        class="floating-search-input"
+        value="{{query}}"
+        focus="{{inputFocus}}"
+        adjust-position="{{false}}"
+        confirm-type="search"
+        hold-keyboard="{{true}}"
+        placeholder="{{i18n.archive.search}}"
+        placeholder-class="floating-search-placeholder"
+        bind:focus="handleSearchFocus"
+        bind:blur="handleSearchBlur"
+        bind:input="handleSearch"
+        bind:keyboardheightchange="handleSearchKeyboardHeightChange" worklet:onkeyboardheightchange="handleSearchKeyboardUpdate"
+      />
+    </view>
+    <view class="archived-clear floating-search-clear" style="pointer-events:{{query ? 'auto' : 'none'}};" bind:tap="clearSearch">
+      <text class="archived-iconfont icon-x floating-search-clear-icon"></text>
+    </view>
+  </view>
+</view>

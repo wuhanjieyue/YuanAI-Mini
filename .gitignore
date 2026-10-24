@@ -1,0 +1,50 @@
+# Windows
+[Dd]esktop.ini
+Thumbs.db
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+
+# Node.js
+node_modules/
+app_config.private.js
+backend/**/__pycache__/
+backend/**/*.pyc
+.oh-my-ccg/
+.omc/
+.omx/
+.codegraph/
+.understand-anything/
+
+# Local database credentials and offline source exports
+backend/.env.mysql.local
+backend/database/exports/
+
+# Local COS credentials
+backend/.env.cos.local
+backend/.env.server.local
+backend/.venv/
+backend/.runtime-cache/
+
+# Local Agent workspaces
+/tmp/
+backend/mcp_servers.local.json
+
+# Private knowledge service credentials
+backend/.env.knowledge.local
+
+# Private development settings and credentials
+project.private.config.json
+.idea/
+.vscode/
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key

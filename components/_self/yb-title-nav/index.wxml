@@ -1,0 +1,29 @@
+<view class="title-nav dc navbarview" style="height: {{navHeight}}px;">
+  <view class="title-view" style="height: {{titleHeight}}px;">
+    <view class="more-icon dr plr24 ac z99">
+        <view class="drawer-trigger ac jc glass-view cradius" catch:tap="openLeft">
+          <view wx:if="{{hasUnreadConversations}}" class="chat-unread-dot cradius drawer-unread-dot" style="{{accentStyle}}" aria-hidden="true"></view>
+          <view>
+            <view class="menu-stroke mradius menu-stroke-wide"></view>
+            <view class="menu-stroke-gap"></view>
+            <view class="menu-stroke mradius menu-stroke-narrow"></view>
+          </view>
+        </view>
+        <view class="model-name dr ac ml16" style="flex: auto;" catch:tap="showFeatures">
+            <view class="model-name-anchor dr ac">
+                <text class="feature-name wt6 ft36">{{featureName}}</text>
+                <view wx:if="{{featureMenuEnabled}}" class="feature-menu-indicator dr ac ml8 ft36 text-l2">
+                    <text class="title-icon title-icon-arr-down feature-menu-arrow"></text>
+                </view>
+            </view>
+        </view>
+    </view>
+  </view>
+  <view wx:if="{{tabs.length}}" class="asset-tabs title-nav-tabs plr32">
+    <view wx:for="{{tabs}}" wx:key="id" data-id="{{item.id}}" catch:tap="selectTab"
+      class="asset-tab title-nav-tab plr36 lradius {{activeTab === item.id ? 'asset-tab-active' : ''}} ft32"
+      aria-role="button" aria-label="{{item.name}}" aria-disabled="{{tabsDisabled}}">
+      <text>{{item.name}}</text>
+    </view>
+  </view>
+</view>

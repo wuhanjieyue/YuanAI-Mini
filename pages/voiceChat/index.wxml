@@ -1,0 +1,20 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="{{themeBackground}}" />
+<view class="pageview ac ja" style="{{themeStyle}}">
+  <view></view>
+  <!-- 音频可视化 -->
+
+  <view class="voice-view cradius bg-l3">
+    <view class="container"></view>
+    <view class="blur-view"></view>
+  </view>
+
+  <view class="dr ac jb ft48" style="width: 76%;">
+    <view class="icon-bg bg-l2 cradius dc ac jc">
+      <text  class="iconfont icon-sliders" ></text>
+    </view>
+
+    <view class="icon-bg bg-l2 cradius dc ac jc" catch:tap="closePage">
+      <text  class="iconfont icon-x" ></text>
+    </view>
+  </view>
+</view>

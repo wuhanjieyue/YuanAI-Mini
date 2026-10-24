@@ -1,0 +1,30 @@
+<view class="file-scroll jc">
+  <scroll-view  style="height: 80px;" scroll-x type="list" show-scrollbar="{{false}}" >
+  <view wx:for="{{files}}" wx:key="draftId" class="attachment-item mlr8">
+    <view wx:if="{{item.fileType === 'image'}}" class="attachment-preview mradius">
+      <image class="image-item mradius" mode="aspectFill" src="{{item.previewPath}}"></image>
+      <view wx:if="{{item.uploadStatus === 'uploading' || item.uploadStatus === 'deleting'}}" class="upload-loading-mask full-bg image-loading-mask mradius">
+        <view class="upload-loading-shimmer" aria-hidden="true"></view>
+      </view>
+    </view>
+
+    <view wx:else class="file-item ac bl-01 mradius" >
+      <view class="file-icon-area ac jc ml16">
+        <text class="iconfont file-icon-image text-main-l1 {{item.iconClass}}"></text>
+        <view wx:if="{{item.uploadStatus === 'uploading' || item.uploadStatus === 'deleting'}}" class="upload-loading-mask full-bg">
+          <view class="upload-loading-shimmer" aria-hidden="true"></view>
+        </view>
+      </view>
+
+      <view class="file-meta mr16 ml24 ft24 text-l2">
+        <text overflow="ellipsis">{{item.name}}</text>
+        <text overflow="ellipsis" class="file-size mt16">{{item.sizeText}}</text>
+      </view>
+    </view>
+    <!-- 删除按钮 -->
+    <view wx:if="{{item.uploadStatus === 'selected' || (item.fileID && item.uploadStatus === 'uploaded')}}" class="delete-button ac jc ft24 bg-l2 cradius" catch:tap="deleteFile" data-index="{{index}}">
+      <text class="iconfont icon-x"></text>
+    </view>
+  </view>
+</scroll-view>
+</view>

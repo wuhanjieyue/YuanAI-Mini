@@ -1,0 +1,12 @@
+{
+  "description": "本地开发设置示例，不包含 AppID、分享参数或用户数据。复制为 project.private.config.json 后按需调整。",
+  "projectname": "YuanAI_mini",
+  "setting": {
+    "compileHotReLoad": false,
+    "skylineRenderEnable": true,
+    "urlCheck": true,
+    "useApiHook": false,
+    "useGlassEaselForWxml": true
+  },
+  "libVersion": "3.15.3"
+}

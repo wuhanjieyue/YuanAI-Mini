@@ -1,0 +1,66 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="full-bg" bind:tap="closePage" style="{{themeStyle}}"></view>
+
+<draggable-sheet
+  class="sheet"
+  initial-child-size="{{0.74}}"
+  min-child-size="{{0}}"
+  max-child-size="{{1}}"
+  snap="{{true}}"
+  snap-sizes="{{[0.74, 1]}}"
+  worklet:onsizeupdate="onSizeUpdate"
+  style="{{themeStyle}}">
+  <scroll-view
+    associative-container="draggable-sheet"
+    class="scrollable sheet-scroll glass"
+    scroll-y
+    type="list"
+    show-scrollbar="{{false}}"
+  >
+    <view class="profile-content pt36 dc ac">
+      <view class="avatar-wrap mtb48" bind:tap="chooseAvatar">
+        <view class="profile-avatar-frame cradius dr ac jc">
+          <image class="profile-avatar" src="{{form.avatarUrl || '/static/logs/glog.png'}}" mode="widthFix"></image>
+        </view>
+        <view class="avatar-edit dc ac jc cradius">
+          <text class="iconfont icon-camera ft40"></text>
+        </view>
+      </view>
+
+      <view class="form-row">
+        <text class="form-label text-l2 ft28 wt6">{{i18n.profile.name}}</text>
+        <input
+          class="profile-input text-l0"
+          placeholder-class="text-placeholder"
+          value="{{form.userName}}"
+          placeholder="{{i18n.profile.name}}"
+          maxlength="30"
+          data-field="userName"
+          bindinput="handleInput"
+        />
+      </view>
+
+      <view class="form-row mt32">
+        <text class="form-label text-l2 ft28 wt6">{{i18n.profile.nickname}}</text>
+        <input
+          class="profile-input text-l0"
+          placeholder-class="text-placeholder"
+          value="{{form.nickName}}"
+          placeholder="{{i18n.profile.nickname}}"
+          maxlength="30"
+          data-field="nickName"
+          bindinput="handleInput"
+        />
+      </view>
+
+      <text class="mt48 text-l2 ft28 tc">{{i18n.profile.help}}</text>
+
+      <view class="save-btn wt6 dc ac jc mt48 text-r0" bind:tap="saveProfile">
+        <text>{{i18n.profile.save}}</text>
+      </view>
+      <view class="cancel-btn dc ac jc mt32 text-l0" bind:tap="closePage">
+        <text>{{i18n.common.cancel}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</draggable-sheet>

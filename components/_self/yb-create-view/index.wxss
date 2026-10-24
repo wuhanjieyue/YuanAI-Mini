@@ -1,0 +1,21 @@
+@import '/static_wxss/skyfontline.wxss';
+@import "../../../static_wxss/asset-cards.wxss";
+@import "/static_wxss/skyother.wxss";
+@import '/static_wxss/skycolor.wxss';
+
+.create-page {
+  position: relative;
+  overflow: hidden;
+}
+.create-scroll { width: 100%; height: 100%; box-sizing: border-box; }
+.create-asset-card.asset-skeleton { height: 411.25rpx; }
+
+.create-bottom-space { height: 154rpx; }
+.create-search-row {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 42rpx;
+  height: 96rpx;
+  z-index: 20;
+}

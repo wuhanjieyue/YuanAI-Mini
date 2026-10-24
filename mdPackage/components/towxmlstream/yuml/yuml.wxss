@@ -1,0 +1,7 @@
+.h2w__yumlView {
+    min-height: 80rpx;
+    min-width: 100%;
+}
+.h2w__yumlError {
+  line-height: 80rpx;
+}

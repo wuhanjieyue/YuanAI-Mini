@@ -1,0 +1,92 @@
+<view class="knowledge-page full-view bg-gray">
+  <yb-title-nav class="z99" feature-name="{{i18n.home.knowledge}}" feature-menu-enabled="{{false}}"
+    tabs="{{categories}}" active-tab="{{activeCategory}}" tabs-disabled="{{actionsOpen}}"
+    bind:tabchange="selectCategory" bind:heightchange="handleNavHeightChange" catch:openLeft="openLeft" />
+
+  <scroll-view type="custom" scroll-y="{{!actionsOpen}}" enable-passive bind:scrolltolower="loadMoreAssets" class="knowledge-scroll">
+    <view style="height: {{navHeight}}px;" aria-hidden="true"></view>
+    <grid-view type="masonry" cross-axis-count="2" main-axis-gap="{{gridGap}}" cross-axis-gap="{{gridGap}}" padding="{{gridPadding}}">
+      <view wx:for="{{items}}" wx:key="id" id="asset-{{index}}" data-id="{{item.id}}" data-index="{{index}}"
+        class="asset-card {{selectedId === item.id ? 'asset-card-hidden' : ''}}" style="height: {{item.cardHeight}}rpx;"
+        catch:tap="openChunks" bind:longpress="openAssetActions" aria-role="button" aria-label="{{item.displayName}}">
+        <block wx:if="{{item.isImage}}">
+          <image wx:if="{{item.url}}" class="asset-photo" src="{{item.url}}" mode="aspectFit" style="opacity:{{item.loaded ? 1 : 0}};"
+            show-menu-by-longpress="{{false}}" data-id="{{item.id}}" data-url="{{item.url}}" bind:load="assetImageLoaded" bind:error="assetImageFailed" />
+          <view wx:if="{{!item.loaded && !item.loadFailed}}" class="asset-skeleton-fill skeleton-clip" aria-hidden="true"><view class="skeleton-shimmer"></view></view>
+          <view wx:if="{{item.loadFailed}}" class="asset-image-state">{{i18n.assets.imageUnavailable}}</view>
+        </block>
+        <view wx:else class="asset-document">
+          <text class="asset-name ft32" max-lines="2" overflow="ellipsis">{{item.displayName}}</text>
+          <text wx:if="{{item.dateLabel}}" class="asset-date">{{i18n.assets.uploadedAt}} {{item.dateLabel}}</text>
+        </view>
+        <view wx:if="{{!item.isImage}}" class="knowledge-status text-l1 bg-l0">
+          <text wx:if="{{item.status !== 'ready'}}">{{item.knowledgeStatus}}</text><text wx:if="{{item.knowledgeDetail}}">{{item.status === 'ready' ? '' : ' · '}}{{item.knowledgeDetail}}</text>
+          <text wx:if="{{item.status === 'failed'}}" data-id="{{item.id}}" catch:tap="retryDocument" aria-role="button"> · {{i18n.common.retry}}</text>
+        </view>
+      </view>
+      <view wx:if="{{showSkeleton}}" class="asset-card knowledge-skeleton asset-skeleton skeleton-clip" aria-label="{{i18n.common.loading}}">
+        <view class="asset-skeleton-block skeleton-block"></view>
+        <view class="asset-skeleton-line skeleton-block"></view>
+        <view class="skeleton-shimmer" aria-hidden="true"></view>
+      </view>
+    </grid-view>
+    <view wx:if="{{(!loading || failed) && !(failed && !items.length)}}" class="asset-status">
+      <block wx:if="{{failed}}">
+        <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+        <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+        <view class="asset-retry" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
+      </block>
+      <text wx:elif="{{!items.length && query}}">{{i18n.assets.noMatches}}</text>
+      <text wx:elif="{{!items.length}}">{{i18n.knowledge.empty}}</text>
+      <text wx:else>{{i18n.assets.end}}</text>
+    </view>
+    <view class="knowledge-bottom-space"></view>
+  </scroll-view>
+
+  <view wx:if="{{failed && !items.length}}" class="asset-empty-overlay">
+    <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+    <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+    <view class="asset-retry asset-error-action" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
+  </view>
+  <yb-asset-actions id="assetActions" language="{{language}}" theme-style="{{themeStyle}}"
+    bind:statechange="assetActionsChanged" bind:localchange="localAssetsChanged" bind:chatAsset="chatAsset" />
+
+  <view class="knowledge-search-row">
+    <view class="knowledge-search-area">
+      <view class="knowledge-search floating-search" aria-role="searchbox" aria-label="{{i18n.knowledge.search}}">
+        <text class="iconfont icon-search floating-search-icon"></text>
+        <input class="floating-search-input" value="{{query}}" maxlength="128" focus="{{inputFocus}}"
+          adjust-position="{{false}}" confirm-type="search" hold-keyboard="{{true}}"
+          placeholder="{{i18n.knowledge.search}}" placeholder-class="floating-search-placeholder"
+          bind:focus="handleSearchFocus" bind:blur="handleSearchBlur" bind:input="handleSearch"
+          bind:keyboardheightchange="handleSearchKeyboardHeightChange" worklet:onkeyboardheightchange="handleSearchKeyboardUpdate" />
+      </view>
+      <view class="knowledge-clear floating-search-clear" style="pointer-events:{{query ? 'auto' : 'none'}};"
+        bind:tap="clearSearch" aria-role="button" aria-label="{{i18n.knowledge.clearSearch}}" aria-hidden="{{!query}}">
+        <text class="iconfont icon-x floating-search-clear-icon"></text>
+      </view>
+    </view>
+    <view class="knowledge-add">
+      <yb-flyout id="addMenu" open-on-trigger-tap="{{false}}" animate-trigger="{{true}}" popup-width-rpx="470"
+        popup-transform-origin="100% 100%" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}}"
+        disabled="{{loading}}" bind:afterclose="addMenuClosed">
+        <view slot="trigger" class="knowledge-add-trigger floating-search-clear floating-search-clear-active {{addMenuOpen ? 'knowledge-add-inactive' : ''}}"
+          catch:tap="openAddMenu" aria-role="button" aria-label="{{i18n.knowledge.add}}" aria-expanded="{{addMenuOpen}}">
+          <text class="iconfont icon-plus floating-search-clear-icon"></text>
+        </view>
+        <view slot="popup" class="setting-option-pop-list">
+          <view class="setting-option-pop-item dr ac" data-action="image" catch:tap="selectAddAction" hover-class="asset-pressed" aria-role="button" aria-label="{{i18n.common.image}}">
+            <text class="iconfont icon-image knowledge-menu-icon text-l0"></text><text class="ft32 text-l0">{{i18n.common.image}}</text>
+          </view>
+          <view class="setting-option-pop-item dr ac" data-action="note" catch:tap="selectAddAction" hover-class="asset-pressed" aria-role="button" aria-label="{{i18n.knowledge.note}}">
+            <text class="iconfont icon-document knowledge-menu-icon text-l0"></text><text class="ft32 text-l0">{{i18n.knowledge.note}}</text>
+          </view>
+          <view class="knowledge-menu-divider" aria-hidden="true"></view>
+          <view class="setting-option-pop-item dr ac" data-action="file" catch:tap="selectAddAction" hover-class="asset-pressed" aria-role="button" aria-label="{{i18n.knowledge.uploadFile}}">
+            <text class="iconfont icon-share knowledge-menu-icon text-l0"></text><text class="ft32 text-l0">{{i18n.knowledge.uploadFile}}</text>
+          </view>
+        </view>
+      </yb-flyout>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,55 @@
+@import './skeleton.wxss';
+
+/* Shared by the two asset lists and their lifted card preview. */
+.asset-tabs { display: flex; flex-direction: row; align-items: center; padding: 18rpx 32rpx 8rpx; box-sizing: border-box; }
+.asset-tabs-glass {
+  padding-bottom: 16rpx;
+  background-color: var(--glass-10, rgba(255, 255, 255, 0.1));
+  backdrop-filter: blur(3px);
+}
+.asset-tab {
+  padding: 18rpx 26rpx;
+  margin-right: 8rpx;
+  border-radius: 48rpx;
+  color: var(--text-l1, #333333BF);
+}
+.asset-tab-active { background-color: var(--bg-l1, #F1F3F5); color: var(--text-l0, #333333); font-weight: 600; }
+.asset-card { position: relative; width: 100%; overflow: hidden; box-sizing: border-box; border-radius: 32rpx; background-color: var(--bg-l1, #F1F3F5); }
+.asset-card-hidden { opacity: 0; }
+.asset-photo { width: 100%; height: 100%; display: block; }
+.asset-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 44rpx 24rpx 24rpx; color: #FFFFFF; background: linear-gradient(transparent, rgba(0, 0, 0, 0.42)); font-size: 28rpx; font-weight: 600; }
+.asset-document { padding: 26rpx; height: 100%; background-color: var(--bg-l0, #FFFFFF); border: 1rpx solid var(--bg-l2, #DCDCDD); border-radius: 32rpx; box-sizing: border-box; display: flex; flex-direction: column; }
+.asset-name {
+  color: var(--text-l0, #333333);
+  font-weight: 500;
+  line-height: 42rpx;
+}
+.asset-date { color: var(--text-l2, #777777); font-size: 20rpx; margin-top: 8rpx; line-height: 28rpx; }
+.asset-file-icon { margin-top: auto; color: var(--text-l0, #333333); font-size: 44rpx; }
+.asset-image-state { position: absolute; left: 0; top: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; padding: 24rpx; color: var(--text-l2, #777777); font-size: 24rpx; text-align: center; }
+.asset-status { padding: 44rpx 40rpx; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-l2, #777777); text-align: center; font-size: 26rpx; line-height: 40rpx; }
+.asset-empty { min-height: 320rpx; }
+.asset-empty-overlay { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 40rpx; box-sizing: border-box; pointer-events: none; }
+.asset-empty-logo { width: 180rpx; height: 180rpx; }
+.asset-empty-copy { margin-top: 24rpx; color: var(--text-l2, #777777); text-align: center; font-size: 26rpx; line-height: 40rpx; }
+.asset-retry { margin-top: 16rpx; color: var(--accent-soft-text, #0A59F7); padding: 16rpx 28rpx; border-radius: 30rpx; }
+.asset-pressed { background-color: var(--ink-8, rgba(0, 0, 0, 0.08)); }
+.asset-iconfont { font-family: "iconfont" !important; font-style: normal; }
+.icon-folde::before { content: "\e778"; }
+
+/* Shared loading geometry; the shimmer itself lives in skeleton.wxss. */
+.asset-skeleton { padding: 26rpx; }
+.asset-skeleton-block { height: 58%; border-radius: 16rpx; }
+.asset-skeleton-line { height: 22rpx; margin-top: 22rpx; border-radius: 10rpx; }
+.asset-skeleton-short { width: 60%; margin-top: 14rpx; }
+.asset-skeleton-fill { position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
+
+/* File-library rows and their lifted copies share the same geometry. */
+.asset-list-row { width: 100%; padding: 30rpx; box-sizing: border-box; }
+.asset-list-icon { position: relative; width: 90rpx; height: 90rpx; flex-shrink: 0; box-sizing: border-box; border: 2rpx solid var(--border-subtle, #EAE8E7); border-radius: 20rpx; overflow: hidden; }
+.asset-list-copy { flex: 1; min-width: 0; padding-left: 30rpx; }
+.asset-list-title { display: block; line-height: 44rpx; }
+.asset-list-description { display: block; padding-top: 4rpx; line-height: 36rpx; }
+
+.asset-error-action { pointer-events: auto; }
+.asset-failure-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320rpx; text-align: center; }

@@ -1,0 +1,17 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="info-page" style="{{themeStyle}};{{accentStyle}};visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+  <view class="info-toolbar">
+    <view class="info-header-side"></view>
+    <text class="info-title ft36">隐私政策</text>
+    <view class="info-header-side dr ac je">
+      <view class="info-header-side dc ac jc glass-view cradius" bind:tap="closePage" aria-role="button" aria-label="关闭">
+        <text class="iconfont icon-x ft48 text-l0"></text>
+      </view>
+    </view>
+  </view>
+  <scroll-view class="info-scroll" scroll-y type="list" associative-container="pop-gesture" show-scrollbar="{{false}}">
+    <view class="info-article" list-item>
+      <towxml wx:if="{{article}}" nodes="{{article}}" openTyper="{{false}}" theme="{{effectiveTheme}}" />
+    </view>
+  </scroll-view>
+</view>

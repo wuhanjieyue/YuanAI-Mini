@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "yb-subsetting-list-card": "/components/yb-subsetting-list-card/index"
+  }
+}

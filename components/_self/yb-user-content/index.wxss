@@ -1,0 +1,44 @@
+@import '/static_wxss/skyfontline.wxss';
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+
+
+.icon-copy::before { content: "\e774"; }
+.icon-edit::before { content: "\e78d"; }
+.box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: var(--ink-10, rgba(0,0, 0, .1));
+  backdrop-filter: blur(1px);
+}
+.bubble {
+  box-sizing: border-box;
+  box-shadow: -4rpx 4rpx 8rpx  var(--border-glass, rgba(255,255, 255, 1));
+  border: 2px solid var(--border-glass, #FFFFFF);
+  transform-origin: 100% 0%;
+  position: absolute;
+}
+.handle-view {
+  position: absolute;
+  width: 60vw;
+  left: 25vw;
+  transform-origin: 50% 50%;
+  border-radius: 32rpx;
+  display: flex;
+  flex-direction: column;
+  background: var(--glass-20, rgba(255, 255, 255, 0.2));
+  border: 1px solid var(--glass-100, rgba(255, 255, 255, 1));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.handle-action {
+  display: flex;
+  flex-direction: row;
+}
+
+.measure { position: absolute; top: 0; left: 0; visibility: hidden; }
+.handle-action { line-height: 48rpx; }
+.chat-feature-label {
+  color: var(--accent-soft-text);
+}

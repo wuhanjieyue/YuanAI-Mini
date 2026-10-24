@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "yb-left-center": "/components/_self/yb-left-center/index",
+    "yb-flyout": "/components/yb-flyout/index",
+    "yb-confirm-dialog": "/components/yb-confirm-dialog/index",
+    "assis-done": "/mdPackage/components/assisDone/index"
+  },
+  "componentPlaceholder": { "assis-done": "view" },
+  "backgroundColorContent": "#ffffff00"
+}

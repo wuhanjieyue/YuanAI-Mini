@@ -1,0 +1,3 @@
+<view class="dot-matrix-loading {{contained ? 'dot-matrix-contained' : ''}}" style="{{fitCanvas ? 'padding:0; width:' + canvasWidthRpx + 'rpx; height:' + canvasHeightRpx + 'rpx;' : ''}}">
+  <canvas id="dotMatrixCanvas" type="2d" class="dot-matrix-canvas"></canvas>
+</view>

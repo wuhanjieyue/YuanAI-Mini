@@ -1,0 +1,32 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<vertical-drag-gesture-handler
+  tag="login-prompt-pan"
+  worklet:should-response-on-move="shouldPanResponse"
+  worklet:should-accept-gesture="shouldPanAccept"
+  worklet:ongesture="handleVerticalDrag"
+  class="try-it-gesture"
+>
+  <view class="try-it-sheet" style="{{themeStyle}};visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+    <view class="login-prompt-hero ac jc">
+      <image class="try-it-hero login-prompt-hero-image" src="{{appStaticRoot + '/login-prompt-hero.webp'}}" mode="aspectFill"></image>
+      <image class="login-prompt-logo" src="/static/logs/glog.png" mode="aspectFit" aria-label="小程序 Logo"></image>
+    </view>
+
+    <view class="file-icon dc ac jc glass-view cradius try-it-close" bind:tap="closePage" aria-role="button" aria-label="关闭">
+      <text class="iconfont icon-x ft48 text-l0"></text>
+    </view>
+
+    <view class="try-it-copy">
+      <text class="try-it-title">一起探索{{appName}}</text>
+      <text class="try-it-description">通过小程序授权登录即可解锁{{appName}}全部能力</text>
+    </view>
+
+    <view class="try-it-actions">
+      <view class="try-it-button wt5 login-prompt-action tc" hover-class="try-it-button-pressed">
+        登录使用
+        <button class="login-prompt-phone-mask" open-type="getPhoneNumber" bindgetphonenumber="handleGetPhoneNumber"
+          disabled="{{loginPending}}" hover-class="none" aria-label="登录使用" style="position:absolute;top:0;right:0;bottom:0;left:0;display:block;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:inherit;color:transparent;background:transparent;opacity:0.01;z-index:1;" plain="{{true}}"></button>
+      </view>
+    </view>
+  </view>
+</vertical-drag-gesture-handler>

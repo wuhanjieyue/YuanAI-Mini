@@ -1,0 +1,89 @@
+@import '/static_wxss/skyother.wxss';
+:host{
+  display: block;
+  width: 100%;
+}
+.yb-flyout-trigger {
+  width: 100%;
+}
+
+.yb-flyout-trigger-content{
+  min-width: 0;
+  flex: 1;
+}
+
+.yb-flyout-anchor{
+  flex-shrink: 0;
+  transform-origin: 50% 50%;
+}
+.yb-flyout-anchor-separate {
+  transform-origin: 100% 50%;
+}
+
+.yb-flyout-anchor-default{
+  width: 100%;
+}
+
+.yb-flyout-mask{
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 299;
+  overflow: hidden;
+  opacity: 0;
+}
+
+
+.yb-flyout-mask-mounted{
+  width: 100vw;
+  height: 100vh;
+}
+
+.yb-flyout-mask-active{
+  opacity: 1;
+}
+
+.yb-flyout-origin,
+.yb-flyout-panel-metrics{
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.yb-flyout-origin { width: 1px; height: 1px; }
+
+.yb-flyout-positioner{
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.yb-flyout-preview{
+  position: absolute;
+  transform-origin: 0 0;
+  box-sizing: border-box;
+  visibility: hidden;
+}
+
+.yb-flyout-mask-active .yb-flyout-preview{
+  visibility: visible;
+}
+
+.yb-flyout-panel{
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  transform: scale(1);
+  transform-origin: 50% 0;
+  opacity: 0;
+}
+
+.yb-flyout-scroll,
+.yb-flyout-popup-content{
+  width: 100%;
+  box-sizing: border-box;
+}

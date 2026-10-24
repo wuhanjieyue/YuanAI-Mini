@@ -1,0 +1,16 @@
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.icon-video::before { content: "\e7c8"; }
+.icon-word::before { content: "\e7c9"; }
+.icon-spreadsheet::before { content: "\e7ca"; }
+.icon-other::before { content: "\e7cb"; }
+.icon-code::before { content: "\e7cc"; }
+.icon-markdown::before { content: "\e7cd"; }
+.icon-pdf::before { content: "\e7ce"; }
+.icon-presentation::before { content: "\e7cf"; }
+.icon-text::before { content: "\e7d0"; }
+.icon-archive1::before { content: "\e7d1"; }

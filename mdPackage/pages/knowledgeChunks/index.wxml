@@ -1,0 +1,28 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="#ffffff00" />
+<view class="info-page knowledge-chunks-page" style="{{themeStyle}};{{accentStyle}};visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+  <view class="info-toolbar">
+    <view class="info-header-side"></view>
+    <text class="info-title ft36" max-lines="1" overflow="ellipsis">{{title || i18n.knowledge.chunks}}</text>
+    <view class="info-header-side dr ac je">
+      <view class="info-header-side dc ac jc glass-view cradius" bind:tap="closePage" aria-role="button" aria-label="{{i18n.archive.close}}">
+        <text class="iconfont icon-x ft48 text-l0"></text>
+      </view>
+    </view>
+  </view>
+  <scroll-view class="info-scroll" scroll-y type="list" associative-container="pop-gesture" show-scrollbar="{{false}}" lower-threshold="100" bind:scrolltolower="loadMore">
+    <view wx:if="{{items.length}}" class="bg-l0 ptb36 plr36 lradius mlr36 mtb24" list-item>
+      <block wx:for="{{items}}" wx:key="id">
+        <view class="knowledge-chunk-row dr ac ft32" data-id="{{item.id}}" bind:tap="openChunk" aria-role="button" aria-label="{{item.title}} {{i18n.knowledge.open}}">
+          <text class="knowledge-chunk-label text-strong" max-lines="1" overflow="ellipsis">{{item.title}}</text>
+          <text class="iconfont icon-arrow-right ft36 text-l2 ml24" aria-hidden="true"></text>
+        </view>
+        <view wx:if="{{index < items.length - 1}}" class="knowledge-chunk-line mtb24 bg-l3"></view>
+      </block>
+    </view>
+    <view class="knowledge-chunks-state tc ft28 text-muted plr36 mtb24" list-item>
+      <text wx:if="{{loading}}">{{i18n.common.loading}}</text>
+      <view wx:elif="{{failed}}" class="asset-failure-state" bind:tap="retry" aria-role="button" aria-label="{{i18n.common.retry}}"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{error}} · {{i18n.common.retry}}</text></view>
+      <text wx:elif="{{!items.length}}">{{i18n.knowledge.noChunks}}</text>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,25 @@
+.skeleton-clip{
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-l1, #F1F3F5);
+}
+
+.skeleton-block{
+  background-color: var(--bg-l2, #DCDCDD);
+}
+
+.skeleton-shimmer{
+  position: absolute;
+  top: -100%;
+  left: -200%;
+  width: 200%;
+  height: 300%;
+  pointer-events: none;
+  background-image: linear-gradient(126deg, transparent 36%, var(--glass-56, rgba(255, 255, 255, 0.56)) 50%, transparent 64%);
+  animation: skeleton-shimmer-sweep 1.8s linear infinite;
+}
+
+@keyframes skeleton-shimmer-sweep{
+  from{ transform: translateX(0); }
+  to{ transform: translateX(200%); }
+}

@@ -1,0 +1,3 @@
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyfontline.wxss';
+@import '/static_wxss/skyother.wxss';

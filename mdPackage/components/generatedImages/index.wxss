@@ -1,0 +1,31 @@
+
+.generated-images {
+  width: 100%;
+  margin-right: 0;
+  margin-left: 0;
+  display: flex;
+  flex-direction: row;
+}
+.generated-images-list { width: 100%; height: 100%; display: flex; flex-direction: row; }
+.generated-images-entrance { transform: scale(0); transform-origin: 0% 0%; }
+.generated-image-card {
+  position: relative;
+  width: 75vw;
+  flex-shrink: 0;
+  margin-right: 20rpx;
+  border-radius: 40rpx;
+  overflow: hidden;
+}
+.generated-image-card-loading { background-color: transparent; }
+.generated-image { width: 100%; height: 100%; }
+.generated-image-state {
+  left: 0;
+  display: flex;
+  font-size: 26rpx;
+}
+.generated-image-deleted-icon { font-size: 64rpx; margin-bottom: 16rpx; }
+.generated-image-loading {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}

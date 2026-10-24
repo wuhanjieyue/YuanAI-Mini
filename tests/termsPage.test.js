@@ -1,0 +1,22 @@
+const assert = require('assert')
+const fs = require('fs')
+
+const app = JSON.parse(fs.readFileSync('app.json', 'utf8'))
+const setting = fs.readFileSync('pages/setting/index.js', 'utf8')
+const page = fs.readFileSync('mdPackage/pages/terms/index.js', 'utf8')
+const template = fs.readFileSync('mdPackage/pages/terms/index.wxml', 'utf8')
+const content = fs.readFileSync('mdPackage/pages/terms/content.js', 'utf8')
+
+const mdPackage = app.subPackages.find(item => item.root === 'mdPackage')
+assert(mdPackage.pages.includes('pages/terms/index'))
+assert.match(setting, /terms_of_use: '\/mdPackage\/pages\/terms\/index'/)
+assert.match(setting, /openAboutPage\(key\)[\s\S]*routeType: SETTING_ROUTE_TYPE,[\s\S]*routeOptions: \{ stacked: true \}/)
+assert.doesNotMatch(setting, /terms_of_use:\s*\{[\s\S]*about\.termsPending/)
+assert.match(page, /parseMarkdown\(TERMS_MARKDOWN, 'markdown'/)
+assert.match(page, /bindPageTheme\(this\)[\s\S]*wx\.nextTick\(\(\) => \{[\s\S]*parseMarkdown/)
+assert.match(template, /<towxml[^>]*openTyper="\{\{false\}\}"[^>]*theme="\{\{effectiveTheme\}\}"/)
+assert.match(template, /scroll-view[^>]*type="list"[^>]*associative-container="pop-gesture"/)
+assert.match(content, /武汉杰跃信息技术有限公司/)
+assert.match(content, /更新日期：2026年9月16日/)
+
+console.log('termsPage: stacked route and static Markdown terms rendering passed')

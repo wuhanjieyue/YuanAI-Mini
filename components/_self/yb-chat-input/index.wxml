@@ -1,0 +1,37 @@
+<view class="input-content {{disabled ? 'input-content-disabled' : ''}}">
+  <view class="right-icon-clear round-centered tc ac jc cradius" bind:tap="clearText">
+      <!-- 语音 -->
+      <text class="iconfont input-icon ft32 input-icon-muted text-l2 icon-x"></text>
+    </view>
+    <textarea data-id="textarea" class="input-area text-l0 {{touchEndStatus == 'input' ? '' : 'input-area-hidden'}}" placeholder-class="text-l1" 	cursor-color="#619EFA"  cursor-spacing="{{12}}" maxlength="{{-1}}" disabled="{{disabled}}" focus="{{inputFocus && !disabled}}" confirm-type="return" value="{{disabled && disabledPlaceholder ? '' : askText}}" cursor="{{cursor}}"	adjust-position="{{false}}" placeholder="{{disabled && disabledPlaceholder ? disabledPlaceholder : placeHolder}}" bind:focus="keyFocus" bind:blur="keyBlur" bind:input="inputAsk" 	hold-keyboard="{{true}}" bind:keyboardheightchange="keybordChange"  bind:linechange="linChange" ></textarea>
+
+    <view class="voice-box row-centered ac surface-bg bg-l0">
+      <view class="wave-area row-centered ac surface-bg bg-l0 {{voiceLoading ? 'jc' : ''}}">
+        <text wx:if="{{voiceLoading}}" class="dictation-label ft28 text-l1">{{i18n.chat.transcription}}</text>
+        <block wx:else>
+          <view
+          class="wave-bar sradius"
+          wx:for="{{bars}}"
+          wx:key="id"
+          style="height: {{item.height}}rpx; opacity: {{item.opacity}};"
+          ></view>
+        </block>
+      </view>
+      <view class="voice-action-space"></view>
+    </view>
+    <view wx:if="{{touchEndStatus != 'input' || voiceLoading}}" class="voice-stop round-centered tc ac jc cradius bg-l2" catch:tap="stopVoice" aria-role="button" aria-disabled="{{voiceLoading}}">
+      <text wx:if="{{voiceLoading}}" class="iconfont icon-loading_flow_iconfont ft32 text-l0 dictation-loading"></text>
+      <view wx:else style="width: 28rpx;height: 28rpx;border-radius: 4rpx;background-color: black;"></view>
+    </view>
+    <view bind:tap="tap" bind:longpress="longpress" bind:touchend="touchend" bind:touchmove="touchmove" bind:touchcancel="cancelVoice" data-id="icon" class="right-icon xxlsize input-action-icon round-centered tc ac jc cradius action-shadow {{disabled && askStatus != 1 ? 'input-action-disabled' : ''}} {{voiceLoading ? 'input-action-disabled' : ''}}" aria-role="button" aria-disabled="{{voiceLoading || (disabled && askStatus != 1)}}">
+        <!-- 发送chat -->
+        <view class="action-button xxlsize round-centered tc ac jc cradius {{touchEndStatus == 'recording2send' ? 'right-icon-send' : 'right-icon'}}">
+          <!-- 等待 -->
+          <text wx:if="{{touchEndStatus != 'input' || askStatus == 0 || (disabled && askStatus != 1)}}" class="iconfont input-icon ft32 input-icon-inverse icon-arrow-up"></text>
+          <!-- 停止 -->
+          <view wx:elif="{{askStatus == 1}}" class="stop-square"></view>
+          <!-- 语音 -->
+          <text wx:elif="{{!disabled && askStatus == 2}}" class="iconfont input-icon ft32 input-icon-inverse icon-mic"></text>
+        </view>
+    </view>
+</view>

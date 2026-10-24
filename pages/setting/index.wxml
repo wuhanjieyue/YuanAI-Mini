@@ -1,0 +1,642 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="sheet" style="{{themeStyle}};visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+  <!-- Floating header bar -->
+  <view class="move-box dc ac">
+    <view class="move-bg dr ac jb ptb24 plr24">
+      <!-- Left: back button (opacity driven by panelProgress) -->
+      <view class="file-icon dc ac jc glass-view cradius header-back-btn" bind:tap="goBackPanel">
+        <text class="iconfont icon-arrow-right ft48 text-l0" style="transform: rotate(180deg)"></text>
+      </view>
+
+      <!-- Center: stacked titles -->
+      <view class="header-titles dr ac jc">
+        <text class="ft36 header-primary-title wt6 text-strong">{{i18n.settings.title}}</text>
+        <view class="header-secondary-title wt6 text-strong dc ac jc">
+          <text class="ft36 header-secondary-main wt6 text-strong">{{panelTitle}}</text>
+          <text wx:if="{{panelConfigKey === 'long_term_memory'}}" class="header-secondary-meta text-muted">{{longTermMemoryUpdatedAt}}</text>
+        </view>
+      </view>
+
+      <!-- Right: one persistent action button -->
+      <view class="header-right-slot dr ac je">
+        <view class="header-action-host dr ac je">
+          <yb-flyout
+            id="longTermMemoryMore"
+            open-on-trigger-tap="{{false}}"
+            animate-trigger="{{true}}"
+            popup-width-rpx="470"
+            popup-transform-origin="100% 0"
+            popup-class="setting-option-pop-surface"
+            theme-style="{{themeStyle}}"
+          >
+            <view slot="trigger" class="header-action-trigger dr ac je">
+              <view class="header-action-btn dr ac jc glass-view" bind:tap="handleHeaderAction" aria-role="button" aria-label="{{headerAction === 'save' ? i18n.common.save : headerAction === 'more' ? i18n.memory.moreActions : i18n.archive.close}}" aria-disabled="{{headerAction === 'save' && saveButtonState !== 'idle'}}">
+                <view class="header-save-label-wrap"><text class="ft28 text-l0 header-save-label">{{i18n.common.save}}</text></view>
+                <view class="header-action-icon-wrap dc ac jc" aria-hidden="true">
+                  <text class="iconfont icon-x ft48 text-l0 header-close-icon"></text>
+                  <text class="iconfont icon-more ft48 text-l0 header-more-icon"></text>
+                  <view class="header-save-status-icon">
+                    <text wx:if="{{saveButtonState === 'saving'}}" class="iconfont icon-loading_flow_iconfont header-save-loading ft48 text-l0"></text>
+                    <text wx:else class="iconfont icon-check header-save-icon ft48 text-l0"></text>
+                  </view>
+                </view>
+              </view>
+            </view>
+            <view slot="popup" class="setting-option-pop-list long-term-memory-menu">
+              <view class="setting-option-pop-item ft32 dr ac" data-action="about" bind:tap="handleLongTermMemoryAction">
+                <text class="iconfont icon-question ft36 mr24"></text>
+                <text>{{i18n.memory.about}}</text>
+              </view>
+              <view
+                class="setting-option-pop-item long-term-memory-menu-refresh {{!longTermMemoryCanRefresh || longTermMemoryRefreshing || longTermMemoryDeleting ? 'long-term-memory-menu-disabled text-muted' : ''}} ft32 dr ac"
+                data-action="refresh"
+                bind:tap="handleLongTermMemoryAction"
+                aria-disabled="{{!longTermMemoryCanRefresh || longTermMemoryRefreshing || longTermMemoryDeleting}}"
+              >
+                <text class="iconfont icon-refresh-line ft36 mr24"></text>
+                <text>{{i18n.memory.refresh}}</text>
+              </view>
+              <view class="setting-option-pop-item long-term-memory-menu-danger ft32 dr ac" data-action="delete" bind:tap="handleLongTermMemoryAction">
+                <text class="iconfont icon-delete ft36 mr24"></text>
+                <text>{{i18n.memory.deleteAndDisable}}</text>
+              </view>
+            </view>
+          </yb-flyout>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Vertical gesture for sheet dismiss -->
+  <vertical-drag-gesture-handler
+    tag="pan"
+    simultaneous-handlers="{{sheetScrollHandlers}}"
+    worklet:should-response-on-move="shouldPanResponse"
+    worklet:should-accept-gesture="shouldPanAccept"
+    worklet:ongesture="handleVerticalDrag"
+    style="flex: 1; overflow: auto; width: 100%; height: 100%;"
+  >
+    <view class="sheet-pan">
+      <!-- Primary content -->
+      <vertical-drag-gesture-handler
+        tag="scroll"
+        native-view="scroll-view"
+        simultaneous-handlers="{{ ['pan'] }}"
+        worklet:should-response-on-move="shouldScrollViewResponse"
+      >
+        <scroll-view
+          class="scrollable glass primary-scroll"
+          scroll-y
+          type="list"
+          show-scrollbar="{{false}}"
+          worklet:onscrollupdate="handleScrollUpdate"
+        >
+            <view class="scrollable-content">
+              <view style="height: 156rpx"></view>
+              <view class="set-box mb24">
+                <block wx:if="{{user.login}}">
+                  <view class="login-profile-card dc ac jc" bind:tap="tapLoginCard">
+                    <view class="cradius login-avatar-wrap login-profile-avatar-wrap">
+                      <view class="cradius login-profile-avatar-frame dr ac jc {{avatarLoadFailed ? 'login-avatar-failed bg-l1' : ''}}">
+                        <image src="{{avatarSource}}" data-src="{{avatarSource}}" class="login-profile-avatar" mode="widthFix"
+                          style="opacity:{{avatarLoaded ? 1 : 0}};" bind:load="handleAvatarLoad" bind:error="handleAvatarError"></image>
+                        <view wx:if="{{!avatarLoaded && !avatarLoadFailed}}" class="login-avatar-loading cradius skeleton-clip" aria-hidden="true">
+                          <view class="skeleton-shimmer"></view>
+                        </view>
+                      </view>
+                      <view class="login-avatar-edit text-strong dc ac jc cradius">
+                        <text class="iconfont icon-rename ft28"></text>
+                      </view>
+                    </view>
+                  </view>
+                </block>
+                <block wx:else>
+                  <view class="bg-l0 ptb24 plr36 lradius dr ac login-card" style="position:relative;">
+                    <view class="cradius login-avatar-wrap {{avatarLoadFailed ? 'login-avatar-failed bg-l1' : ''}}">
+                      <image src="{{avatarSource}}" data-src="{{avatarSource}}" class="cradius login-avatar-image"
+                        style="opacity:{{avatarLoaded ? 1 : 0}};" bind:load="handleAvatarLoad" bind:error="handleAvatarError"></image>
+                      <view wx:if="{{!avatarLoaded && !avatarLoadFailed}}" class="login-avatar-loading cradius skeleton-clip" aria-hidden="true">
+                        <view class="skeleton-shimmer"></view>
+                      </view>
+                    </view>
+
+                    <view class="dc ml24">
+                      <text class="ft32">{{i18n.profile.welcome}}</text>
+                      <text class="text-l2">{{i18n.auth.login}}</text>
+                    </view>
+
+                    <text class="iconfont icon-arrow-right mla ft36 text-l2"></text>
+                    <button
+                      class="login-phone-mask"
+                      open-type="getPhoneNumber"
+                      bindgetphonenumber="handleGetPhoneNumber"
+                      hover-class="none"
+                     style="position:absolute;top:0;right:0;bottom:0;left:0;display:block;padding:0;margin:0;font-size:0;line-height:1;color:transparent;background:transparent;border:0;border-radius:inherit;box-sizing:border-box;opacity:0.01;z-index:2;width:100%;height:100%;" plain="{{true}}"></button>
+                  </view>
+                </block>
+            </view>
+
+            <text class="mlp wt6 ft28 text-muted mt8 mb16">{{customSectionTitle}}</text>
+            <view class="set-box bg-l0 ptb36 plr36 lradius dc ac mb24">
+              <block wx:for="{{customSets}}" wx:for-item="item" wx:for-index="index" wx:key="key">
+                <view class="dr ac ft32 set-item" bind:tap="tapSetItem" data-name="{{item.name}}" data-key="{{item.key}}" data-right-set="{{item.rightSet}}">
+                  <text class="iconfont mr24 ft36 {{item.icon}}"></text>
+                  <text>{{item.name}}</text>
+                  <text wx:if="{{item.rightText}}" class="text-l2 mla ft32 wt4">{{item.rightText}}</text>
+                  <text wx:if="{{item.rightSet}}" class="iconfont icon-arrow-right {{item.rightText ? 'ml8' : 'mla'}} ft36 text-l2"></text>
+                </view>
+                <view wx:if="{{index < customSets.length - 1}}" class="set-line ml36 mtb24 bg-l3"></view>
+              </block>
+            </view>
+
+            <block wx:if="{{user.login}}">
+              <text class="mlp wt6 ft28 text-muted mt8 mb16">{{i18n.settings.sections.account}}</text>
+              <view class="set-box bg-l0 ptb36 plr36 lradius dc ac mb24">
+                <block wx:for="{{accountSets}}" wx:for-item="item" wx:for-index="index" wx:key="key">
+                  <block wx:if="{{item.key !== 'upgrade_pro' || user.subscription !== 'pro'}}">
+                    <view class="dr ac ft32 set-item {{item.key === 'upgrade_pro' ? 'set-item-upgrade' : ''}}" style="{{item.key === 'upgrade_pro' ? accentStyle : ''}}" bind:tap="tapSetItem" data-name="{{item.name}}" data-key="{{item.key}}" data-right-set="{{item.rightSet}}">
+                      <text class="iconfont mr24 ft36 {{item.icon}}"></text>
+                      <text>{{item.name}}</text>
+
+                      <text wx:if="{{item.rightSet}}" class="iconfont icon-arrow-right mla ft36 text-l2"></text>
+                      <text wx:if="{{item.rightValue}}" class="text-l2 mla ft36">{{item.key === 'subscription' ? (user.subscription === 'pro' ? i18n.storage.pro : i18n.storage.basic) : user[item.key]}}</text>
+                    </view>
+                    <view wx:if="{{index < accountSets.length - 1}}" class="set-line ml36 mtb24 bg-l3"></view>
+                  </block>
+                </block>
+              </view>
+            </block>
+
+            <text class="mlp wt6 ft28 text-muted mt8 mb16">{{i18n.settings.sections.app}}</text>
+            <view class="set-box bg-l0 ptb36 plr36 lradius dc mb24">
+              <block wx:for="{{applicationSets}}" wx:key="key" wx:for-index="index">
+                <yb-flyout
+                  wx:if="{{item.type === 'selector' || item.type === 'accent'}}"
+                  id="applicationPop-{{item.key}}"
+                  separate-anchor="{{true}}"
+                  scrollable="{{item.scrollable}}"
+                  trigger-class="set-item"
+                  popup-class="setting-option-pop-surface" theme-style="{{themeStyle}}">
+                  <view slot="trigger" class="dr ac ft32">
+                    <text class="iconfont mr24 ft36 {{item.icon}}"></text>
+                    <text>{{item.name}}</text>
+                  </view>
+                  <view slot="anchor" class="dr ac ft32">
+                    <view wx:if="{{item.type === 'accent'}}" class="accent-dot cradius" style="{{item.accentStyle}}"></view>
+                    <text class="text-l2 {{item.type === 'accent' ? '' : 'mr8'}}" style="{{item.type === 'accent' ? 'margin-left:12rpx' : ''}}">{{item.value}}</text>
+                    <text wx:if="{{item.interactive}}" class="iconfont icon-a-fenzu1 ft28 text-l2" style="{{item.type === 'accent' ? 'margin-left:8rpx' : ''}}"></text>
+                  </view>
+                  <view slot="popup" class="setting-option-pop-list">
+                    <view
+                      wx:for="{{item.options}}"
+                      wx:key="value"
+                      wx:for-item="option"
+                      class="setting-option-pop-item ft32 dr ac"
+                      data-key="{{item.key}}"
+                      data-value="{{option.value}}"
+                      bind:tap="handleApplicationOptionChange"
+                    >
+                      <view class="setting-option-check-slot dr ac jc">
+                        <text wx:if="{{option.value == item.selectedValue}}" class="iconfont icon-check ft32 setting-option-check text-main-l1"></text>
+                      </view>
+                      <view wx:if="{{item.type === 'accent'}}" class="setting-option-color-dot cradius" style="{{option.dotStyle}}"></view>
+                      <view class="setting-option-copy dc jc">
+                        <view class="text-l0 {{option.value == item.selectedValue ? 'text-main-l1' : ''}}">{{option.label}}</view>
+                        <view wx:if="{{option.desc}}" class="ft28 setting-option-desc text-l2 {{option.value == item.selectedValue ? 'text-main-l1' : ''}}">{{option.desc}}</view>
+                      </view>
+                    </view>
+                  </view>
+                </yb-flyout>
+                <view wx:else class="dr ac ft32 set-item" bind:tap="tapSetItem" data-name="{{item.name}}" data-key="{{item.key}}" data-right-set="{{item.rightSet}}">
+                  <text class="iconfont mr24 ft36 {{item.icon}}"></text>
+                  <text>{{item.name}}</text>
+                  <switch wx:if="{{item.type === 'switch'}}" class="mla" checked="{{item.checked}}" bind:change="handleAppSwitchChange" data-key="{{item.key}}"></switch>
+                  <view wx:elif="{{item.type === 'link'}}" class="dr ac mla">
+                    <text wx:if="{{item.value}}" class="text-l2 mr8">{{item.value}}</text>
+                    <text class="iconfont icon-arrow-right ft36 text-l2"></text>
+                  </view>
+                </view>
+                <view wx:if="{{index < applicationSets.length - 1}}" class="set-line ml36 mtb24 bg-l3"></view>
+              </block>
+            </view>
+            <text class="set-tip text-l2 ft24 mt8 mb24">{{languageTips}}</text>
+
+            <text class="mlp wt6 ft28 text-muted text-l1 mtb8">{{i18n.settings.sections.suggestions}}</text>
+            <view class="set-box bg-l0 ptb36 plr36 lradius dc mb24">
+              <block wx:for="{{suggestSets}}" wx:key="key" wx:for-index="gIndex">
+                <view class="dr ac ft32 set-item">
+                  <text class="iconfont mr24 ft36 {{item.icon}}"></text>
+                  <text>{{item.name}}</text>
+                  <switch wx:if="{{item.type === 'switch'}}" class="mla" checked="{{item.checked}}" bind:change="handleSuggestSwitchChange" data-key="{{item.key}}"></switch>
+                </view>
+                <view wx:if="{{gIndex < suggestSets.length - 1}}" class="set-line ml36 mtb24 bg-l3"></view>
+              </block>
+            </view>
+
+            <text class="mlp wt6 ft28 text-muted text-l1 mtb8">{{i18n.settings.sections.about}}</text>
+            <view class="set-box bg-l0 ptb36 plr36 lradius dc mb24">
+              <block wx:for="{{aboutSets}}" wx:key="key" wx:for-index="aIndex">
+                <view class="dr ac ft32 set-item" bind:tap="tapAboutItem" data-key="{{item.key}}">
+                  <text class="iconfont mr24 ft36 {{item.icon}}"></text>
+                  <text>{{item.name}}</text>
+                  <text class="iconfont icon-arrow-right mla ft32 text-l2"></text>
+                </view>
+                <view class="set-line ml36 mtb24 bg-l3"></view>
+              </block>
+              <view class="dr ac ft32 set-item">
+                <view style="width: 36rpx;height: 36rpx;background-color: black" class="cradius mr24"></view>
+                <text>{{miniProgramLabel}}</text>
+              </view>
+              <text class="text-l2 ml8 mt8">{{appInfo.appVersion}}</text>
+            </view>
+
+            <view wx:if="{{user.login}}" class="set-box bg-l0 ptb36 plr36 lradius dc mt24">
+              <view class="dr ac ft32 set-item" bind:tap="handleLogout">
+                <text class="iconfont icon-exit mr24 ft36"></text>
+                <text>{{i18n.auth.logout}}</text>
+                <text class="iconfont icon-arrow-right mla ft32 text-l2"></text>
+              </view>
+            </view>
+
+            <view class="safe-holder"></view>
+          </view>
+        </scroll-view>
+      </vertical-drag-gesture-handler>
+
+      <!-- Secondary panel (slides from right) -->
+      <horizontal-drag-gesture-handler
+        tag="hpan"
+        simultaneous-handlers="{{secondaryScrollHandlers}}"
+        worklet:ongesture="handlePanelDrag"
+      >
+        <view class="secondary-panel full-bg">
+          <block wx:if="{{activePanel === 'personalization'}}">
+            <vertical-drag-gesture-handler
+              tag="personalizationScroll"
+              native-view="scroll-view"
+              simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+              worklet:should-response-on-move="shouldPersonalizationScrollViewResponse"
+            >
+              <scroll-view
+                class="scrollable glass secondary-scroll"
+                scroll-y
+                type="list"
+                show-scrollbar="{{false}}"
+                worklet:onscrollupdate="handlePersonalizationScrollUpdate"
+              >
+                <view style="height: 156rpx"></view>
+                <yb-subsetting-personalization
+                  ai-name="{{aiName}}"
+                  language="{{applicationSettings.language}}"
+                  mode="personalization"
+                  draft="{{personalizationDraft}}"
+                  traits="{{personalizationTraits}}"
+                  bind:optionchange="handlePersonalizationOptionChange"
+                  bind:input="handleDraftInput"
+                  bind:switch="handleDraftSwitch" theme-style="{{themeStyle}}"/>
+                <view class="safe-holder"></view>
+              </scroll-view>
+            </vertical-drag-gesture-handler>
+          </block>
+
+          <block wx:elif="{{activePanel === 'memory'}}">
+            <view class="memory-panel-stack {{panelConfigKey === 'long_term_memory' ? 'long-term-memory-active' : ''}}">
+              <view class="memory-panel-base">
+                <vertical-drag-gesture-handler
+                  tag="memoryScroll"
+                  native-view="scroll-view"
+                  simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+                  worklet:should-response-on-move="shouldMemoryScrollViewResponse"
+                >
+                  <scroll-view
+                    class="scrollable glass secondary-scroll"
+                    scroll-y
+                    type="list"
+                    show-scrollbar="{{false}}"
+                    worklet:onscrollupdate="handleMemoryScrollUpdate"
+                  >
+                    <view style="height: 156rpx"></view>
+                    <yb-subsetting-personalization
+                      ai-name="{{aiName}}"
+                      language="{{applicationSettings.language}}"
+                      mode="memory"
+                      draft="{{personalizationDraft}}"
+                      traits="{{personalizationTraits}}"
+                      bind:input="handleDraftInput"
+                      bind:switch="handleDraftSwitch"
+                      bind:longtermmemory="openLongTermMemory" theme-style="{{themeStyle}}"/>
+                    <view class="safe-holder"></view>
+                  </scroll-view>
+                </vertical-drag-gesture-handler>
+              </view>
+
+              <view class="long-term-memory-panel full-bg">
+                <yb-dot-matrix-loading wx:if="{{longTermMemoryLoading}}" active="{{longTermMemoryLoading}}" theme="{{effectiveTheme}}" color="{{accentLoadingColor}}"/>
+                <vertical-drag-gesture-handler
+                  wx:else
+                  tag="longTermMemoryScroll"
+                  native-view="scroll-view"
+                  simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+                  worklet:should-response-on-move="shouldLongTermMemoryScrollViewResponse"
+                >
+                  <scroll-view
+                    class="long-term-memory-scroll"
+                    scroll-y
+                    scroll-top="{{longTermMemoryScrollTopValue}}"
+                    bind:scrolltolower="loadMoreLongTermMemory"
+                    type="list"
+                    show-scrollbar="{{false}}"
+                    worklet:onscrollupdate="handleLongTermMemoryScrollUpdate"
+                  >
+                    <view class="long-term-memory-content {{longTermMemorySections.length ? '' : 'long-term-memory-content-empty'}}">
+                      <view wx:if="{{!longTermMemorySections.length}}" class="long-term-memory-empty dc ac jc text-l1">
+                        <image class="long-term-memory-empty-logo" src="/static/logs/glog.png" mode="widthFix"></image>
+                        <text class="mt32 mb24">{{i18n.memory.empty}}</text>
+                      </view>
+                      <block wx:for="{{longTermMemorySections}}" wx:key="id">
+                        <view class="long-term-memory-section">
+                          <text class="long-term-memory-title wt6 ft36 text-strong">{{item.title}}</text>
+                          <text class="long-term-memory-body ft32 text-strong">{{item.body}}</text>
+                        </view>
+                      </block>
+                      <view class="safe-holder"></view>
+                    </view>
+                  </scroll-view>
+                </vertical-drag-gesture-handler>
+              </view>
+            </view>
+          </block>
+
+          <block wx:elif="{{activePanel === 'notification'}}">
+            <view class="notification-panel-stack">
+              <view class="notification-panel-base">
+                <vertical-drag-gesture-handler
+                  tag="notificationScroll"
+                  native-view="scroll-view"
+                  simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+                  worklet:should-response-on-move="shouldNotificationScrollViewResponse"
+                >
+                  <scroll-view
+                    class="scrollable glass secondary-scroll"
+                    scroll-y
+                    type="list"
+                    show-scrollbar="{{false}}"
+                    worklet:onscrollupdate="handleNotificationScrollUpdate"
+                  >
+                    <view style="height: 156rpx"></view>
+                    <yb-subsetting-notification
+                      page-key="notification"
+                      notification="{{notification}}"
+                      language="{{applicationSettings.language}}"
+                      bind:navigate="handleNotificationNavigate"
+                      bind:change="handleNotificationChange"
+                    />
+                    <view class="safe-holder"></view>
+                  </scroll-view>
+                </vertical-drag-gesture-handler>
+              </view>
+
+              <view class="notification-detail-panel full-bg">
+                <vertical-drag-gesture-handler
+                  tag="notificationDetailScroll"
+                  native-view="scroll-view"
+                  simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+                  worklet:should-response-on-move="shouldNotificationDetailScrollViewResponse"
+                >
+                  <scroll-view
+                    class="scrollable glass notification-detail-scroll"
+                    scroll-y
+                    type="list"
+                    show-scrollbar="{{false}}"
+                    worklet:onscrollupdate="handleNotificationDetailScrollUpdate"
+                  >
+                    <view style="height: 156rpx"></view>
+                    <yb-subsetting-notification
+                      wx:if="{{notificationDetailKey}}"
+                      page-key="{{notificationDetailKey}}"
+                      notification="{{notification}}"
+                      language="{{applicationSettings.language}}"
+                      bind:change="handleNotificationChange"
+                    />
+                    <view class="safe-holder"></view>
+                  </scroll-view>
+                </vertical-drag-gesture-handler>
+              </view>
+            </view>
+          </block>
+
+          <block wx:elif="{{activePanel === 'data_control'}}">
+            <view class="data-control-panel-stack">
+              <view class="data-control-panel-base">
+                <vertical-drag-gesture-handler
+                  tag="dataControlScroll"
+                  native-view="scroll-view"
+                  simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+                  worklet:should-response-on-move="shouldDataControlScrollViewResponse"
+                >
+                  <scroll-view
+                    class="scrollable glass secondary-scroll"
+                    scroll-y
+                    type="list"
+                    show-scrollbar="{{false}}"
+                    worklet:onscrollupdate="handleDataControlScrollUpdate"
+                  >
+                    <view style="height: 156rpx"></view>
+                    <yb-subsetting-data-control
+                      id="dataControlSection"
+                      ai-name="{{aiName}}"
+                      language="{{applicationSettings.language}}"
+                      data-control="{{dataControl}}"
+                      export-status="{{exportState.status}}" deletion-status="{{deletionStatus}}"
+                      bind:exporttap="handleExportTap" bind:deletiontap="handleDeletionTap"
+                      bind:navigatearchive="handleArchivedChatsNavigate"
+                      bind:change="handleDataControlChange"
+                      bind:action="handleDataControlAction"
+                      bind:confirmrequest="handleDataControlConfirmRequest"
+                    />
+                    <view class="safe-holder"></view>
+                  </scroll-view>
+                </vertical-drag-gesture-handler>
+              </view>
+
+              <view class="archived-chats-panel full-bg bg-l0">
+                <yb-archived-chats id="archivedChats" theme="{{effectiveTheme}}"
+                  bind:viewconversation="viewArchivedConversation"
+                  bind:conversationchanged="archivedConversationChanged"
+                  wx:if="{{panelConfigKey === 'archived_chats'}}"
+                  language="{{applicationSettings.language}}" theme-style="{{themeStyle}}"/>
+              </view>
+            </view>
+          </block>
+
+          <block wx:elif="{{activePanel === 'storage'}}">
+            <vertical-drag-gesture-handler
+              tag="storageScroll"
+              native-view="scroll-view"
+              simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+              worklet:should-response-on-move="shouldStorageScrollViewResponse"
+            >
+              <scroll-view class="scrollable glass secondary-scroll" scroll-y type="list"
+                show-scrollbar="{{false}}" worklet:onscrollupdate="handleStorageScrollUpdate">
+                <view style="height: 156rpx"></view>
+                <view class="storage-panel">
+                  <view wx:if="{{storageLoading}}" aria-label="{{i18n.storage.loading}}">
+                    <view class="storage-summary plr16" aria-hidden="true">
+                      <view class="storage-placeholder storage-placeholder-title"></view>
+                      <view class="storage-track bg-l1 mt24 storage-track-loading">
+                        <view class="storage-loading-sweep full-bg"></view>
+                      </view>
+                    </view>
+                    <view class="storage-card bg-l0" aria-hidden="true">
+                      <view class="storage-row dr ac jb">
+                        <view class="storage-placeholder storage-placeholder-label"></view>
+                        <view class="storage-placeholder storage-placeholder-value"></view>
+                      </view>
+                      <view class="storage-divider"></view>
+                      <view class="storage-row dr ac jb">
+                        <view class="storage-placeholder storage-placeholder-label"></view>
+                        <view class="storage-placeholder storage-placeholder-value"></view>
+                      </view>
+                    </view>
+                  </view>
+                  <view wx:elif="{{storageError}}" class="storage-state asset-failure-state plr16 ptb48" bind:tap="loadStorageUsage" aria-role="button"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{i18n.storage.failed}}</text></view>
+                  <block wx:elif="{{storageUsage}}">
+                  <view class="storage-summary plr16">
+                    <text class="storage-usage wt6 ft32 text-strong">{{i18n.storage.usedPrefix}} {{storageUsage.used}}{{i18n.storage.totalPrefix}} {{storageUsage.quota}}</text>
+                    <view class="storage-track bg-l1 mt24" aria-role="progressbar" aria-label="{{i18n.storage.usedPrefix}} {{storageUsage.used}}{{i18n.storage.totalPrefix}} {{storageUsage.quota}}">
+                      <view class="storage-used" style="width: {{storageUsage.percent}}%; min-width: {{storageUsage.percent > 0 ? 22 : 0}}rpx"></view>
+                    </view>
+                  </view>
+                  <view class="storage-card bg-l0">
+                    <view class="storage-row dr ac jb" bind:tap="openStorageCategory" data-category="document" hover-class="storage-row-hover" aria-role="button">
+                      <text class="ft32 text-strong">{{i18n.storage.documents}}</text>
+                      <view class="dr ac text-l2"><text class="ft30 mr24">{{storageUsage.documents}}</text><text class="iconfont icon-arrow-right ft36"></text></view>
+                    </view>
+                    <view class="storage-divider"></view>
+                    <view class="storage-row dr ac jb" bind:tap="openStorageCategory" data-category="image" hover-class="storage-row-hover" aria-role="button">
+                      <text class="ft32 text-strong">{{i18n.storage.images}}</text>
+                      <view class="dr ac text-l2"><text class="ft30 mr24">{{storageUsage.images}}</text><text class="iconfont icon-arrow-right ft36"></text></view>
+                    </view>
+                  </view>
+                  <text wx:if="{{storageUsage.overQuota}}" class="storage-note plr16 pt24 ft24 text-strong">{{i18n.storage.overQuota}}</text>
+                  <text class="storage-note plr16 pt24 ft24 text-l2">{{i18n.storage.cleanupHint}}</text>
+                  </block>
+                </view>
+                <view class="safe-holder"></view>
+              </scroll-view>
+            </vertical-drag-gesture-handler>
+          </block>
+
+          <block wx:elif="{{activePanel === 'usage_limits'}}">
+            <vertical-drag-gesture-handler
+              tag="usageLimitsScroll"
+              native-view="scroll-view"
+              simultaneous-handlers="{{ ['pan', 'hpan'] }}"
+              worklet:should-response-on-move="shouldUsageLimitsScrollViewResponse"
+            >
+              <scroll-view class="scrollable secondary-scroll usage-limits-scroll bg-l1" scroll-y type="list"
+                show-scrollbar="{{false}}" worklet:onscrollupdate="handleUsageLimitsScrollUpdate">
+                <view style="height: 156rpx"></view>
+                <view class="usage-limits-panel" style="{{accentStyle}}" aria-label="{{usageLimitsLoading ? i18n.storage.loading : i18n.usageLimits.title}}">
+                  <view class="usage-card usage-limit-card" aria-hidden="{{usageLimitsLoading}}" list-item>
+                    <view class="usage-limit-heading ac jb dr">
+                      <view class="usage-card-title ft32 usage-skeleton-slot">
+                        <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{usageLimitsLifetime ? i18n.usageLimits.freeUsage : i18n.usageLimits.cycleUsage}}</text>
+                        <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                      </view>
+                      <view class="usage-percent ml16 text-l1 ft32 usage-skeleton-slot">
+                        <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.usedPrefix}}{{usageLimitsPercent}}{{i18n.usageLimits.usedSuffix}}</text>
+                        <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                      </view>
+                    </view>
+                    <view class="usage-track mt16 {{usageLimitsLoading ? 'usage-track-loading' : ''}}" aria-role="progressbar" aria-label="{{usageLimitsLifetime ? i18n.usageLimits.freeUsage : i18n.usageLimits.cycleUsage}} {{usageLimitsPercent}}%">
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-loading-sweep full-bg"></view>
+                      <view wx:else class="usage-track-fill" style="width:{{usageLimitsPercent}}%;"></view>
+                    </view>
+                    <view class="usage-reset ft24 text-l2 mt16 usage-skeleton-slot">
+                      <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{usageLimitsError || usageLimitsReset || i18n.usageLimits.notEnabled}}</text>
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                    </view>
+                    <view class="usage-reset ft24 text-l2 mt16 usage-skeleton-slot">
+                      <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.packagePoints}} {{usageLimitsPackagePoints}}</text>
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                    </view>
+                  </view>
+
+                  <view class="usage-section-title ac mb24 text-muted usage-credits-heading ft32" aria-hidden="{{usageLimitsLoading}}" list-item>
+                    <view class="usage-skeleton-slot">
+                      <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.credits}}</text>
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                    </view>
+                  </view>
+                  <view class="usage-card usage-credit-card ptb24 ac jb dr" aria-hidden="{{usageLimitsLoading}}" list-item>
+                    <view class="usage-card-title ft32 usage-skeleton-slot">
+                      <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.purchasedPoints}}</text>
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                    </view>
+                    <view class="usage-credit-value ml16 text-l1 ft32 usage-skeleton-slot">
+                      <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{usageLimitsPurchasedPoints}}</text>
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                    </view>
+                  </view>
+                  <view class="usage-credit-description mt16 text-l2 usage-skeleton-slot" aria-hidden="{{usageLimitsLoading}}" list-item>
+                    <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.creditsDescription}}</text>
+                    <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                  </view>
+                  <view wx:if="{{usageLimitsPending}}" class="usage-credit-description mt16 text-l2 usage-skeleton-slot" aria-hidden="{{usageLimitsLoading}}" list-item>
+                    <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.pending}} {{usageLimitsPending}} · ¥{{usageLimitsReserved}}</text>
+                    <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                  </view>
+                  <view class="usage-card usage-credit-card ptb24 ac jb dr mt48" bind:tap="openQuotaPurchase" aria-role="button" aria-label="{{i18n.usageLimits.buyCredits}}" aria-disabled="{{usageLimitsLoading}}" aria-hidden="{{usageLimitsLoading}}" list-item>
+                    <view class="usage-purchase-label ft32 usage-skeleton-slot">
+                      <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.buyCredits}}</text>
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                    </view>
+                    <view class="ml16 text-l2 ft36 usage-skeleton-slot">
+                      <text class="iconfont icon-arrow-right {{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}"></text>
+                      <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
+                    </view>
+                  </view>
+                </view>
+                <view class="safe-holder"></view>
+              </scroll-view>
+            </vertical-drag-gesture-handler>
+          </block>
+
+        </view>
+      </horizontal-drag-gesture-handler>
+    </view>
+  </vertical-drag-gesture-handler>
+</view>
+
+<yb-confirm-dialog
+  wx:if="{{activePanel === 'data_control'}}"
+  id="dataControlConfirmDialog"
+  title="{{dataControlConfirm.title}}" centered="{{dataControlConfirm.centered}}"
+  style="position: relative; z-index: 999;"
+  message="{{dataControlConfirm.message}}"
+  danger="{{dataControlConfirm.danger}}"
+  confirm-tone="{{dataControlConfirm.confirmTone}}"
+  message-align="{{dataControlConfirm.messageAlign}}"
+  confirm-text="{{dataControlConfirm.confirmText || i18n.common.confirm}}"
+  cancel-text="{{i18n.common.cancel}}"
+  validation-text="{{i18n.validation.nameRequired}}"
+  bind:confirm="handleDataControlConfirm" theme-style="{{themeStyle}}"/>
+
+<yb-confirm-dialog
+  wx:if="{{activePanel === 'memory'}}"
+  id="memoryDeleteConfirmDialog"
+  style="position: relative; z-index: 1000;"
+  title="{{i18n.memory.deleteConfirmTitle}}"
+  message="{{i18n.memory.deleteConfirmMessage}}"
+  danger="{{true}}"
+  centered="{{true}}"
+  muted-text="{{true}}"
+  message-align="left"
+  confirm-text="{{i18n.memory.deleteAndDisable}}"
+  cancel-text="{{i18n.common.cancel}}"
+  bind:confirm="handleMemoryDeleteConfirm"
+  theme-style="{{themeStyle}}"
+/>
+
+<yb-notice-capsule id="dataActionNotice" theme-style="{{themeStyle}}" />

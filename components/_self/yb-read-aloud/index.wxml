@@ -1,0 +1,20 @@
+<yb-notice-capsule id="playbackNotice" duration="{{0}}" resume-on-replace="{{true}}" custom-content="{{true}}" theme-style="{{themeStyle}}">
+  <view slot="prefix" class="speech-control dr ac jc" catch:tap="togglePlayback"
+    aria-role="button" aria-label="{{loading ? i18n.speech.loading : (paused ? i18n.speech.play : i18n.speech.pause)}}" aria-disabled="{{loading}}">
+    <text class="iconfont {{loading ? 'icon-loading_flow_iconfont speech-loading' : (paused ? 'icon-play_circle_line' : 'icon-pause_circle_line')}} speech-play"></text>
+  </view>
+  <text class="speech-time ft28 text-l0">{{elapsed}}</text>
+  <view slot="suffix" class="dr ac speech-actions text-l0">
+    <view class="speech-control speech-rate dr ac jc {{loading ? 'speech-disabled' : ''}}" catch:tap="cycleRate"
+      aria-role="button" aria-label="{{i18n.speech.rate}} {{rate}}x" aria-disabled="{{loading}}"><text class="ft28">{{rate}}x</text></view>
+    <view class="speech-control dc ac jc {{loading ? 'speech-disabled' : ''}}" data-offset="-15" catch:tap="seek"
+      aria-role="button" aria-label="{{i18n.speech.rewind}}" aria-disabled="{{loading}}">
+      <text class="iconfont icon-fast_rewind_line speech-arrow"></text>
+    </view>
+    <view class="speech-control dc ac jc {{loading ? 'speech-disabled' : ''}}" data-offset="15" catch:tap="seek"
+      aria-role="button" aria-label="{{i18n.speech.forward}}" aria-disabled="{{loading}}">
+      <text class="iconfont icon-fast_forward_line speech-arrow"></text>
+    </view>
+    <view class="speech-control dr ac jc" catch:tap="stop" aria-role="button" aria-label="{{i18n.speech.close}}"><text class="iconfont icon-x ft36"></text></view>
+  </view>
+</yb-notice-capsule>

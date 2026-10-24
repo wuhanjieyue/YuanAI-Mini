@@ -1,0 +1,99 @@
+{
+  "defaults": {
+    "chat": "yuan-go",
+    "temporary": "yuan-go",
+    "work": "yuan-go"
+  },
+  "models": [
+    {
+      "id": "yuan-go",
+      "name": "Yuan-Go",
+      "providerModel": "qwen3.8-flash",
+      "modes": [
+        "chat",
+        "temporary",
+        "work"
+      ],
+      "minPlan": "guest",
+      "enabled": true,
+      "defaultEffortId": "medium",
+      "efforts": [
+        {
+          "id": "light",
+          "label": "轻度",
+          "providerEffort": "low",
+          "minPlan": "guest"
+        },
+        {
+          "id": "medium",
+          "label": "中",
+          "providerEffort": "low",
+          "minPlan": "user"
+        },
+        {
+          "id": "high",
+          "label": "高",
+          "providerEffort": "high",
+          "minPlan": "user"
+        },
+        {
+          "id": "very-high",
+          "label": "极高",
+          "providerEffort": "high",
+          "minPlan": "user"
+        },
+        {
+          "id": "ultra-high",
+          "label": "超高",
+          "providerEffort": "high",
+          "minPlan": "user"
+        }
+      ]
+    },
+    {
+      "id": "yuan-pro",
+      "name": "Yuan-Pro",
+      "providerModel": "qwen3.8-max",
+      "modes": [
+        "chat",
+        "temporary",
+        "work"
+      ],
+      "minPlan": "user",
+      "enabled": true,
+      "defaultEffortId": "medium",
+      "efforts": [
+        {
+          "id": "light",
+          "label": "轻度",
+          "providerEffort": "low",
+          "minPlan": "user"
+        },
+        {
+          "id": "medium",
+          "label": "中",
+          "providerEffort": "low",
+          "minPlan": "user"
+        },
+        {
+          "id": "high",
+          "label": "高",
+          "providerEffort": "high",
+          "minPlan": "user"
+        },
+        {
+          "id": "very-high",
+          "label": "极高",
+          "providerEffort": "high",
+          "minPlan": "user"
+        },
+        {
+          "id": "ultra-high",
+          "label": "超高",
+          "providerEffort": "high",
+          "minPlan": "user"
+        }
+      ]
+    }
+  ]
+}

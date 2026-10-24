@@ -1,0 +1,2 @@
+<image wx:if="{{attrs.src && !error}}" class="{{attrs.class}}" src="{{attrs.src}}" mode="aspectFit" preload="{{true}}" style="width:{{size.w}}rpx; height:{{size.h}}rpx;" bindload="load" binderror="error"></image>
+<text wx:if="{{error}}" class="h2w__latexError">{{i18n.renderer.formulaFailed}}</text>

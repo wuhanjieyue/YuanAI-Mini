@@ -1,0 +1,70 @@
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+.models-icon{
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.icon-arr-up::before{
+  content: "\e7aa";
+}
+.model-icon-slot {
+  width: 86rpx;
+}
+.other-model-title {
+  height: 100rpx;
+  min-height: 100rpx;
+  flex: 0 0 100rpx;
+  padding-right: 0;
+}
+
+.list-divider{
+  width: 80%;
+  height: 1rpx;
+  margin-left: 10%;
+  background-color: var(--bg-l3, #C4C4C5);
+}
+
+.model-options{
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+.icon-arr-right::before { content: "\e7a9"; }
+.icon-arr-right { transform: rotate(-90deg); }
+.cascade-stage { width: 100%; position: relative; box-sizing: border-box; }
+.cascade-card {
+  position: absolute;
+  background: var(--glass-72, rgba(255, 255, 255, 0.72));
+  border: 1rpx solid var(--text-l3);
+  border-color: var(--text-l3, rgba(51, 51, 51, 0.25));
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+.models-base { border-radius: 20px; padding: 6rpx; }
+.other-model-panel { border-radius: 14px; padding: 0 6rpx; }
+.cascade-item {
+  height: 110rpx;
+  position: relative;
+  padding-right: 0;
+  padding-left: 0;
+  display: flex;
+  box-sizing: border-box;
+}
+.cascade-item .model-label { flex: 1; min-width: 0; }
+.model-icon-slot { flex-shrink: 0; }
+.cascade-item .models-icon { width: 86rpx; flex-shrink: 0; }
+.cascade-divider {
+  position: absolute;
+  bottom: 0;
+  left: 10%;
+  width: 80%;
+  height: 1rpx;
+}
+.is-disabled { opacity: 0.4; }
+
+.cascade-right { right: 36rpx; transform-origin: 100% 100%; }
+.cascade-left { left: 36rpx; transform-origin: 0% 100%; }
+.other-model-title { position: relative; }
+.model-options { flex-shrink: 0; }

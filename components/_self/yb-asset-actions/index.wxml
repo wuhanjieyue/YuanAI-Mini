@@ -1,0 +1,48 @@
+<yb-flyout id="flyout" preview-enabled="{{true}}" animate-trigger="{{false}}" open-on-trigger-tap="{{false}}"
+  popup-width-rpx="470" scrollable="{{true}}" theme-style="{{themeStyle}}"
+  popup-class="setting-option-pop-surface" mask-class="asset-menu-mask" bind:open="afterOpen" bind:afterclose="afterClose">
+  <view slot="preview" class="asset-lifted {{viewMode === 'list' ? 'asset-list-row dr ac' : 'asset-card'}}">
+    <block wx:if="{{viewMode === 'list'}}">
+      <view class="asset-list-icon dr ac jc">
+        <image wx:if="{{item.isImage && item.url && !item.loadFailed}}" class="asset-photo" src="{{item.url}}" mode="aspectFill" show-menu-by-longpress="{{false}}" />
+        <text wx:elif="{{item.isImage}}" class="iconfont icon-image ft40 text-muted" aria-hidden="true"></text>
+        <text wx:else class="asset-iconfont {{item.iconClass}} ft48" aria-hidden="true"></text>
+      </view>
+      <view class="asset-list-copy">
+        <text class="asset-list-title ft32 wt6 text-strong" max-lines="1" overflow="ellipsis">{{item.displayName}}</text>
+        <text class="asset-list-description ft24 text-muted" max-lines="1" overflow="ellipsis">{{item.typeLabel}}{{item.dateLabel ? ' · ' + item.dateLabel : ''}}</text>
+      </view>
+    </block>
+    <block wx:else>
+      <image wx:if="{{item.isImage && item.url && !item.loadFailed}}" class="asset-photo" src="{{item.url}}" mode="{{source === 'sample' ? 'aspectFill' : 'aspectFit'}}" show-menu-by-longpress="{{false}}" />
+      <view wx:elif="{{item.isImage}}" class="asset-image-state">{{i18n.assets.imageUnavailable}}</view>
+      <view wx:else class="asset-document">
+        <text class="asset-name ft32" max-lines="2" overflow="ellipsis">{{item.displayName}}</text>
+        <text wx:if="{{item.dateLabel}}" class="asset-date">{{i18n.assets.uploadedAt}} {{item.dateLabel}}</text>
+        <text wx:if="{{source !== 'knowledge'}}" class="asset-iconfont {{item.iconClass}} asset-file-icon"></text>
+      </view>
+      <text wx:if="{{item.showTitle}}" class="asset-caption">{{item.displayName}}</text>
+    </block>
+  </view>
+  <view slot="popup" class="asset-menu ptb16">
+    <view wx:for="{{actions}}" wx:key="id" class="asset-menu-row {{item.disabled ? 'text-l2' : 'text-l0'}} dr ac {{item.danger ? 'asset-menu-danger text-err-l1' : ''}}"
+      data-action="{{item.id}}" hover-class="{{item.disabled ? 'none' : 'asset-pressed'}}" catch:tap="chooseAction" aria-role="button" aria-label="{{item.text}}" aria-disabled="{{item.disabled || (item.id === 'share' && sharePreparing)}}">
+      <text class="asset-iconfont asset-menu-icon {{item.icon || ''}}">{{item.glyph}}</text>
+      <text class="asset-menu-label ft32">{{item.text}}</text>
+      <text wx:if="{{item.arrow}}" class="asset-menu-arrow">›</text>
+    </view>
+  </view>
+</yb-flyout>
+
+<yb-notice-capsule id="assetNotice" theme-style="{{themeStyle}}" />
+<root-portal>
+  <view class="asset-operation-origin" aria-hidden="true"></view>
+  <yb-confirm-dialog id="assetDialog" style="position:absolute;top:{{-originTop}}px;left:{{-originLeft}}px;z-index:999;" theme-style="{{themeStyle}}"
+    title="{{assetDialogAction === 'rename' ? (assetIsImage ? i18n.assets.renameTitle : i18n.assets.renameFileTitle) : (assetIsImage ? i18n.assets.deleteTitle : i18n.assets.deleteFileTitle)}}"
+    message="{{assetDialogMessage}}" centered="{{true}}" horizontal-actions="{{true}}"
+    input-mode="{{assetDialogAction === 'rename'}}" input-value="{{assetDialogName}}"
+    danger="{{assetDialogAction === 'delete'}}" message-align="{{assetDialogAction === 'delete' ? 'left' : 'center'}}"
+    muted-text="{{assetDialogAction === 'delete'}}" validation-text="{{i18n.validation.nameRequired}}"
+    confirm-text="{{assetDialogAction === 'rename' ? i18n.common.save : i18n.common.delete}}" cancel-text="{{i18n.common.cancel}}"
+    bind:confirm="confirmAssetAction" bind:close="closeAssetDialog" />
+</root-portal>

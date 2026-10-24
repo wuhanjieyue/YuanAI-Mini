@@ -1,0 +1,9 @@
+{
+  "navigationStyle":"custom",
+  "backgroundColorContent":"#ffffff00",
+  "disableScroll":true,
+  "usingComponents":{
+    "yb-flyout":"/components/yb-flyout/index",
+    "yb-models-select":"/components/yb-models-select/index"
+  }
+}

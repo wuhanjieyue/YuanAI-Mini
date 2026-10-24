@@ -1,0 +1,95 @@
+.message-actions { flex-wrap: wrap; }
+.message-actions-entrance { transform: scale(0); transform-origin: 0% 0%; }
+.message-action-button {
+  display: flex;
+  box-sizing: border-box;
+  width: 72rpx;
+  min-height: 44rpx;
+  flex: 0 0 72rpx;
+}
+.message-action-icon {
+  display: block;
+  line-height: 36rpx;
+}
+.branch-action-loading { animation: branch-action-spin 1.5s linear infinite; }
+@keyframes branch-action-spin { to { transform: rotate(360deg); } }
+.message-share-container { position: relative; }
+.message-action-trigger { width: 72rpx; flex: 0 0 72rpx; }
+.feedback-trigger,
+.more-trigger { flex-shrink: 0; }
+.feedback-trigger .icon-c1e6c4-24-bold-light {
+  transform: scale(1.3);
+}
+.feedback-popup {
+  box-sizing: border-box;
+  background: var(--glass-72, rgba(255, 255, 255, 0.72));
+  border: 2px solid var(--border-glass, #ffffff);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 6rpx;
+}
+.feedback-menu { padding: 12rpx; }
+.feedback-option {
+  min-height: 88rpx;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.feedback-option-label { flex: 1; }
+.more-popup {
+  box-sizing: border-box;
+  background: var(--glass-72, rgba(255, 255, 255, 0.72));
+  border: 2px solid var(--border-glass, #ffffff);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 8rpx;
+}
+.more-menu {
+  padding-top: 10rpx;
+  padding-right: 18rpx;
+  padding-left: 18rpx;
+}
+.more-time,
+.more-model {
+  display: block;
+  padding-top: 12rpx;
+  padding-right: 28rpx;
+  padding-left: 28rpx;
+  font-size: 26rpx;
+  line-height: 44rpx;
+}
+.more-model { padding-top: 10rpx; padding-bottom: 4rpx; }
+.more-option {
+  min-height: 96rpx;
+  padding: 0 28rpx;
+  box-sizing: border-box;
+}
+.more-option-branch { min-height: 112rpx; }
+.more-option-icon {
+  width: 56rpx;
+  flex: 0 0 56rpx;
+}
+.more-option-label {
+  flex: 1;
+  line-height: 44rpx;
+}
+.more-divider {
+  height: 2rpx;
+  margin-right: 28rpx;
+  margin-bottom: 0;
+  margin-left: 28rpx;
+  background: var(--border-subtle, #eae8e7);
+}
+.sources-entry { font-size: 26rpx; line-height: 44rpx; flex-shrink: 0; }
+.sources-icon {
+  flex-shrink: 0;
+}
+.source-icon-stack {
+  margin-right: 10rpx;
+}
+.source-stack-image {
+  margin-left: -8rpx;
+  border: 2rpx solid var(--bg-l0);
+  flex-shrink: 0;
+}

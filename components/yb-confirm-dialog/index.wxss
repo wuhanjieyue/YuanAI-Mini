@@ -1,0 +1,165 @@
+@import '../_shared/flex.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+.dialog-overlay{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.dialog-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.dialog-container-centered {
+  transform: translateY(-10vh);
+}
+.dialog-panel {
+  position: relative;
+  visibility: hidden;
+  transform: scale(1);
+  transform-origin: 50% 50%;
+  opacity: 0;
+}
+
+.dialog-panel-visible{
+  visibility: visible;
+}
+.dialog-bubble {
+  position: relative;
+  width: 76vw;
+  padding-top: 40rpx;
+  padding-bottom: 28rpx;
+  background: var(--glass-90, rgba(255, 255, 255, 0.9));
+  border: 2px solid var(--border-glass, #ffffff);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+.dialog-bubble-centered {
+  padding-top: 44rpx;
+  padding-bottom: 32rpx;
+  background: var(--glass-80, rgba(255, 255, 255, 0.8));
+  border: 2px solid var(--border-glass, #ffffff);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.dialog-content {
+  width: 100%;
+}
+.dialog-title {
+  display: block;
+}
+
+.dialog-title-left,
+.dialog-message-left{
+  width: 100%;
+  text-align: left;
+}
+.dialog-message {
+  display: block;
+  line-height: 1.6;
+  margin-bottom: 28rpx;
+}
+
+.dialog-message-left{
+  white-space: pre-line;
+}
+.dialog-input {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 28rpx;
+  border-radius: 44rpx;
+  box-sizing: border-box;
+}
+.dialog-btn {
+  width: 100%;
+  height: 88rpx;
+  background: var(--ink-6, rgba(0,0,0,0.06));
+}
+.dialog-actions {
+  align-items: stretch;
+}
+
+.dialog-actions .dialog-btn{
+  width: 100%;
+  flex: none;
+}
+
+.dialog-actions .dialog-btn + .dialog-btn{
+  margin-top: 20rpx;
+}
+
+
+.dialog-confirm-btn{
+  margin-left: 0;
+  background: var(--main-l1, #0A59F7);
+}
+
+.dialog-single-btn{
+  margin-left: 0;
+  background: var(--ink-6, rgba(0,0,0,0.06));
+}
+
+
+.dialog-confirm-danger{
+  background: var(--err-l1, #E84026);
+}
+
+.dialog-actions-horizontal {
+  flex-direction: row;
+}
+.dialog-actions-horizontal .dialog-btn {
+  width: 0;
+  flex: 1;
+}
+.dialog-actions-horizontal .dialog-btn + .dialog-btn {
+  margin-top: 0;
+  margin-left: 20rpx;
+}
+.dialog-actions-horizontal .dialog-confirm-danger {
+  background: var(--ink-6, rgba(0,0,0,0.06));
+}
+.dialog-actions-horizontal .dialog-confirm-danger .dialog-btn-text {
+  color: var(--err-l1, #E84026);
+}
+
+.dialog-arrow-wrap{
+  width: 48rpx;
+  height: 24rpx;
+  overflow: hidden;
+  align-self: center;
+  margin-top: -2px;
+}
+.dialog-arrow {
+  width: 28rpx;
+  height: 28rpx;
+  background: var(--glass-65, rgba(255, 255, 255, 0.65));
+  backdrop-filter: blur(10px);
+  border-right: 2px solid var(--border-glass, #ffffff);
+  border-bottom: 2px solid var(--border-glass, #ffffff);
+  transform: rotate(45deg);
+  margin-top: -14rpx;
+  margin-right: auto;
+  margin-bottom: 0;
+  border-radius: 0 0 6rpx 0;
+  box-sizing: border-box;
+}
+
+.dialog-arrow-start{
+  position: absolute;
+  top: -18rpx;
+  left: 30%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+
+.dialog-arrow-start .dialog-arrow{
+  transform: rotate(225deg);
+  margin-top: 8rpx;
+}

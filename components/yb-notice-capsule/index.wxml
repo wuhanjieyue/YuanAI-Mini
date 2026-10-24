@@ -1,0 +1,12 @@
+<root-portal>
+  <view class="notice-origin" aria-hidden="true"></view>
+  <view class="floating-search notice-capsule {{visible ? '' : 'notice-capsule-hidden'}} {{closing ? 'notice-capsule-closing' : ''}}"
+    style="{{themeStyle}};top:{{noticeTop}}px;left:{{noticeLeft}}px;height:{{heightRpx}}rpx;border-radius:{{heightRpx / 2}}rpx;" aria-role="{{alert ? 'alert' : 'status'}}" aria-label="{{message}}" aria-hidden="{{!visible || closing}}">
+    <slot name="prefix"></slot>
+    <view class="notice-content">
+      <text wx:if="{{!customContent}}" class="ft28 text-l0">{{message}}</text>
+      <slot wx:else></slot>
+    </view>
+    <slot name="suffix"></slot>
+  </view>
+</root-portal>

@@ -1,0 +1,2 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="{{themeBackground}}" />
+<view class="full-view" bind:tap="intoIndex" style="{{themeStyle}}"></view>

@@ -1,0 +1,166 @@
+<view class="library-page full-view bg-gray {{conversationScope ? 'library-sheet-page' : ''}}">
+  <view wx:if="{{conversationScope}}" class="library-sheet-header move-box dc ac">
+    <view class="library-sheet-header-bg dr ac jb ptb24 plr24">
+      <view class="library-sheet-left"></view>
+      <view class="library-sheet-title-wrap dr ac jc"><text class="ft36 library-sheet-title wt6 text-strong">{{featureTitle}}</text></view>
+      <view class="library-sheet-right dr ac je">
+        <view class="library-sheet-close cradius dr ac jc glass-view" bind:tap="openLeft" aria-role="button" aria-label="{{i18n.archive.close}}"><text class="iconfont icon-x ft48 text-l0"></text></view>
+      </view>
+    </view>
+  </view>
+  <yb-title-nav wx:else
+    class="z99"
+    feature-name="{{i18n.library.title}}"
+    feature-menu-enabled="{{false}}"
+    tabs="{{categories}}" active-tab="{{activeCategory}}" tabs-disabled="{{actionsOpen}}"
+    bind:tabchange="selectCategory" bind:heightchange="handleNavHeightChange"
+    catch:openLeft="openLeft"
+  ></yb-title-nav>
+
+  <scroll-view type="custom" scroll-y="{{!actionsOpen}}" enable-passive class="library-scroll"
+    lower-threshold="100" bind:scrolltolower="loadMoreAssets"
+    refresher-enabled="{{!actionsOpen}}" refresher-triggered="{{refreshing}}" bind:refresherrefresh="refreshAssets">
+    <view style="height: {{navHeight}}px;" aria-hidden="true"></view>
+    <sticky-header wx:if="{{conversationScope}}" offset-top="{{navHeight}}">
+      <view class="asset-tabs asset-tabs-glass">
+        <view wx:for="{{categories}}" wx:key="id" data-id="{{item.id}}" catch:tap="selectCategory"
+          class="asset-tab {{activeCategory === item.id ? 'asset-tab-active' : ''}} ft32" aria-role="button" aria-label="{{item.name}}">
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </sticky-header>
+    <grid-view type="masonry" cross-axis-count="2" wx:if="{{viewMode === 'grid'}}" main-axis-gap="{{gridGap}}" cross-axis-gap="{{gridGap}}" padding="{{gridPadding}}">
+      <view wx:for="{{items}}" wx:key="id" id="asset-{{index}}" data-id="{{item.id}}" data-index="{{index}}"
+        class="asset-card library-asset-card {{selectedId === item.id ? 'asset-card-hidden' : ''}}"
+        style="height: {{item.cardHeight}}rpx;"
+        catch:tap="previewAsset" bind:longpress="openAssetActions" aria-role="button" aria-label="{{item.displayName}}">
+        <block wx:if="{{item.isImage}}">
+          <image wx:if="{{item.url}}" class="asset-photo" src="{{item.url}}" mode="aspectFit" style="opacity:{{item.loaded ? 1 : 0}};"
+            show-menu-by-longpress="{{false}}" data-id="{{item.id}}" data-url="{{item.url}}" bind:load="assetImageLoaded" bind:error="assetImageFailed" />
+          <view wx:if="{{!item.loaded && !item.loadFailed}}" class="asset-skeleton-fill skeleton-clip" aria-hidden="true"><view class="skeleton-shimmer"></view></view>
+          <view wx:if="{{item.loadFailed}}" class="asset-image-state">{{i18n.assets.imageUnavailable}}</view>
+        </block>
+        <view wx:else class="asset-document">
+          <text class="asset-name ft32" max-lines="2" overflow="ellipsis">{{item.displayName}}</text>
+          <text wx:if="{{item.dateLabel}}" class="asset-date">{{i18n.assets.uploadedAt}} {{item.dateLabel}}</text>
+          <text class="asset-iconfont {{item.iconClass}} asset-file-icon"></text>
+        </view>
+      </view>
+      <view wx:if="{{showSkeleton}}" class="asset-card library-asset-card asset-skeleton skeleton-clip" aria-label="{{i18n.common.loading}}">
+        <view class="asset-skeleton-block skeleton-block"></view>
+        <view class="asset-skeleton-line skeleton-block"></view>
+        <view class="asset-skeleton-line asset-skeleton-short skeleton-block"></view>
+        <view class="skeleton-shimmer" aria-hidden="true"></view>
+      </view>
+    </grid-view>
+    <list-view wx:else>
+      <view wx:for="{{items}}" wx:key="id" id="asset-{{index}}" data-id="{{item.id}}" data-index="{{index}}"
+        class="asset-list-row dr ac {{selectedId === item.id ? 'asset-card-hidden' : ''}}"
+        catch:tap="previewAsset" bind:longpress="openAssetActions" aria-role="button" aria-label="{{item.displayName}}">
+        <view class="asset-list-icon dr ac jc">
+          <block wx:if="{{item.isImage}}">
+            <image wx:if="{{item.url}}" class="asset-photo" src="{{item.url}}" mode="aspectFill" style="opacity:{{item.loaded ? 1 : 0}};"
+              show-menu-by-longpress="{{false}}" data-id="{{item.id}}" data-url="{{item.url}}" bind:load="assetImageLoaded" bind:error="assetImageFailed" />
+            <view wx:if="{{!item.loaded && !item.loadFailed}}" class="asset-skeleton-fill skeleton-clip" aria-hidden="true"><view class="skeleton-shimmer"></view></view>
+            <text wx:if="{{item.loadFailed}}" class="iconfont icon-image ft40 text-muted" aria-hidden="true"></text>
+          </block>
+          <text wx:else class="asset-iconfont {{item.iconClass}} ft48" aria-hidden="true"></text>
+        </view>
+        <view class="asset-list-copy">
+          <text class="asset-list-title ft32 wt6 text-strong" max-lines="1" overflow="ellipsis">{{item.displayName}}</text>
+          <text class="asset-list-description ft24 text-muted" max-lines="1" overflow="ellipsis">{{item.typeLabel}}{{item.dateLabel ? ' · ' + item.dateLabel : ''}}</text>
+        </view>
+      </view>
+      <view wx:if="{{showSkeleton}}" class="asset-list-row dr ac" aria-label="{{i18n.common.loading}}">
+        <view class="asset-list-icon skeleton-clip"><view class="skeleton-shimmer"></view></view>
+        <view class="asset-list-copy"><view class="library-skeleton-title skeleton-clip"><view class="skeleton-shimmer"></view></view><view class="library-skeleton-description mt16 skeleton-clip"><view class="skeleton-shimmer"></view></view></view>
+      </view>
+    </list-view>
+    <view wx:if="{{(!loading || failed) && !(failed && !items.length)}}" class="asset-status {{!items.length ? 'asset-empty' : ''}}">
+      <text wx:if="{{loading}}">{{i18n.common.loading}}</text>
+      <block wx:elif="{{failed}}">
+        <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+        <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+        <view class="asset-retry" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
+      </block>
+      <text wx:elif="{{!items.length && query}}">{{i18n.assets.noMatches}}</text>
+      <text wx:elif="{{items.length && !hasMore}}">{{i18n.assets.end}}</text>
+    </view>
+    <view class="library-bottom-space"></view>
+  </scroll-view>
+  <view wx:if="{{!items.length && !loading && !failed && !query}}" class="asset-empty-overlay">
+    <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+    <text class="asset-empty-copy">{{i18n.assets.empty}}</text>
+  </view>
+  <view wx:if="{{failed && !items.length}}" class="asset-empty-overlay">
+    <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+    <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+    <view class="asset-retry asset-error-action" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
+  </view>
+  <yb-asset-actions id="assetActions" view-mode="{{viewMode}}" language="{{language}}" theme-style="{{themeStyle}}" bind:statechange="assetActionsChanged" bind:chatAsset="chatAsset" />
+
+  <view class="library-search-row">
+    <view class="library-search-area">
+      <view class="library-search floating-search" aria-role="searchbox" aria-label="{{i18n.library.search}}">
+        <text class="library-iconfont icon-search floating-search-icon"></text>
+        <input
+          class="floating-search-input"
+          value="{{query}}"
+          maxlength="128"
+          focus="{{inputFocus}}"
+          adjust-position="{{false}}"
+          confirm-type="search"
+          hold-keyboard="{{true}}"
+          placeholder="{{i18n.library.search}}"
+          placeholder-class="floating-search-placeholder"
+          bind:focus="handleSearchFocus"
+          bind:blur="handleSearchBlur"
+          bind:input="handleSearch"
+          bind:keyboardheightchange="handleSearchKeyboardHeightChange" worklet:onkeyboardheightchange="handleSearchKeyboardUpdate"
+        />
+      </view>
+      <view class="library-clear floating-search-clear" style="pointer-events:{{query ? 'auto' : 'none'}};" bind:tap="clearSearch">
+        <text class="library-iconfont icon-x floating-search-clear-icon"></text>
+      </view>
+    </view>
+    <view class="library-filter">
+      <yb-flyout id="filterMenu" open-on-trigger-tap="{{false}}" animate-trigger="{{true}}"
+        popup-width-rpx="560" edge-gap-rpx="0" popup-transform-origin="100% 100%"
+        close-on-mask-tap="{{false}}" bind:masktap="handleFilterMask" bind:afterclose="filterMenuClosed" theme-style="{{themeStyle}}">
+        <view slot="trigger" class="library-filter-trigger floating-search-clear floating-search-clear-active {{filterMenuOpen ? 'library-filter-inactive' : ''}}"
+          catch:tap="openFilterMenu" aria-role="button" aria-label="{{i18n.library.filter}}" aria-expanded="{{filterMenuOpen}}">
+          <text class="iconfont {{viewMode === 'list' ? 'icon-list_check_line' : 'icon-menus'}} floating-search-clear-icon"></text>
+        </view>
+        <view slot="popup" class="library-menu-stage" catch:tap="handleFilterMask">
+          <view class="library-menu-stack">
+            <view class="library-menu-base setting-option-pop-surface" catch:tap="handleFilterCard" style="pointer-events:{{sourceMenuOpen ? 'none' : 'auto'}};" aria-hidden="{{sourceMenuOpen}}">
+              <view class="setting-option-pop-list">
+                <view class="setting-option-pop-item dr ac" data-id="grid" catch:tap="selectViewMode" aria-role="button" aria-label="{{i18n.library.grid}}" aria-checked="{{viewMode === 'grid'}}">
+                  <text class="iconfont icon-menus library-menu-icon"></text><text class="library-menu-label ft32" max-lines="1" overflow="ellipsis">{{i18n.library.grid}}</text><text class="iconfont icon-check library-menu-check {{viewMode !== 'grid' ? 'library-menu-unchecked' : ''}}"></text>
+                </view>
+                <view class="setting-option-pop-item dr ac" data-id="list" catch:tap="selectViewMode" aria-role="button" aria-label="{{i18n.library.list}}" aria-checked="{{viewMode === 'list'}}">
+                  <text class="iconfont icon-list_check_line library-menu-icon"></text><text class="library-menu-label ft32" max-lines="1" overflow="ellipsis">{{i18n.library.list}}</text><text class="iconfont icon-check library-menu-check {{viewMode !== 'list' ? 'library-menu-unchecked' : ''}}"></text>
+                </view>
+                <view class="library-menu-divider" aria-hidden="true"></view>
+              </view>
+            </view>
+            <view class="library-source-panel {{sourceMenuOpen ? 'setting-option-pop-surface' : ''}}" catch:tap="handleFilterCard">
+              <view class="library-source-header setting-option-pop-item dr ac" catch:tap="toggleSourceMenu" aria-role="button" aria-label="{{origin ? i18n.library[origin] : i18n.library.filter}}" aria-expanded="{{sourceMenuOpen}}">
+                <text class="iconfont icon-filter_2_line library-menu-icon"></text><text class="library-menu-label ft32" max-lines="1" overflow="ellipsis">{{origin ? i18n.library[origin] : i18n.library.filter}}</text><text class="iconfont {{sourceMenuOpen ? 'icon-arr-down' : 'icon-arrow-right'}} mla ft28"></text>
+              </view>
+              <view class="library-source-options" style="pointer-events:{{sourceMenuOpen ? 'auto' : 'none'}};" aria-hidden="{{!sourceMenuOpen}}">
+                <view class="library-menu-divider" aria-hidden="true"></view>
+                <view class="setting-option-pop-item dr ac" data-id="uploaded" catch:tap="selectOrigin" aria-role="button" aria-label="{{i18n.library.uploaded}}" aria-checked="{{origin === 'uploaded'}}">
+                  <text class="iconfont icon-share library-menu-icon"></text><text class="library-menu-label ft32" max-lines="1" overflow="ellipsis">{{i18n.library.uploaded}}</text><text class="iconfont icon-check library-menu-check {{origin !== 'uploaded' ? 'library-menu-unchecked' : ''}}"></text>
+                </view>
+                <view class="setting-option-pop-item dr ac" data-id="generated" catch:tap="selectOrigin" aria-role="button" aria-label="{{i18n.library.generated}}" aria-checked="{{origin === 'generated'}}">
+                  <text class="iconfont icon-image-create library-menu-icon"></text><text class="library-menu-label ft32" max-lines="1" overflow="ellipsis">{{i18n.library.generated}}</text><text class="iconfont icon-check library-menu-check {{origin !== 'generated' ? 'library-menu-unchecked' : ''}}"></text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </yb-flyout>
+    </view>
+  </view>
+</view>

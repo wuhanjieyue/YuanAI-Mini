@@ -1,0 +1,24 @@
+<view class="tasks-page full-view bg-l0" style="{{themeStyle}}">
+  <yb-title-nav class="z99" feature-name="{{i18n.home.tasks}}" feature-menu-enabled="{{false}}" tabs="{{tabs}}" active-tab="{{activeTab}}" tabs-disabled="{{menuOpen}}" bind:tabchange="selectTab" bind:heightchange="handleNavHeightChange" catch:openLeft="openLeft" />
+  <scroll-view class="tasks-scroll" type="list" scroll-y="{{!menuOpen}}" enable-passive bind:scrolltolower="loadMore">
+    <view list-item style="height:{{navHeight}}px;"></view>
+    <block wx:for="{{tasks}}" wx:key="id">
+      <view wx:if="{{activeTab === 'completed' || item.paused === (activeTab === 'paused')}}" list-item class="task-item dr ac" data-id="{{item.id}}" bind:tap="openTask" aria-role="button" aria-label="{{item.name}}">
+        <view class="task-copy">
+          <text class="task-title ft32 text-strong" max-lines="1" overflow="ellipsis">{{item.name}}</text>
+          <text class="task-subtitle ft24 text-muted" max-lines="1" overflow="ellipsis">{{item.lastRun}} · {{item.repeat}}</text>
+        </view>
+        <view wx:if="{{activeTab !== 'completed'}}" catch:tap="ignoreTap"><yb-task-menu task="{{item}}" theme-style="{{themeStyle}}" bind:action="handleAction" bind:menuchange="menuChanged" /></view>
+      </view>
+    </block>
+    <view wx:if="{{error}}" list-item class="ptb32 plr32 text-muted ft28" bind:tap="retry">{{error}}，点击重试</view>
+    <view wx:if="{{loading}}" list-item class="ptb32 plr32 text-muted ft28">加载中…</view>
+    <view wx:elif="{{hasMore}}" list-item class="ptb32 plr32 text-muted ft28" bind:tap="loadMore">加载更多</view>
+    <view list-item class="tasks-bottom-space"></view>
+  </scroll-view>
+  <view wx:if="{{!tasks.length && !loading && !error && !hasMore}}" class="asset-empty-overlay">
+    <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+    <text class="asset-empty-copy">{{activeTab === 'completed' ? '还没有已完成的计划任务对话' : '还没有计划任务，点击右下角新建任务'}}</text>
+  </view>
+  <view class="task-create" hover-class="task-pressed" bind:tap="openTask" aria-role="button" aria-label="新建任务">新建任务</view>
+</view>

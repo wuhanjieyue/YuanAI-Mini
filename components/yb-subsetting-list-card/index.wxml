@@ -1,0 +1,24 @@
+<view class="section-card ">
+  <block wx:for="{{items}}" wx:key="key" wx:for-index="index">
+    <view class="card-row dr ac" bind:tap="handleItemTap" data-index="{{index}}">
+      <block wx:if="{{item.rowType === 'action'}}">
+        <text class="row-action ft32 {{item.actionTone === 'danger' ? 'text-danger' : 'text-link'}}">{{item.label}}</text>
+      </block>
+
+      <block wx:else>
+        <text class="row-title ft32 wt5 {{item.labelTone === 'primary' ? 'text-link' : item.labelTone === 'danger' ? 'text-danger' : 'text-strong'}}">{{item.label}}</text>
+
+        <view wx:if="{{item.rowType === 'switch'}}" class="card-trailing mla">
+          <switch class="card-switch" checked="{{item.checked}}" disabled="{{item.disabled}}" catchtap="" bind:change="handleSwitchChange" data-index="{{index}}" color="#34C759"></switch>
+        </view>
+
+        <view wx:else class="card-trailing mla card-value dr ac">
+          <text wx:if="{{item.trailingIcon}}" class="iconfont {{item.trailingIcon}} {{item.loading ? 'row-loading' : ''}} ft36 text-strong"></text>
+          <text wx:if="{{item.value}}" class="row-value {{item.valueTone === 'primary' ? 'text-link' : item.valueTone === 'danger' ? 'text-danger' : 'text-muted'}} ft32">{{item.value}}</text>
+          <text wx:if="{{item.arrow}}" class="icon-arrow-right row-arrow ft28 text-l2"></text>
+        </view>
+      </block>
+    </view>
+    <view wx:if="{{index < items.length - 1}}" class="card-line"></view>
+  </block>
+</view>

@@ -1,0 +1,53 @@
+.holder-view{
+  flex: 1;
+  flex-shrink: 0;
+  min-height: 124rpx;
+}
+.dot {
+  width: 20rpx;
+  height: 20rpx;
+  background-color: var(--accent-loading);
+  animation: wave 1.4s infinite ease-in-out;
+  opacity: .9;
+}
+
+.dot1 {
+  animation-delay: 0s;
+}
+
+.dot2 {
+  animation-delay: 0.2s;
+}
+
+.dot3 {
+  animation-delay: 0.4s;
+}
+.loading-container {
+  min-height: 42rpx;
+}
+
+@keyframes wave {
+  0%, 100% {
+    opacity: .9;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: .35;
+    transform: translateY(-10rpx);
+  }
+}
+.stream-user-content{
+  transform: scale(0,0);
+  transform-origin: 100% 0%;
+}
+
+.user-content{
+  max-width: 70vw;
+}
+
+.stream-process-row{
+  overflow: hidden;
+}
+.stream-commentary {
+  line-height: 1.8;
+}

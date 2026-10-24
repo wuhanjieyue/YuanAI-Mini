@@ -1,0 +1,81 @@
+{
+  "entryPagePath": "pages/index/index",
+  "pages": [
+    "pages/index/index",
+    "pages/logPage/logpage",
+    "pages/leftpage/index",
+    "pages/filePage/index",
+    "pages/reasoningPage/index",
+    "pages/sourcesPage/index",
+    "pages/profilePage/index",
+    "pages/voiceChat/index",
+    "pages/setting/index",
+    "pages/conversationFiles/index",
+    "pages/memoryAbout/index",
+    "pages/upgrade/index",
+    "pages/usageLimits/purchase/index",
+    "pages/helpCenter/index",
+    "pages/createTryIt/index",
+    "pages/loginPrompt/index",
+    "pages/createDetail/index",
+    "pages/reportError/index",
+    "pages/aboutWebView/index",
+    "pages/taskEdit/index"
+  ],
+  "subPackages": [
+    {
+      "root": "mdPackage",
+      "name": "md",
+      "pages": [
+        "pages/archivedChat/index",
+        "pages/filePreview/index",
+        "pages/terms/index",
+        "pages/privacy/index",
+        "pages/skillDetail/index",
+        "pages/knowledgeChunks/index",
+        "pages/knowledgeChunk/index"
+      ],
+      "entry": "index.js"
+    }
+  ],
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": [
+        "md"
+      ]
+    }
+  },
+  "window": {
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "@navigationText",
+    "navigationBarBackgroundColor": "@pageBackground",
+    "backgroundColor": "@pageBackground",
+    "backgroundTextStyle": "@backgroundText"
+  },
+  "style": "v2",
+  "renderer": "skyline",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "defaultContentBox": true,
+      "enableScrollViewAutoSize": true,
+      "disableABTest": true,
+      "sdkVersionBegin": "3.7.2",
+      "sdkVersionEnd": "15.255.255"
+    }
+  },
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "darkmode": true,
+  "themeLocation": "theme.json",
+  "requiredPrivateInfos": [
+    "getFuzzyLocation"
+  ],
+  "permission": {
+    "scope.userFuzzyLocation": {
+      "desc": "你的大致位置用于提供本地推荐、新闻、天气及个性化回答"
+    }
+  }
+}

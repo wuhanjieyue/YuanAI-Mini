@@ -1,0 +1,48 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="#ffffff00" />
+<view class="sheet file-preview-sheet bg-l0 text-strong" style="{{themeStyle}};visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+  <view class="move-box dc ac">
+    <view class="move-bg dr ac jb ptb24 plr24">
+      <view class="file-preview-header-side dr ac">
+        <view class="file-preview-action dc ac jc glass-view cradius" bind:tap="closePage" aria-role="button" aria-label="{{i18n.archive.close}}">
+          <text class="iconfont icon-x ft48 text-l0"></text>
+        </view>
+      </view>
+      <text class="info-title ft36" overflow="ellipsis">{{title || i18n.common.document}}</text>
+      <view class="file-preview-header-side dr ac je">
+        <view class="file-preview-action {{loading || failed || downloading ? 'file-preview-action-disabled' : ''}} dc ac jc glass-view cradius" bind:tap="downloadFile" aria-role="button" aria-label="{{i18n.assets.saveFile}}" aria-disabled="{{loading || failed || downloading}}">
+          <text class="iconfont icon-download ft48 text-l0"></text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <vertical-drag-gesture-handler
+    tag="pan"
+    simultaneous-handlers="{{sheetScrollHandlers}}"
+    worklet:should-response-on-move="shouldPanResponse"
+    worklet:should-accept-gesture="shouldPanAccept"
+    worklet:ongesture="handleVerticalDrag"
+    class="file-preview-pan"
+  >
+    <view class="sheet-pan">
+      <vertical-drag-gesture-handler
+        tag="scroll"
+        native-view="scroll-view"
+        simultaneous-handlers="{{ ['pan'] }}"
+        worklet:should-response-on-move="shouldScrollViewResponse"
+        class="file-preview-pan"
+      >
+        <scroll-view class="file-preview-scroll" scroll-y type="list" show-scrollbar="{{false}}" worklet:onscrollupdate="handleScrollUpdate">
+          <view list-item class="file-preview-content plr36 pb64 {{loading || failed ? 'file-preview-content-loading ac jc' : ''}}">
+            <view wx:if="{{loading}}" class="file-preview-loading" style="width:{{loadingCanvasWidthRpx}}rpx;height:{{loadingCanvasHeightRpx}}rpx;">
+              <yb-dot-matrix-loading wx:if="{{pageVisible}}" contained="{{true}}" active="{{true}}" fit-canvas="{{true}}" canvas-width-rpx="{{loadingCanvasWidthRpx}}" canvas-height-rpx="{{loadingCanvasHeightRpx}}" theme="{{effectiveTheme}}" color="{{accentLoadingColor}}" />
+            </view>
+            <view wx:elif="{{failed}}" class="asset-failure-state"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{i18n.assets.previewFailed}}</text></view>
+            <towxml wx:elif="{{kind === 'markdown' && article}}" nodes="{{article}}" openTyper="{{false}}" theme="{{effectiveTheme}}" />
+            <text wx:elif="{{kind === 'text'}}" class="file-preview-text ft32" user-select="{{true}}">{{content}}</text>
+          </view>
+        </scroll-view>
+      </vertical-drag-gesture-handler>
+    </view>
+  </vertical-drag-gesture-handler>
+</view>

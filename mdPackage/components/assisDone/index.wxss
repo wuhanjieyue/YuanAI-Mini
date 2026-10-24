@@ -1,0 +1,4 @@
+.user-content{
+    transform-origin: 100% 0%;
+    max-width: 70vw;
+}

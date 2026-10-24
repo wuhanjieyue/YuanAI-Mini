@@ -1,0 +1,73 @@
+<view class="message-actions {{animateEntrance ? 'message-actions-entrance' : ''}} dr ac text-l1 mt8 mb24 ft40">
+  <view class="message-action-button ac pr32" bind:tap="copy" aria-role="button" aria-label="{{i18n.common.copy}}">
+    <text class="iconfont icon-copy message-action-icon ft36"></text>
+  </view>
+  <view wx:if="{{item.status === 'failed' && !item.messageId}}" class="message-action-button ac pr32" bind:tap="retryLocal" aria-role="button" aria-label="{{i18n.chat.retry}}">
+    <text class="iconfont icon-refresh message-action-icon ft36"></text>
+  </view>
+  <block wx:if="{{!compact && !(item.status === 'failed' && !item.messageId)}}">
+  <view class="feedback-trigger message-action-trigger">
+    <yb-flyout id="feedbackFlyout" popup-width-rpx="360" popup-transform-origin="0% 0%" popup-class="feedback-popup" theme-style="{{themeStyle}}" bind:open="feedbackFlyoutOpened">
+      <view slot="trigger" class="message-action-button ac pr32" aria-role="button" aria-label="{{feedbackValue === 'like' ? i18n.chat.like : feedbackValue === 'dislike' ? i18n.chat.dislike : i18n.chat.feedback}}">
+        <text class="iconfont message-action-icon ft36 {{feedbackValue === 'like' ? 'icon-thumbs-up' : feedbackValue === 'dislike' ? 'icon-thumbs-down' : 'icon-c1e6c4-24-bold-light'}}"></text>
+      </view>
+      <view slot="popup" class="feedback-menu text-l1">
+        <view class="feedback-option plr24 ft28 dr ac" data-value="like" catch:tap="setFeedback" aria-role="button" aria-label="{{i18n.chat.like}}">
+          <text class="iconfont icon-thumbs-up feedback-option-icon mr24 ft32"></text>
+          <text class="feedback-option-label">{{i18n.chat.like}}</text>
+          <text wx:if="{{feedbackValue === 'like'}}" class="iconfont icon-check"></text>
+        </view>
+        <view class="feedback-option plr24 ft28 dr ac" data-value="dislike" catch:tap="setFeedback" aria-role="button" aria-label="{{i18n.chat.dislike}}">
+          <text class="iconfont icon-thumbs-down feedback-option-icon mr24 ft32"></text>
+          <text class="feedback-option-label">{{i18n.chat.dislike}}</text>
+          <text wx:if="{{feedbackValue === 'dislike'}}" class="iconfont icon-check"></text>
+        </view>
+      </view>
+    </yb-flyout>
+  </view>
+  <view wx:if="{{shareEnabled && item.conversationId && item.turnId}}" class="message-action-button ac pr32 message-share-container" aria-label="{{i18n.chat.share}}">
+    <text class="iconfont {{shareLoading || sharePending ? 'icon-loading_flow_iconfont branch-action-loading' : 'icon-share'}} message-action-icon ft36"></text>
+    <button class="message-share-mask" open-type="share" disabled="{{shareLoading}}" bind:tap="shareHaptic" data-share-scope="turn" data-conversation-id="{{item.conversationId}}" data-turn-id="{{item.turnId}}" hover-class="none" aria-label="{{i18n.chat.share}}" style="position:absolute;top:50%;left:0;display:block;width:36rpx;height:36rpx;margin:0;padding:0;border:0;background:transparent;opacity:0.01;z-index:2;box-sizing:border-box;transform:translateY(-50%);" plain="{{true}}"></button>
+  </view>
+  <view class="more-trigger message-action-trigger">
+    <yb-flyout id="moreFlyout" popup-width-rpx="480" popup-transform-origin="0% 0%" popup-class="more-popup" theme-style="{{themeStyle}}" disabled="{{branchLoadingTurnId === item.turnId}}" bind:open="moreFlyoutOpened">
+      <view slot="trigger" class="message-action-button ac pr32" aria-role="button" aria-label="{{i18n.chat.moreActions}}">
+        <text class="iconfont {{branchLoadingTurnId === item.turnId ? 'icon-loading_flow_iconfont branch-action-loading' : 'icon-more'}} message-action-icon ft36"></text>
+      </view>
+      <view slot="popup" class="more-menu pb16 text-l1">
+        <text class="more-time pb8 text-l2">{{timeText}}</text>
+        <view class="more-option more-option-branch dr ac" data-action="branch" catch:tap="selectMoreAction" aria-role="button" aria-label="{{i18n.chat.branch}}">
+          <text class="iconfont icon-worktree more-option-icon tc ft36"></text>
+          <text class="more-option-label ml24 ft32">{{i18n.chat.branch}}</text>
+        </view>
+        <view class="more-option dr ac" data-action="readAloud" catch:tap="selectMoreAction" aria-role="button" aria-label="{{i18n.chat.readAloud}}">
+          <text class="iconfont icon-volume-up more-option-icon tc ft36"></text>
+          <text class="more-option-label ml24 ft32">{{i18n.chat.readAloud}}</text>
+        </view>
+        <view class="more-divider mt8" aria-hidden="true"></view>
+        <text class="more-model pb8 text-l2">{{usedModelText}}</text>
+        <view class="more-option dr ac" data-action="retry" catch:tap="selectMoreAction" aria-role="button" aria-label="{{i18n.chat.retry}}">
+          <text class="iconfont icon-refresh more-option-icon tc ft36"></text>
+          <text class="more-option-label ml24 ft32">{{i18n.chat.retry}}</text>
+        </view>
+        <view wx:if="{{item.feature !== 'searching' && item.feature !== 'imging'}}" class="more-option dr ac" data-action="webSearch" catch:tap="selectMoreAction" aria-role="button" aria-label="{{i18n.chat.searchWeb}}">
+          <text class="iconfont icon-web-search more-option-icon tc ft36"></text>
+          <text class="more-option-label ml24 ft32">{{i18n.chat.searchWeb}}</text>
+        </view>
+        <view wx:if="{{item.feature !== 'thinking' && item.feature !== 'imging'}}" class="more-option dr ac" data-action="deepResearch" catch:tap="selectMoreAction" aria-role="button" aria-label="{{i18n.chat.deepResearch}}">
+          <text class="iconfont icon-deep-thinking more-option-icon tc ft36"></text>
+          <text class="more-option-label ml24 ft32">{{i18n.chat.deepResearch}}</text>
+        </view>
+      </view>
+    </yb-flyout>
+  </view>
+  </block>
+
+  <view wx:if="{{citations.length && !(item.status === 'failed' && !item.messageId)}}" class="sources-entry dr ac" bind:tap="openSources" aria-role="button" aria-label="{{sourcesLabel}}">
+    <view wx:if="{{icons.length}}" class="source-icon-stack pl8 dr ac">
+      <image wx:for="{{icons}}" wx:key="domain" class="source-stack-image lsize bg-l0 cradius" src="{{item.url}}" mode="aspectFit" data-domain="{{item.domain}}" binderror="iconError" />
+    </view>
+    <text wx:else class="iconfont icon-web-search sources-icon mr8 ft32"></text>
+    <text>{{sourcesLabel}}</text>
+  </view>
+</view>

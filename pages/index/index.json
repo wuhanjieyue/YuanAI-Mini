@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "yb-left-center": "/components/_self/yb-left-center/index",
+    "yb-chat-view": "/components/_self/yb-chat-view/index",
+    "yb-library-view": "/components/_self/yb-library-view/index",
+    "yb-tasks-view": "/components/_self/yb-tasks-view/index",
+    "yb-knowledge-view": "/components/_self/yb-knowledge-view/index",
+    "yb-plugins-view": "/components/_self/yb-plugins-view/index",
+    "yb-create-view": "/components/_self/yb-create-view/index"
+  },
+  "backgroundColor": "@pageBackground",
+  "backgroundColorContent": "#ffffff00"
+}

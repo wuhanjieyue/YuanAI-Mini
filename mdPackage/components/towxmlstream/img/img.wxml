@@ -1,0 +1,5 @@
+<generated-images wx:if="{{generatedImages.length}}" images="{{generatedImages}}" theme="{{theme}}" language="{{language}}" bind:unavailable="unavailable"/>
+<block wx:else>
+  <image wx:if="{{attrs.src && !error}}" class="{{attrs.class}}" mode="{{attrs.mode || 'widthFix'}}" src="{{attrs.src}}" style="{{attrs.style}}; width:{{size.w || 2}}px;height:{{size.h || 2}}px;" bindload="load" binderror="error"></image>
+  <text wx:if="{{error}}" class="h2w__imgError ft28 text-hint">{{i18n.renderer.imageFailed}}</text>
+</block>

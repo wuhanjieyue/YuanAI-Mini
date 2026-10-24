@@ -1,0 +1,31 @@
+<view wx:if="{{files.length || images.length}}" class="message-attachments dc ae {{delivery ? 'delivery-attachments mb24' : ''}}">
+  <view wx:if="{{delivery && files.length}}" class="delivery-files bg-l0">
+    <block wx:for="{{files}}" wx:key="index">
+      <view class="delivery-file-row dr ac" hover-class="bg-l1" hover-stay-time="{{80}}" catch:tap="previewFile" data-kind="file" data-index="{{index}}" aria-role="button" aria-label="{{item.unavailableReason ? i18n.assets.fileDeleted : item.name}}">
+        <view class="delivery-file-icon text">
+          <text class="iconfont icon-text delivery-file-outline"></text>
+          <view class="delivery-file-line delivery-file-line-short"></view>
+          <view class="delivery-file-line delivery-file-line-long"></view>
+        </view>
+        <text class="delivery-file-name omiTxt text-muted wt4 ft32" max-lines="1" overflow="ellipsis">{{item.unavailableReason ? i18n.assets.fileDeleted : item.name}}</text>
+        <text class="iconfont icon-arrow-right delivery-file-arrow ft32 text-muted"></text>
+      </view>
+      <view wx:if="{{index < files.length - 1}}" class="delivery-file-divider"></view>
+    </block>
+  </view>
+  <view wx:elif="{{files.length}}" class="attachment-files dc ae">
+    <view wx:for="{{files}}" wx:key="index" class="attachment-file-row bg-content dr ac lradius" catch:tap="previewFile" data-kind="file" data-index="{{index}}">
+      <text class="iconfont attachment-file-icon ft48 {{item.iconClass}}  {{item.colorClass}}"></text>
+      <view class="attachment-file-info dc">
+        <text class="attachment-file-name omiTxt wt5 ft32" overflow="ellipsis">{{item.unavailableReason ? i18n.assets.spaceInsufficient : item.name}}</text>
+        <text class="mt4 text-l2 ft24">{{item.unavailableReason ? i18n.assets.fileDeleted : item.typeLabel}}</text>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{images.length}}" class="attachment-images dr je">
+    <view wx:for="{{images}}" wx:key="index" class="attachment-image mradius" catch:tap="previewFile" data-kind="image" data-index="{{index}}">
+      <view wx:if="{{item.unavailableReason}}" class="attachment-image-empty ac jc ft24 bg-l1 text-l2">{{i18n.assets.deleted}}</view>
+      <image wx:else class="attachment-image mradius" src="{{item.src}}" mode="aspectFill"></image>
+    </view>
+  </view>
+</view>

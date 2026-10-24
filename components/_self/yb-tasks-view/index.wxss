@@ -1,0 +1,13 @@
+@import "/static_wxss/skyother.wxss";
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/asset-cards.wxss';
+.tasks-page { position: relative; overflow: hidden; }
+.tasks-scroll { width: 100%; height: 100%; }
+.task-item { margin: 28rpx 30rpx 0; padding: 30rpx; border: 2rpx solid var(--border-subtle); border-radius: 48rpx; }
+.task-copy { flex: 1; min-width: 0; }
+.task-title { display: block; line-height: 44rpx; }
+.task-subtitle { display: block; padding-top: 24rpx; line-height: 36rpx; }
+.task-create { position: absolute; right: 58rpx; bottom: calc(30rpx + env(safe-area-inset-bottom)); padding: 24rpx 38rpx; border-radius: 60rpx; background: var(--accent-action-bg); color: var(--accent-action-text); font-size: 32rpx; font-weight: 600; }
+.tasks-bottom-space { height: 180rpx; }
+
+.task-pressed { opacity: 0.7; }

@@ -1,0 +1,18 @@
+@import '/static_wxss/skyfontline.wxss';
+@import "/static_wxss/asset-cards.wxss";
+@import "/static_wxss/skyother.wxss";
+@import "/static_wxss/skycolor.wxss";
+
+.knowledge-page { position: relative; overflow: hidden; }
+.knowledge-scroll { width: 100%; height: 100%; box-sizing: border-box; }
+.knowledge-skeleton { height: 297rpx; }
+.knowledge-bottom-space { height: 154rpx; }
+.knowledge-search-row { position: absolute; left: 7%; right: 7%; bottom: 42rpx; height: 96rpx; z-index: 20; }
+.knowledge-search-area { position: absolute; top: 0; left: 0; right: 112rpx; height: 96rpx; }
+.knowledge-add { position: absolute; top: 0; right: 0; width: 96rpx; height: 96rpx; }
+.knowledge-add-trigger { position: relative; top: 0; width: 96rpx; height: 96rpx; }
+.knowledge-add-inactive { pointer-events: none; }
+.knowledge-menu-icon { width: 48rpx; font-size: 40rpx; margin-right: 20rpx; }
+.knowledge-menu-divider { height: 2rpx; margin: 12rpx 28rpx; background-color: var(--ink-12, rgba(0, 0, 0, 0.12)); }
+
+.knowledge-status { position: absolute; left: 16rpx; right: 16rpx; bottom: 12rpx; font-size: 20rpx; border-radius: 8rpx; padding: 4rpx 8rpx; }

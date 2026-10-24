@@ -1,0 +1,6 @@
+<scroll-view scroll-x="{{true}}" enable-flex="{{true}}" enable-passive="{{true}}" class="h2w__yumlBox">
+    <view style="width:{{size.w}}rpx;" class="h2w__yumlView">
+        <image wx:if="{{attr.src && !error}}" class="{{attr.class}}" src="{{attr.src}}" style="width:{{size.w}}rpx; height:{{size.h}}rpx;" mode="{{attr.mode}}" bindload="load" binderror="error"></image>
+        <view wx:if="{{error}}" class="h2w__yumlError tc ft28 text-hint">{{i18n.renderer.chartFailed}}</view>
+    </view>
+</scroll-view>

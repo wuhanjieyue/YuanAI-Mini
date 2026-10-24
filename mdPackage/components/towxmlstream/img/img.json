@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "generated-images": "../../generatedImages/index"
+  }
+}

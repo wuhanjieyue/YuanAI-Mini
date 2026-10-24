@@ -1,0 +1,17 @@
+<view class="measure bubble ptb24 plr36 accent-user-bubble xlradius" style="width:{{bubbleWidth}}px;{{textStyle}}"><text><text wx:if="{{featureLabel}}" class="chat-feature-label">{{featureLabel}} </text>{{content}}</text></view>
+<view class="box full-view" bind:tap="close">
+  <view class="user-content-panel bubble ptb24 plr36 accent-user-bubble xlradius" style="width:{{bubbleWidth}}px;{{textStyle}}">
+    <text><text wx:if="{{featureLabel}}" class="chat-feature-label">{{featureLabel}} </text>{{content}}</text>
+  </view>
+  <view class="handle-view ft36">
+    <view class="handle-action ptb32 plr64 ac" catch:tap="copy">
+      <text class="handle-icon mr32 iconfont icon-copy"></text>
+      <text>{{i18n.common.copy}}</text>
+    </view>
+    <view class="handle-action ptb32 plr64 ac" catch:tap="edit">
+      <text class="handle-icon mr32 iconfont icon-edit"></text>
+      <text>{{i18n.common.edit}}</text>
+    </view>
+  </view>
+
+</view>

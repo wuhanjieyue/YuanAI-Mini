@@ -1,0 +1,47 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="full-bg" bind:tap="closePage" style="{{themeStyle}}"></view>
+<draggable-sheet class="skill-sheet" style="{{themeStyle}};{{accentStyle}};height:{{screenHeight}}px;"
+  initial-child-size="{{0.6}}" min-child-size="{{0}}" max-child-size="{{maxSheetSize}}"
+  snap="{{true}}" snap-sizes="{{[0.6]}}" worklet:onsizeupdate="onSizeUpdate">
+  <scroll-view class="skill-scroll bg-l0" type="list" scroll-y show-scrollbar="{{false}}" associative-container="draggable-sheet">
+    <view wx:if="{{loading || failed}}" list-item class="skill-status plr32 ft28 dc ac jc">
+      <image wx:if="{{failed}}" class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+      <text class="{{failed ? 'asset-empty-copy' : 'text-l2'}}">{{loading ? i18n.common.loading : i18n.common.loadFailed}}</text>
+      <view wx:if="{{failed}}" class="skill-retry ptb24 plr24" bind:tap="loadSkill" aria-role="button" aria-label="{{i18n.common.retry}}">
+        <text>{{i18n.common.retry}}</text>
+      </view>
+    </view>
+    <block wx:else>
+      <view list-item class="skill-header plr32 as">
+        <view class="skill-logo bg-l0 dc ac jc">
+          <image class="skill-logo-image" src="{{item.logoUrl}}" mode="aspectFill" show-menu-by-longpress="{{false}}" aria-hidden="true" />
+        </view>
+        <view class="skill-copy pl24 {{item.installed && !item.globalDefault ? 'skill-copy-deletable' : ''}}">
+          <text class="skill-title wt6 text-strong" max-lines="2" overflow="ellipsis">{{skillTitle}}</text>
+          <text class="skill-description pt8 text-l2" max-lines="3" overflow="ellipsis">{{description}}</text>
+        </view>
+      </view>
+      <view list-item class="skill-update-time plr24 ft24 text-l2"><text>{{updatedAtLabel}}</text></view>
+      <view list-item class="skill-article plr24 pt24">
+        <view class="skill-markdown-frame ptb24 plr24">
+          <towxml wx:if="{{article}}" nodes="{{article}}" openTyper="{{false}}" theme="{{effectiveTheme}}" />
+        </view>
+      </view>
+    </block>
+    <view list-item class="skill-bottom-space safe-holder" style="height:{{screenHeight * 0.2}}px;" aria-hidden="true"></view>
+    <view list-item class="skill-footer-space" aria-hidden="true"></view>
+  </scroll-view>
+  <view wx:if="{{!loading && !failed && item.installed && !item.globalDefault}}" class="skill-delete skill-close dr ac jc glass-view"
+    bind:tap="removeSkill" aria-role="button" aria-label="{{i18n.common.delete}}" aria-disabled="{{removing || trying}}" aria-busy="{{removing}}">
+    <text class="skill-close-icon iconfont icon-delete ft48 text-l0" aria-hidden="true"></text>
+  </view>
+  <view class="skill-close dr ac jc glass-view" bind:tap="closePage" aria-role="button" aria-label="{{i18n.archive.close}}">
+    <text class="skill-close-icon iconfont icon-x ft48 text-l0" aria-hidden="true"></text>
+  </view>
+  <view class="skill-footer">
+    <view class="skill-try-button wt6 dr ac jc {{loading || failed || trying || removing || !item.canTry ? 'skill-try-button-disabled' : ''}} ft32"
+      bind:tap="trySkill" aria-role="button" aria-label="{{kind === 'mcp' ? i18n.plugins.tryMcp : i18n.plugins.trySkill}}" aria-disabled="{{loading || failed || trying || removing || !item.canTry}}">
+      <text>{{trying ? i18n.common.loading : item && !item.canTry ? (kind === 'mcp' ? i18n.plugins.mcpUnavailable : i18n.plugins.tryUnavailable) : (kind === 'mcp' ? i18n.plugins.tryMcp : i18n.plugins.trySkill)}}</text>
+    </view>
+  </view>
+</draggable-sheet>

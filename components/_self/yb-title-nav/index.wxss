@@ -1,0 +1,84 @@
+@import '/static_wxss/asset-cards.wxss';
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+.title-nav {
+  position: absolute;
+  top: 0px;
+  background: linear-gradient(
+        to bottom,
+        var(--glass-92, rgba(255,255,255,0.92)) 0%,
+        var(--glass-92, rgba(255,255,255,0.92)) 65%,
+        rgba(255,255,255,0) 100%
+    );
+}
+
+.title-view{
+    position: relative;
+    width: 100%;
+    flex: none;
+}
+.title-nav-tabs {
+  height: 120rpx;
+  padding-top: 22rpx;
+  padding-bottom: 20rpx;
+  flex: none;
+}
+.title-nav-tab {
+  line-height: 42rpx;
+  padding-top: 18rpx;
+  padding-bottom: 18rpx;
+}
+.more-icon {
+  position: absolute;
+  bottom: 8px;
+  width: 96vw;
+}
+.drawer-trigger {
+  position: relative;
+  width: 92rpx;
+  height: 92rpx;
+  flex: none;
+  display: flex;
+  box-sizing: border-box;
+}
+.drawer-unread-dot {
+  width: 22rpx;
+  height: 22rpx;
+  position: absolute;
+  top: 18rpx;
+  right: 18rpx;
+  z-index: 1;
+}
+.menu-stroke {
+  height: 4rpx;
+  background-color: var(--text-l0, #333333);
+}
+
+.menu-stroke-wide{
+    width: 32rpx;
+}
+
+.menu-stroke-narrow{
+    width: 24rpx;
+}
+
+.menu-stroke-gap{
+    height: 12rpx;
+}
+
+.title-icon{
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+}
+
+.title-icon-arr-down::before{
+    content: "\e7a9";
+}
+
+
+
+.feature-menu-arrow{
+    font-size: 32rpx;
+}

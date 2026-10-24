@@ -1,0 +1,43 @@
+page { background-color: transparent; }
+
+.sheet {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.move-bg {
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  background: linear-gradient(to bottom, var(--glass-80, rgba(255, 255, 255, 0.8)), rgba(0, 0, 0, 0));
+}
+.sources-header {
+  padding-top: 72rpx;
+  padding-bottom: 20rpx;
+}
+.source-row { padding-top: 28rpx; }
+.source-site {
+  line-height: 42rpx;
+}
+.source-icon {
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+.source-domain { flex: 1; min-width: 0; word-break: break-all; }
+.source-title {
+  line-height: 44rpx;
+  word-break: break-word;
+}
+.source-divider { height: 1rpx; margin-top: 28rpx; }
+.sources-footer {
+  padding-bottom: 72rpx;
+  line-height: 36rpx;
+}
+.source-image {
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+.source-description {
+  margin-top: 6rpx;
+  line-height: 42rpx;
+}

@@ -1,0 +1,50 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="archive-view info-page" style="{{themeStyle}};{{accentStyle}}">
+  <yb-notice-capsule id="deletedAssetNotice" custom-content="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}">
+    <text class="ft28 wt5 text-err-l1">{{i18n.assets.fileDeleted}}</text>
+    <view slot="suffix" class="dr ac ft28 wt5 text-l0" catch:tap="openStorageUpgrade" aria-role="button" aria-label="{{i18n.assets.getMoreStorage}}">
+      <text>{{i18n.assets.getMoreStorage}}</text>
+      <text class="iconfont icon-arrow-right ft28"></text>
+    </view>
+  </yb-notice-capsule>
+  <view class="archive-toolbar plr24 ac pb16 pt24 bg-l0">
+    <view class="archive-toolbar-side">
+      <button class="archive-toolbar-button" bind:tap="closePage" style="margin:0;padding:0 24rpx;line-height:76rpx;border:1rpx solid var(--bg-l2);border-radius:48rpx;background:var(--bg-l0);color:var(--text-strong);font-size:28rpx;white-space:nowrap;" plain="{{true}}">{{i18n.archive.close}}</button>
+    </view>
+    <text class="archive-toolbar-title tc wt6 ft32" overflow="ellipsis">{{title}}</text>
+    <view class="archive-toolbar-side archive-toolbar-end je">
+      <button class="archive-toolbar-button {{unarchiving || !canUnarchive ? 'archive-toolbar-disabled' : ''}}" disabled="{{unarchiving || !canUnarchive}}" bind:tap="unarchive" style="margin:0;padding:0 24rpx;line-height:76rpx;border:1rpx solid var(--bg-l2);border-radius:48rpx;background:var(--bg-l0);color:{{unarchiving || !canUnarchive ? 'var(--text-muted)' : 'var(--text-strong)'}};font-size:28rpx;white-space:nowrap;" plain="{{true}}">{{unarchiving ? i18n.common.loading : i18n.archive.unarchive}}</button>
+    </view>
+  </view>
+
+  <scroll-view class="archive-messages" type="list" scroll-y show-scrollbar="{{false}}"
+    associative-container="pop-gesture" scroll-into-view="{{scrollIntoView}}" scroll-with-animation="{{false}}">
+    <view wx:if="{{hasMore && messages.length && !failed}}" list-item class="archive-status ptb32 plr32 tc ft28 text-muted">
+      <button class="archive-load-button" disabled="{{loading}}" bind:tap="loadMessages" style="background:transparent;color:var(--text-muted);font-size:28rpx;border:0;" plain="{{true}}">{{loading ? i18n.common.loading : i18n.archive.loadEarlier}}</button>
+    </view>
+    <view wx:if="{{loading && !messages.length}}" list-item class="archive-status ptb32 plr32 tc ft28 text-muted">{{i18n.common.loading}}</view>
+    <view wx:if="{{failed}}" list-item class="archive-status asset-failure-state ptb32 plr32 tc ft28 text-muted">
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+      <text class="asset-empty-copy">{{i18n.archive.messageLoadFailed}}</text>
+      <button class="archive-load-button" bind:tap="loadMessages" style="background:transparent;color:var(--text-muted);font-size:28rpx;border:0;" plain="{{true}}">{{i18n.common.retry}}</button>
+    </view>
+    <view wx:if="{{!loading && !failed && !messages.length}}" list-item class="archive-status ptb32 plr32 tc ft28 text-muted">{{i18n.archive.noMessages}}</view>
+
+    <view wx:for="{{messages}}" wx:key="messageId" id="{{item.domId}}" list-item class="archive-message plr36 pb32">
+      <view wx:if="{{item.role === 'user'}}" class="archive-user ae">
+        <message-attachments language="{{language}}" attachments="{{item.attachments}}" bind:previewFile="previewMessageAttachment" />
+        <view wx:if="{{item.content}}" class="archive-user-bubble ptb24 ft32 accent-user-bubble">
+          <text user-select="{{true}}">{{item.content}}</text>
+        </view>
+      </view>
+      <view wx:else>
+        <think-item wx:if="{{item.thinking}}" language="{{language}}" think-open="{{item.thinkOpen}}" think-status="{{item.thinkStatus}}" think-duration-text="{{item.thinkDurationText}}" process-trace="{{item.processTrace}}" process-duration-ms="{{item.processDurationMs}}" bind:open="openReasoning" />
+        <generated-images language="{{language}}" images="{{item.contentParts}}" content="{{item.content}}" settled="{{true}}" turn-status="{{item.status}}" theme="{{effectiveTheme}}" bind:unavailable="openDeletedMessageAsset"/>
+        <towxml wx:if="{{item.article}}" nodes="{{item.article}}" openTyper="{{false}}" data-message-id="{{item.messageId}}" catch:artifactlink="previewArtifact" catch:unavailable="openDeletedMessageAsset" theme="{{effectiveTheme}}"/>
+        <message-attachments delivery="{{true}}" language="{{language}}" attachments="{{item.attachments}}" bind:previewFile="previewMessageAttachment" />
+        <assis-act compact="{{true}}" bind:copy="copyMessage" wx:if="{{item.content.length || item.contentParts.length}}" language="{{language}}" item="{{item}}" bind:openSources="openSources" />
+      </view>
+    </view>
+    <view id="archive-bottom" list-item style="height:{{safeBottom}}px"></view>
+  </scroll-view>
+</view>

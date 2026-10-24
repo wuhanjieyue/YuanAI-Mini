@@ -1,0 +1,50 @@
+@import '../_shared/iconfont.wxss';
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+.section-card {
+  overflow: hidden;
+}
+.card-row {
+  min-height: 96rpx;
+  padding: 0 28rpx;
+}
+
+.card-line{
+  width: calc(100% - 56rpx);
+  height: 1rpx;
+  margin-left: 28rpx;
+  background: var(--ink-8, rgba(0, 0, 0, 0.08));
+}
+.row-title,
+.row-action {
+  line-height: 1.45;
+}
+.row-value {
+  line-height: 1.45;
+}
+
+.card-switch{
+  transform: scale(0.94);
+  transform-origin: 100% 50%;
+}
+.row-arrow {
+  font-family: "iconfont" !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-arrow-right:before{
+  content: "\e77b";
+}
+
+.row-loading {
+  animation: loadingRotate 1s linear infinite;
+}
+@keyframes loadingRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.icon-loading_flow_iconfont::before { content: "\e7d3"; }
+.icon-download::before { content: "\e7d2"; }

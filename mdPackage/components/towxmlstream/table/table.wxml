@@ -1,0 +1,28 @@
+<!--table-->
+<block wx:if="{{data.tag === 'table'}}">
+    <view class="h2w__tableParent">
+        <scroll-view scroll-x="{{true}}" clip="{{false}}" enable-passive="{{true}}" class="h2w__tableScroll" style="min-height:{{data.scrollMinHeight}}rpx;">
+            <view class="{{data.attrs.class}}" width="{{data.attrs.width}}" style="{{data.attrs.style}}">
+            <!--thead、tbody、tfoot-->
+            <block wx:if="{{data.children}}" wx:for="{{data.children}}" wx:for-item="item" wx:for-index="sectionIndex" wx:key="sectionIndex">
+                <view wx:if="{{item.tag}}" class="{{item.attrs.class}}">
+                    <!--tr-->
+                    <block wx:if="{{item.children}}" wx:for="{{item.children}}" wx:for-item="item" wx:for-index="rowIndex" wx:key="rowIndex">
+                        <view wx:if="{{item.tag}}" class="{{item.attrs.class}}">
+                            <!--td-->
+                            <block wx:if="{{item.children}}" wx:for="{{item.children}}" wx:for-item="item" wx:for-index="cellIndex" wx:key="cellIndex">
+                                <view wx:if="{{item.tag}}" class="{{item.attrs.class}}" width="{{data.attrs.width}}" style="{{data.attrs.style}}">
+                                    <!--content-->
+                                    <span wx:if="{{item.children}}" class="h2w__inlineContent">
+                                        <decode nodes="{{item}}" stream-mode="{{streamMode}}" context-id="{{contextId}}"/>
+                                    </span>
+                                </view>
+                            </block>
+                        </view>
+                    </block>
+                </view>
+            </block>
+            </view>
+        </scroll-view>
+    </view>
+</block>

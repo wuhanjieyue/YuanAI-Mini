@@ -1,0 +1,8 @@
+@import '/static_wxss/skyfontline.wxss';
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+.task-more { width: 84rpx; height: 84rpx; }
+
+.task-editor-more { width: auto; height: auto; padding: 28rpx; border-radius: 999rpx; box-sizing: border-box; }
+
+.task-editor-more .iconfont { width: 36rpx; height: 36rpx; line-height: 36rpx; }

@@ -1,0 +1,11 @@
+{
+  "component": true,
+  "styleIsolation": "apply-shared",
+  "usingComponents": {
+    "towxml": "../towxmlstream/towxml",
+    "think-item": "../thinkItem/index",
+    "assis-act": "../assisAct/index",
+    "message-attachments": "../messageAttachments/index",
+    "generated-images": "../generatedImages/index"
+  }
+}

@@ -1,0 +1,28 @@
+<view class="reasoning-slider-view" bind:tap="close">
+    <view class="reasoning-backdrop"></view>
+  <view class="reasoning-island dc ptb32 fv ac jc" style="transform-origin: {{originX}}px 100%;">
+    <view class="reasoning-content ac jc">
+      <view class="reasoning-model-summary ac jc mb24 text-l0 ft40 wt6" catch:tap="openModels" aria-role="button" aria-label="{{draftModelName}} {{draftLabel}}">
+        <text>{{draftModelName}} {{draftLabel}}</text>
+        <text class="iconfont icon-arrow-right ft40"></text>
+      </view>
+      <pan-gesture-handler
+        worklet:ongesture="handlePan"
+        worklet:should-accept-gesture="shouldAcceptGesture"
+        worklet:should-response-on-move="shouldResponseOnMove"
+      >
+        <view class="reasoning-track" catch:tap="tapTrack">
+          <view class="reasoning-fill-start"></view>
+          <view class="reasoning-fill-body" style="width: {{fillBodyWidth}}px;"></view>
+          <view
+            wx:for="{{markers}}"
+            wx:key="id"
+            class="reasoning-marker ssize cradius {{index <= draftIndex ? 'is-active' : ''}}  {{item.locked ? 'is-locked' : ''}}"
+            style="left: {{item.left}}px;"
+          ></view>
+          <view class="reasoning-thumb bg-l0 cradius"></view>
+        </view>
+      </pan-gesture-handler>
+    </view>
+  </view>
+</view>

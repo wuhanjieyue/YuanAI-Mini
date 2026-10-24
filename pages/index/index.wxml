@@ -1,0 +1,79 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="{{themeBackground}}" />
+<horizontal-drag-gesture-handler
+  tag="hor"
+  worklet:should-response-on-move="shouldHorResponse"
+  worklet:should-accept-gesture="shouldHorAccept"
+  worklet:ongesture="onSwipeBack"
+>
+  <view class="home-shell bg-gray text-l0 full-view" style="{{themeStyle}};{{temporaryMode ? temporaryAccentStyle : accentStyle}}">
+    <view class="leftview full-view dr">
+      <yb-left-center
+        id="leftCenter"
+        history-controller="{{true}}"
+        current-feature="{{currentFeature}}"
+        temporary-mode="{{temporaryMode}}"
+        language="{{language}}"
+        bind:selectconversation="loadConversation"
+        bind:selectfeature="switchHomeFeature"
+        bind:openstoragecategory="openStorageCategory"
+        bind:requestclose="closeLeftPage"
+      ></yb-left-center>
+      <view class="drawer-close-area" bind:tap="closeLeftPage"></view>
+    </view>
+
+    <view class="full-page full-view rightview z99">
+      <view
+        wx:if="{{currentFeature === 'chat'}}"
+        class="home-feature full-view"
+      >
+        <yb-chat-view
+          id="chatView"
+          language="{{language}}"
+          share-loading="{{shareLoading}}"
+          archive-loading="{{archiveLoading}}"
+          bind:openLeft="openLeft"
+          bind:openFile="openFilePage"
+          bind:openSettings="openSet"
+          bind:openVoice="goVoice"
+          bind:reasoningSliderChange="handleReasoningSliderChange"
+          bind:openReasoning="openReasoningPage" bind:openSources="openSourcesPage"
+          bind:modeChange="handleModeChange"
+          bind:conversationCreated="refreshBranchConversations"
+          bind:conversationAction="handleConversationAction"
+          bind:deleteConversation="deleteCurrentConversation"
+          bind:openConversationFiles="openConversationFiles"
+        ></yb-chat-view>
+      </view>
+
+      <view
+        wx:if="{{currentFeature === 'library'}}"
+        class="home-feature full-view"
+      >
+        <yb-library-view id="libraryView" storage-category="{{storageCategory}}" storage-navigation-id="{{storageNavigationId}}" language="{{language}}" theme-style="{{themeStyle}};{{accentStyle}}" bind:openLeft="openLeft"
+          bind:chatAsset="startAssetChat" bind:actionschange="handleAssetActionsChange"></yb-library-view>
+      </view>
+
+      <view wx:if="{{currentFeature === 'tasks'}}" class="home-feature full-view">
+        <yb-tasks-view id="tasksView" language="{{language}}" theme-style="{{themeStyle}};{{accentStyle}}" bind:openLeft="openLeft" bind:editTask="openTaskEditor" bind:openTaskChat="loadConversation" bind:actionschange="handleAssetActionsChange"></yb-tasks-view>
+      </view>
+      <view wx:if="{{currentFeature === 'knowledge'}}" class="home-feature full-view">
+        <yb-knowledge-view id="knowledgeView" language="{{language}}" theme-style="{{themeStyle}};{{accentStyle}}" bind:openLeft="openLeft"
+          bind:actionschange="handleAssetActionsChange" bind:chatAsset="startAssetChat"></yb-knowledge-view>
+      </view>
+      <view wx:if="{{currentFeature === 'plugins'}}" class="home-feature full-view">
+        <yb-plugins-view id="pluginsView" language="{{language}}" theme-style="{{themeStyle}}" bind:openLeft="openLeft" bind:openSkill="openSkill" bind:trySkill="startSkillTrial" bind:actionschange="handleAssetActionsChange"></yb-plugins-view>
+      </view>
+      <view wx:if="{{currentFeature === 'create'}}" class="home-feature full-view">
+        <yb-create-view
+          id="createView"
+          language="{{language}}"
+          theme-style="{{themeStyle}};{{accentStyle}}"
+          bind:actionschange="handleAssetActionsChange"
+          bind:openLeft="openLeft"
+          bind:openCreation="openCreation"
+          bind:chatAsset="startAssetChat"
+        ></yb-create-view>
+      </view>
+    </view>
+  </view>
+</horizontal-drag-gesture-handler>

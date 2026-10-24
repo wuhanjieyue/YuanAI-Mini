@@ -1,0 +1,27 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<view class="full-bg" bind:tap="closePage" style="{{themeStyle}}"></view>
+<draggable-sheet
+  class="memory-about-sheet"
+  style="{{themeStyle}};height:{{screenHeight}}px;"
+  initial-child-size="{{0.3}}"
+  min-child-size="{{0}}"
+  max-child-size="{{0.3}}"
+  snap="{{true}}"
+  worklet:onsizeupdate="onSizeUpdate"
+>
+  <scroll-view
+    class="memory-about-scroll bg-l0"
+    scroll-y
+    type="list"
+    show-scrollbar="{{false}}"
+    associative-container="draggable-sheet"
+  >
+    <view class="memory-about-card dc ac" style="min-height:{{screenHeight * 0.3}}px;">
+      <text class="memory-about-title wt6 text-strong">{{i18n.memory.about}}</text>
+      <text class="memory-about-description tc mt24 text-l2 ft32">{{i18n.memory.aboutDescription}}</text>
+      <view class="memory-about-button dc ac jc" bind:tap="closePage" aria-role="button" aria-label="{{i18n.memory.gotIt}}">
+        <text class="memory-about-button-text wt6 ft32">{{i18n.memory.gotIt}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</draggable-sheet>

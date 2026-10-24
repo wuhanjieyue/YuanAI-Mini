@@ -1,0 +1,30 @@
+@import "/static_wxss/asset-cards.wxss";
+page { background-color: transparent; }
+
+.util-logo {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 14rpx;
+  flex-shrink: 0;
+}
+
+.util-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet {
+  width: 100%;
+  position: absolute;
+  bottom: 0
+}
+
+.move-bg{
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  background: linear-gradient(
+    to bottom,
+    var(--glass-80, rgba(255,255,255,0.8)),
+    rgba(0, 0, 0, 0)
+  );
+}

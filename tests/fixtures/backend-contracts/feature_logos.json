@@ -1,0 +1,18 @@
+[
+  {
+    "id": "deep_research",
+    "logoUrl": "https://assets.example.test/yuanbytes_aimini/wx988b23423cfc4ec7/app_static/skills/deep-research-4f77b5c062f6.png"
+  },
+  {
+    "id": "image_generation",
+    "logoUrl": "https://assets.example.test/yuanbytes_aimini/wx988b23423cfc4ec7/app_static/skills/image-generation-a3fd29d79e02.png"
+  },
+  {
+    "id": "study",
+    "logoUrl": "https://assets.example.test/yuanbytes_aimini/wx988b23423cfc4ec7/app_static/skills/study-7282bdfd11f2.png"
+  },
+  {
+    "id": "web_search",
+    "logoUrl": "https://assets.example.test/yuanbytes_aimini/wx988b23423cfc4ec7/app_static/skills/web-search-0cc5aa36974e.png"
+  }
+]

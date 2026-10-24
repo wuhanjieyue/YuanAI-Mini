@@ -1,0 +1,128 @@
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+.feature-icon{
+  font-family: "iconfont" !important;
+  font-style: normal;
+}
+
+.icon-gauge::before{
+  content: "\e7ab";
+}
+
+.icon-plugin::before{
+  content: "\e7a8";
+}
+
+.icon-pin::before{
+  content: "\e7a7";
+}
+
+.icon-image::before{
+  content: "\e7a6";
+}
+
+.icon-chat_3_line::before{
+  content: "\e7a3";
+}
+
+.icon-delete::before{
+  content: "\e79b";
+}
+
+.icon-archive::before{
+  content: "\e796";
+}
+
+.icon-file::before{
+  content: "\e791";
+}
+
+.icon-camera::before{
+  content: "\e78e";
+}
+
+.icon-agent::before{
+  content: "\e78b";
+}
+
+.icon-ghost::before{
+  content: "\e780";
+}
+
+.icon-check::before{
+  content: "\e782";
+}
+
+.icon-share::before{
+  content: "\e760";
+}
+.icon-loading_flow_iconfont::before { content: "\e7d3"; }
+.feature-share-loading { animation: feature-share-spin 1.5s linear infinite; }
+@keyframes feature-share-spin { to { transform: rotate(360deg); } }
+
+.feature-popup-view{
+  width: 0;
+  height: 0;
+  position: absolute;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  z-index: 200;
+}
+
+.feature-popup,
+.feature-popup-surface{
+  box-sizing: border-box;
+  background: var(--glass-20, rgba(255, 255, 255, 0.2));
+  border: 2px solid var(--border-glass, #ffffff);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  padding: 6rpx;
+}
+
+.feature-popup-surface{
+  background: var(--glass-72, rgba(255, 255, 255, 0.72));
+  transform-origin: 0% 0%;
+}
+.feature-conversation-title {
+  display: block;
+  padding-bottom: 12rpx;
+  white-space: nowrap;
+}
+.feature-conversation-row {
+  position: relative;
+  min-height: 92rpx;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.feature-popup-more{
+  position: absolute;
+  left: 52rpx;
+  bottom: 36rpx;
+  margin: 0;
+  width: 60vw;
+  transform-origin: 0 100%;
+}
+.feature-mode-row {
+  min-height: 92rpx;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.feature-mode-name {
+  white-space: nowrap;
+}
+.feature-check {
+  width: 56rpx;
+  flex: 0 0 56rpx;
+}
+.feature-more-row {
+  min-height: 112rpx;
+  padding: 0 28rpx;
+}
+.feature-more-icon {
+  width: 72rpx;
+  height: 72rpx;
+  flex: 0 0 72rpx;
+}

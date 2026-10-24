@@ -1,0 +1,155 @@
+<view class="page-left dc" style="{{temporaryMode ? temporaryAccentStyle : accentStyle}}">
+  <view class="title-view move-box dc bg-gray" style="height: {{titleHeight}}px;">
+    <view class="more-icon dr ac jb plr24" >
+      <view class="bl-01 search-view xlradius bg-l0 dr ac jc" style="width: 90%; height: {{searchHeight}}px;">
+        <text class="iconfont icon-search ft36 text-l1 mlr24" ></text>
+        <input class="text-l0" placeholder-class="text-l1"
+          style="width: 100%;"
+          value="{{searchQuery}}"
+          placeholder="{{i18n.common.search}}"
+          bindinput="handleSearchInput"
+        ></input>
+      </view>
+      <text
+        wx:if="{{searchQuery}}"
+        catch:tap="clearSearch"
+        class="iconfont icon-x ft40 text-l0 mlr16"
+      ></text>
+      <text
+        wx:else
+        catch:tap="closePage"
+        class="iconfont icon-arrow-right ft40 text-l0 mlr16"
+      ></text>
+    </view>
+  </view>
+  
+  <scroll-view
+    scroll-y
+    type="list"
+    enable-passive
+    lower-threshold="80"
+    bindscrolltolower="loadMoreConversations"
+    class="chat-view pt24 bg-gray"
+  >
+
+    <view class="feature-actions search-collapsible">
+      <view data-feature="library" catch:tap="openFeature" class="home-action mlr16 mt8 dr ac mradius {{currentFeature === 'library' ? 'bg-l1' : ''}}">
+          <text class="iconfont icon-folde ft40"></text>
+          <text class="ft32 ml36" overflow="ellipsis">{{i18n.home.library}}</text>
+      </view>
+
+      <view data-feature="tasks" catch:tap="openFeature" class="home-action mlr16 mt8 dr ac mradius {{currentFeature === 'tasks' ? 'bg-l1' : ''}}">
+          <text class="iconfont icon-time_line ft40"></text>
+          <text class="ft32 ml36" overflow="ellipsis">{{i18n.home.tasks}}</text>
+      </view>
+
+      <view data-feature="knowledge" catch:tap="openFeature" class="home-action mlr16 mt8 dr ac mradius {{currentFeature === 'knowledge' ? 'bg-l1' : ''}}">
+          <text class="iconfont icon-study ft40"></text>
+          <text class="ft32 ml36" overflow="ellipsis">{{i18n.home.knowledge}}</text>
+      </view>
+
+      <view data-feature="plugins" catch:tap="openFeature" class="home-action mlr16 mt8 dr ac mradius {{currentFeature === 'plugins' ? 'bg-l1' : ''}}">
+          <text class="iconfont icon-plugin ft40"></text>
+          <text class="ft32 ml36" overflow="ellipsis">{{i18n.common.plugin}}</text>
+      </view>
+
+      <view data-feature="create" catch:tap="openFeature" class="home-action mlr16 mt8 dr ac mradius {{currentFeature === 'create' ? 'bg-l1' : ''}}">
+          <text class="iconfont icon-image-create ft40"></text>
+          <text class="ft32 ml36" overflow="ellipsis">{{i18n.home.create}}</text>
+      </view>
+    </view>
+
+    <view class="pinned-section search-collapsible">
+      <view wx:if="{{pinnedConversations.length}}" class="pinned-content">
+        <text class="ft36 ml36 mtb24 wt6" overflow="ellipsis">{{i18n.sidebar.pinned}}</text>
+        <view
+          wx:for="{{pinnedConversations}}"
+          wx:key="conversationId"
+          list-item
+          id="conversation-pinned-{{index}}"
+          data-id="{{item.conversationId}}"
+          data-index="pinned-{{index}}"
+          catch:tap="selectConversation"
+          catch:longpress="openConversationActions"
+          class="conversation-item mlr16 dc jc {{activeConversationId === item.conversationId ? 'active' : ''}}"
+        >
+          <view class="conversation-title-row dr ac">
+            <text class="conversation-title text-strong ft32" overflow="ellipsis">{{item.title}}</text>
+            <text wx:if="{{chatRuns[item.conversationId].status === 'queued' || chatRuns[item.conversationId].status === 'running'}}" class="iconfont icon-loading_flow_iconfont conversation-generating-icon lsize tc ft28 text-l1"></text>
+            <view wx:elif="{{unreadConversations[item.conversationId]}}" class="chat-unread-dot cradius conversation-unread-dot" style="{{accentStyle}}" aria-hidden="true"></view>
+          </view>
+          <text wx:if="{{chatRuns[item.conversationId].status === 'cancelling'}}" class="ft24 text-l1">{{i18n.chat.stopping}}</text>
+        </view>
+        <view wx:if="{{pinnedHasMore}}" catch:tap="loadMorePinnedConversations" class="pinned-expand-row mlr16">
+          <text class="ft32 text-l1">{{i18n.sidebar.expand}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="recent-title search-collapsible">
+      <text class="ft36 ml36 mtb24 wt6" overflow="ellipsis">{{i18n.sidebar.recent}}</text>
+    </view>
+
+    <block wx:if="{{recentConversations.length}}">
+      <view
+        wx:for="{{recentConversations}}"
+        wx:key="conversationId"
+        list-item
+        id="conversation-recent-{{index}}"
+        data-id="{{item.conversationId}}"
+        data-index="recent-{{index}}"
+        catch:tap="selectConversation"
+        catch:longpress="openConversationActions"
+        class="conversation-item mlr16 dc jc {{activeConversationId === item.conversationId ? 'active' : ''}}"
+      >
+        <view class="conversation-title-row dr ac">
+          <text class="conversation-title text-strong ft32" overflow="ellipsis">{{item.title}}</text>
+          <text wx:if="{{chatRuns[item.conversationId].status === 'queued' || chatRuns[item.conversationId].status === 'running'}}" class="iconfont icon-loading_flow_iconfont conversation-generating-icon lsize tc ft28 text-l1"></text>
+          <view wx:elif="{{unreadConversations[item.conversationId]}}" class="chat-unread-dot cradius conversation-unread-dot" style="{{accentStyle}}" aria-hidden="true"></view>
+        </view>
+        <text wx:if="{{chatRuns[item.conversationId].status === 'cancelling'}}" class="ft24 text-l1">{{i18n.chat.stopping}}</text>
+      </view>
+    </block>
+    <view wx:if="{{loadingMoreConversations}}" class="loading-row">
+      <view wx:for="{{[68, 44]}}" wx:key="*this" class="conversation-item mlr16 dc jc conversation-skeleton-item">
+        <view class="conversation-title-row dr ac">
+          <view class="conversation-skeleton-text skeleton-clip mradius" style="width: {{item}}%;">
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{searchLoading}}" class="conversation-list-skeleton">
+      <view wx:for="{{[34, 68, 52, 76, 44]}}" wx:key="*this" class="conversation-item mlr16 dc jc conversation-skeleton-item">
+        <view class="conversation-title-row dr ac">
+          <view class="conversation-skeleton-text skeleton-clip mradius" style="width: {{item}}%;">
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{initialLoadingConversations}}" class="conversation-list-skeleton">
+      <view wx:for="{{[34, 68, 52, 76, 44]}}" wx:key="*this" class="conversation-item mlr16 dc jc conversation-skeleton-item">
+        <view class="conversation-title-row dr ac">
+          <view class="conversation-skeleton-text skeleton-clip mradius" style="width: {{item}}%;">
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{!recentConversations.length && (searchQuery || !pinnedConversations.length) && !searchLoading && !initialLoadingConversations}}" class="conversation-state dc ac jc text-l1">
+      <image class="logo-img" src="/static/logs/glog.png" mode="widthFix"></image>
+      <text class="mt32 mb24">{{conversationLoadFailed || searchLoadFailed ? i18n.sidebar.listLoadFailed : appliedSearchQuery ? i18n.sidebar.noMatches : i18n.sidebar.empty}}</text>
+    </view>
+  </scroll-view>
+  <view class="bottom-actions pt24 pr48 dr ac jb">
+    <view catch:tap="startNewConversation" class="chat-action dr ac jc plr36">
+      <view class="chat-action-glass-edge" aria-hidden="true"></view>
+      <text class="iconfont icon-image-create ft42 chat-action-icon"></text>
+      <text class="ft32 wt9 chat-action-text">{{i18n.home.chat}}</text>
+    </view>
+    <view catch:tap="openSet" class="setting-action glass-view dc ac jc cradius">
+      <text class="iconfont icon-setting ft52 setting-action-icon text-strong"></text>
+    </view>
+  </view>
+</view>

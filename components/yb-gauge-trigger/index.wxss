@@ -1,0 +1,43 @@
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+
+.gauge-trigger {
+  position: relative;
+  transform-origin: 50% 50%;
+}
+
+.gauge-canvas{
+  width: 52rpx;
+  height: 52rpx;
+  position: absolute;
+  left: 6rpx;
+  top: 6rpx;
+}
+
+.gauge-needle{
+  width: 4rpx;
+  height: 18rpx;
+  position: absolute;
+  left: 30rpx;
+  top: 16rpx;
+  z-index: 2;
+  border-radius: 4rpx;
+  background: var(--text-l0, #333333);
+  transform-origin: 50% 100%;
+}
+.gauge-hub {
+  width: 10rpx;
+  height: 10rpx;
+  position: absolute;
+  left: 27rpx;
+  top: 29rpx;
+  z-index: 3;
+  box-sizing: border-box;
+  border: 3rpx solid var(--text-l0, #333333);
+}
+.gauge-hit-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+}

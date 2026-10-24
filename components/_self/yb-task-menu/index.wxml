@@ -1,0 +1,14 @@
+<yb-flyout id="menu" popup-width-rpx="470" popup-transform-origin="100% 0" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}}" bind:open="opened" bind:afterclose="closed">
+  <view slot="trigger" class="task-more dr ac jc {{editor ? 'task-editor-more glass-view' : ''}}" aria-role="button" aria-label="更多任务操作">
+    <text class="iconfont icon-more {{editor ? 'ft36 text-l0' : 'ft40 text-muted'}}"></text>
+  </view>
+  <view slot="popup" class="setting-option-pop-list">
+    <view wx:if="{{editor}}" class="setting-option-pop-item dr ac ft32" data-action="save" bind:tap="choose" aria-role="button"><text class="iconfont icon-check ft36 mr24"></text><text>保存</text></view>
+    <block wx:if="{{task.id}}">
+      <view class="setting-option-pop-item dr ac ft32" data-action="run" bind:tap="choose" aria-role="button"><text class="iconfont icon-play_circle_line ft36 mr24"></text><text>立即运行</text></view>
+      <view class="setting-option-pop-item dr ac ft32" data-action="chat" bind:tap="choose" aria-role="button"><text class="iconfont icon-chat_3_line ft36 mr24"></text><text>打开聊天</text></view>
+      <view class="setting-option-pop-item dr ac ft32" data-action="toggle" bind:tap="choose" aria-role="button"><text class="iconfont {{task.paused ? 'icon-play_circle_line' : 'icon-pause_circle_line'}} ft36 mr24"></text><text>{{task.paused ? '恢复' : '暂停'}}</text></view>
+      <view class="setting-option-pop-item dr ac ft32 text-err-l1" data-action="delete" bind:tap="choose" aria-role="button"><text class="iconfont icon-delete ft36 mr24"></text><text>删除</text></view>
+    </block>
+  </view>
+</yb-flyout>

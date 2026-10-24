@@ -1,0 +1,4 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" />
+<view style="{{themeStyle}}">
+  <web-view src="{{url}}"></web-view>
+</view>

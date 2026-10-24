@@ -1,0 +1,104 @@
+@import '/static_wxss/skyfontline.wxss';
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+
+.reasoning-slider-view{
+  width: 0;
+  height: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+}
+.reasoning-island {
+  min-height: 340rpx;
+  position: absolute;
+  left: 3vw;
+  bottom: 0;
+  padding-right: 20rpx;
+  padding-left: 20rpx;
+  overflow: visible;
+}
+
+.reasoning-backdrop{
+  width: 100vw;
+  min-height: 436rpx;
+  position: absolute;
+  left: 0;
+  bottom: -48rpx;
+  box-sizing: border-box;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--glass-72, rgba(255, 255, 255, 0.72)) 38%, var(--glass-90, rgba(255, 248, 243, 0.9)));
+  opacity: 0;
+}
+.reasoning-content {
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.reasoning-track{
+  width: calc(94vw - 40rpx);
+  height: 104rpx;
+  position: relative;
+  overflow: visible;
+  box-sizing: border-box;
+  border: 1rpx solid var(--text-l3);
+  border-radius: 52rpx;
+  background: var(--glass-96, rgba(255, 255, 255, 0.96));
+  box-shadow: 0 10rpx 32rpx var(--accent-shadow);
+  will-change: contents;
+}
+.reasoning-model-summary {
+  min-height: 72rpx;
+  display: flex;
+}
+
+.reasoning-model-summary .iconfont{
+  margin-left: 12rpx;
+}
+
+.reasoning-fill-start{
+  width: 42rpx;
+  height: 84rpx;
+  position: absolute;
+  left: 8rpx;
+  top: 10rpx;
+  border-radius: 42rpx 0 0 42rpx;
+  background: var(--accent-action-bg);
+}
+
+.reasoning-fill-body{
+  height: 84rpx;
+  position: absolute;
+  left: 50rpx;
+  top: 10rpx;
+  background: var(--accent-action-bg);
+  transform-origin: 0 50%;
+}
+.reasoning-thumb {
+  width: 84rpx;
+  height: 84rpx;
+  position: absolute;
+  left: 0;
+  top: 10rpx;
+  z-index: 3;
+  box-sizing: border-box;
+  border: 4rpx solid var(--accent-action-bg);
+  box-shadow: 0 3rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+.reasoning-marker {
+  position: absolute;
+  top: 43rpx;
+  z-index: 2;
+  margin-left: -9rpx;
+  background: var(--ink-22, rgba(51, 51, 51, 0.22));
+}
+
+.reasoning-marker.is-active{
+  background: var(--accent-action-text);
+  opacity: 0.28;
+}

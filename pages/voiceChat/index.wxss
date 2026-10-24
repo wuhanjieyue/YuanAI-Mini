@@ -1,0 +1,35 @@
+.voice-view{
+  width: 300rpx;
+  height: 300rpx;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.blur-view{
+  position: absolute;
+  width: 300rpx;
+  height: 300rpx;
+  backdrop-filter: blur(8px);background-color: var(--glass-15, rgba(255, 255, 255, 0.15));
+  z-index: 1;
+}
+
+.container {
+  position: absolute;
+  width: 300rpx;
+  height: 300rpx;
+  background: linear-gradient(
+    to bottom,
+    #00dfd8 0%,
+    #00b2f0 25%,
+    #007cf0 45%,
+    #1e3a8a 70%,
+    #5b21b6 100%
+  );
+  border-radius: 40px;
+}
+
+.icon-bg{
+  width: 106rpx;
+  height: 106rpx;
+}

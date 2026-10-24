@@ -1,0 +1,6 @@
+<view class="gauge-trigger dc xxlsize ac jc">
+  <canvas id="gaugeCanvas" type="2d" class="gauge-canvas"></canvas>
+  <view class="gauge-needle"></view>
+  <view class="gauge-hub bg-l0 cradius"></view>
+  <view class="gauge-hit-area xxlsize" catch:tap="open"></view>
+</view>

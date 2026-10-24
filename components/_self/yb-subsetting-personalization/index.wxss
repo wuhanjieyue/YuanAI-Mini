@@ -1,0 +1,80 @@
+@import '/static_wxss/skyfontline.wxss';
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+.personalization-page{
+  width: 90%;
+  margin-left: 5%;
+  padding-bottom: 72rpx;
+  box-sizing: border-box;
+}
+
+.icon-a-fenzu1:before{
+  content: "\e7a1";
+}
+
+.icon-check:before{
+  content: "\e782";
+}
+
+.icon-arrow-right:before{
+  content: "\e77b";
+}
+
+.memory-manage-card,
+.memory-toggle-card{
+  padding: 0 28rpx;
+}
+
+.tone-pop-trigger{
+  min-height: 96rpx;
+  padding: 0 28rpx;
+  box-sizing: border-box;
+}
+
+.traits-card{
+  padding: 0 28rpx;
+  overflow: hidden;
+}
+
+.input-card{
+  padding: 22rpx 28rpx;
+}
+
+.textarea-card{
+  height: 180rpx;
+}
+
+.personalization-row{
+  min-height: 96rpx;
+  box-sizing: border-box;
+}
+
+.personalization-line{
+  width: calc(100% - 24rpx);
+  height: 1rpx;
+  margin-left: 12rpx;
+  background: var(--ink-8, rgba(0, 0, 0, 0.08));
+}
+
+.section-hint-last{
+  margin-bottom: 8rpx;
+}
+.input-control,
+.textarea-control {
+  width: 100%;
+  line-height: 1.6;
+}
+
+.input-control{
+  min-height: 48rpx;
+}
+
+.textarea-control{
+  height: 136rpx;
+}
+
+.memory-switch{
+  transform: scale(0.94);
+  transform-origin: 100% 50%;
+}

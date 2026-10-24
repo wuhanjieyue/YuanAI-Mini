@@ -1,0 +1,19 @@
+<template name="generated-image-card">
+  <view list-item class="generated-image-card bg-l1 {{!item.loaded && !item.unavailableReason && item.status !== 'failed' && !item.loadFailed ? 'generated-image-card-loading' : ''}}" style="width: {{item.widthVw}}vw; height: {{item.heightVw}}vw;">
+    <image wx:if="{{item.url && !item.unavailableReason}}" src="{{item.url}}" mode="aspectFit" class="generated-image" style="opacity: {{item.loaded ? 1 : 0}};" data-id="{{item.artifactId}}" data-url="{{item.url}}" bind:load="imageLoaded" bind:error="imageFailed" catch:tap="preview" show-menu-by-longpress="{{true}}"/>
+    <view wx:if="{{item.unavailableReason}}" class="generated-image-state full-bg dc ac jc text-l2" aria-label="{{i18n.assets.imageDeleted}}">
+      <text class="iconfont icon-image1 generated-image-deleted-icon"></text>
+      <text>{{i18n.assets.imageDeleted}}</text>
+    </view>
+    <view wx:elif="{{item.status === 'failed' || item.loadFailed}}" class="generated-image-state full-bg ac jc text-l2">{{item.loadFailed ? i18n.renderer.imageFailed : i18n.renderer.imageGenerationFailed}}</view>
+    <view wx:elif="{{!item.loaded}}" class="generated-image-state full-bg ac jc text-l2">
+      <yb-dot-matrix-loading wx:if="{{!pageHidden}}" contained="{{true}}" active="{{true}}" fit-canvas="{{true}}" canvas-width-rpx="{{item.canvasWidthRpx}}" canvas-height-rpx="{{item.canvasHeightRpx}}" class="generated-image-loading ac jc" theme="{{theme}}" color="{{loadingColor}}"/>
+    </view>
+  </view>
+</template>
+<view wx:if="{{cards.length}}" class="generated-images mtb24 {{animateEntrance ? 'generated-images-entrance' : ''}}" style="height: {{listHeight}}vw; visibility: {{pageHidden ? 'hidden' : 'visible'}};">
+  <template wx:if="{{cards.length === 1}}" is="generated-image-card" data="{{item: cards[0], i18n, pageHidden, theme, loadingColor}}"/>
+  <scroll-view wx:if="{{cards.length > 1}}" type="list" enable-flex="{{true}}" scroll-x="{{true}}" show-scrollbar="{{false}}" class="generated-images-list">
+    <template wx:for="{{cards}}" wx:key="artifactId" is="generated-image-card" data="{{item, i18n, pageHidden, theme, loadingColor}}"/>
+  </scroll-view>
+</view>

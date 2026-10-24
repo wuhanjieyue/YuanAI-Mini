@@ -1,0 +1,32 @@
+<view class="yb-flyout-trigger dr ac trigger-class" bind:tap="handleTriggerTap" aria-role="button" aria-disabled="{{disabled}}">
+  <view class="yb-flyout-trigger-content {{separateAnchor ? '' : 'yb-flyout-anchor yb-flyout-animated-anchor yb-flyout-anchor-default anchor-class'}}">
+    <slot name="trigger"></slot>
+  </view>
+  <view wx:if="{{separateAnchor}}" class="yb-flyout-anchor yb-flyout-animated-anchor yb-flyout-anchor-separate mla anchor-class">
+    <slot name="anchor"></slot>
+  </view>
+</view>
+
+<root-portal>
+  <view class="yb-flyout-mask {{maskMounted ? 'yb-flyout-mask-mounted' : ''}}  {{portalActive ? 'yb-flyout-mask-active' : ''}} mask-class" style="{{themeStyle}};{{maskStyle}}" catch:tap="handleMaskTap" aria-role="dialog" aria-hidden="{{!portalActive}}">
+    <text class="yb-flyout-origin" aria-hidden="{{true}}">.</text>
+    <view class="yb-flyout-preview" style="{{previewEnabled ? previewStyle : 'display:none;'}}" catch:tap="handlePreviewTap">
+      <slot name="preview"></slot>
+    </view>
+    <view class="yb-flyout-positioner" style="{{positionerStyle}}">
+      <text class="yb-flyout-panel-metrics full-bg" aria-hidden="{{true}}">.</text>
+      <view class="yb-flyout-panel popup-class" style="{{panelStyle}}transform-origin:{{measuredTransformOrigin || popupTransformOrigin}};" catch:tap="handlePopupTap">
+        <scroll-view
+          class="yb-flyout-scroll"
+          scroll-y="{{scrollable && scrollReady}}"
+          show-scrollbar="{{false}}"
+          style="{{scrollStyle}}"
+        >
+          <view class="yb-flyout-popup-content">
+            <slot name="popup"></slot>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+</root-portal>

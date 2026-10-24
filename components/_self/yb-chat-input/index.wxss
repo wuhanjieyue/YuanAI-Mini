@@ -1,0 +1,134 @@
+@import '/static_wxss/skyfontline.wxss';
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+
+
+.icon-x::before { content: "\e78f"; }
+.icon-arrow-up::before { content: "\e77c"; }
+.icon-mic::before { content: "\e77e"; }
+
+.input-content{
+  width: 100%;
+  min-height: 64rpx;
+  position: relative;
+  box-sizing: border-box;
+}
+.round-centered {
+  display: flex;
+  flex-direction: column;
+}
+.row-centered {
+  display: flex;
+  flex-direction: row;
+}
+
+.input-icon-inverse{
+  color: var(--accent-action-text, #FFFFFF);
+}
+
+.input-area {
+  font-size: 1.1rem;
+  letter-spacing: 1.4px;
+  line-height: 42rpx;
+  height: 52rpx;
+  position: absolute;
+  top: 0;
+  left: 76rpx;
+  right: 76rpx;
+  box-sizing: border-box;
+  padding: 11rpx 0 0;
+}
+.input-area-hidden{
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.input-content-disabled .input-area{
+  color: var(--text-l2);
+}
+
+.right-icon,
+.right-icon-send{
+  line-height: 64rpx;
+  background-color: var(--accent-action-bg);
+}
+.stop-square{
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 4rpx;
+  background-color: var(--accent-action-text);
+}
+.right-icon-clear{
+  width: 0;height: 0;line-height: 0;opacity: 0;
+  position: absolute;top:0px;right: 0px;z-index: 4;
+}
+
+.input-action-icon{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+}
+
+.voice-stop{
+  position: absolute;
+  right: 76rpx;
+  bottom: 0;
+  width: 64rpx;
+  height: 64rpx;
+  z-index: 4;
+}
+
+.voice-action-space{
+  height: 64rpx;
+  flex: 0 0 158rpx;
+}
+
+.action-shadow{
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.input-action-disabled,
+.input-action-disabled .action-button{
+  background-color: var(--bg-l2);
+  box-shadow: none;
+}
+
+.input-action-disabled .input-icon{
+  color: var(--text-l2);
+}
+
+.hold-view{
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+  border-radius: 12px;
+  background-color: red;
+  z-index: 99;
+}
+.wave-bar {
+  background-color: var(--text-l0, #333333);
+  width: 4rpx;
+  flex: 0 0 4rpx;
+  margin-right: 6rpx;
+  transition: height 0.12s linear, opacity 0.12s linear;
+}
+
+
+.voice-box{
+  width:calc(100% - 76rpx);height: 64rpx;position: absolute;top:0;left: 76rpx;overflow: hidden;transform-origin: 100% 50%;
+}
+
+.wave-area{
+  flex: auto;
+  height: 64rpx;
+  overflow: hidden;
+}
+
+.dictation-loading { animation:dictation-spin 1.5s linear infinite; }
+.dictation-label { flex-shrink:0; white-space:nowrap; }
+@keyframes dictation-spin { to { transform:rotate(360deg); } }

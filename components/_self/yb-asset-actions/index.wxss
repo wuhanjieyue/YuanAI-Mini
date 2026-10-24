@@ -1,0 +1,25 @@
+@import '/static_wxss/skyfontline.wxss';
+@import "../../../static_wxss/asset-cards.wxss";
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+:host { display: block; width: 0; height: 0; }
+.asset-lifted { height: 100%; box-shadow: 0 20rpx 70rpx rgba(0, 0, 0, 0.22); }
+.asset-lifted.asset-list-row { background-color: var(--bg-gray); border-radius: 32rpx; overflow: hidden; }
+.asset-menu-mask { background-color: rgba(0, 0, 0, 0.18); }
+.asset-menu {
+  padding-right: 0;
+  padding-left: 0;
+}
+.asset-menu-row {
+  padding: 18rpx 30rpx;
+  min-height: 80rpx;
+}
+.asset-menu-icon { font-size: 38rpx; width: 44rpx; margin-right: 20rpx; }
+.asset-menu-label {
+  flex: 1;
+  line-height: 40rpx;
+}
+.asset-menu-arrow { font-size: 38rpx; margin-left: 12rpx; }
+
+.asset-operation-origin { position: absolute; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }

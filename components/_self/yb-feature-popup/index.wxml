@@ -1,0 +1,44 @@
+<yb-flyout
+  id="anchoredFeaturePopup"
+  animate-trigger="{{false}}"
+  popup-width-rpx="{{popupType == 'mode' ? modePopupWidthRpx : 400}}"
+  popup-class="feature-popup-surface"
+  bind:close="handleAnchoredClose" bind:afterclose="handleAnchoredAfterClose" theme-style="{{themeStyle}}">
+  <view slot="popup">
+    <view wx:if="{{popupType == 'mode'}}" class="feature-mode-list">
+      <view wx:for="{{modeOptions}}" wx:key="id" class="feature-mode-row dr plr32 ac" data-id="{{item.id}}" catch:tap="selectMode">
+        <text class="feature-icon feature-icon-large ft36 {{item.icon}}"></text>
+        <text class="feature-mode-name ml24 ft36">{{item.name}}</text>
+        <view class="feature-check tc mla">
+          <text class="feature-icon feature-icon-regular ft32 {{item.id == modeId ? 'icon-check' : ''}}"></text>
+        </view>
+      </view>
+    </view>
+    <view wx:if="{{popupType == 'conversation'}}" class="feature-conversation-list">
+      <text class="feature-conversation-title text-l1 plr32 pt24 ft28" overflow="ellipsis">{{conversationTitle}}</text>
+      <block wx:for="{{conversationActions}}" wx:key="id">
+      <view wx:if="{{(item.id != 'share' || (modeId != 'temporary' && conversationId)) && (modeId != 'temporary' || (item.id != 'pin' && item.id != 'archive'))}}" class="feature-conversation-row dr plr32 ac {{item.tone == 'danger' ? 'feature-text-danger text-err-l1' : ''}}" data-id="{{item.id}}" catch:tap="selectConversationAction" aria-role="button" aria-label="{{item.id == 'pin' && conversationPinned ? unpinLabel : item.name}}">
+        <text class="feature-icon feature-icon-large ft36 {{item.id == 'share' ? (shareLoading ? 'icon-loading_flow_iconfont feature-share-loading' : item.icon) : item.id == 'archive' && archiveLoading ? 'icon-loading_flow_iconfont feature-share-loading' : item.icon}}"></text>
+        <text class="feature-row-name ml24 ft32">{{item.id == 'pin' && conversationPinned ? unpinLabel : item.name}}</text>
+        <button wx:if="{{item.id == 'share'}}" class="feature-share-mask" open-type="share" disabled="{{shareLoading}}" data-share-scope="conversation" data-conversation-id="{{conversationId}}" hover-class="none" aria-label="{{item.name}}" style="position:absolute;top:0;right:0;bottom:0;left:0;display:block;width:100%;height:100%;margin:0;padding:0;border:0;background:transparent;opacity:0.01;z-index:2;box-sizing:border-box;" plain="{{true}}"></button>
+      </view>
+      </block>
+    </view>
+  </view>
+</yb-flyout>
+
+<view class="feature-popup-view" bind:tap="close">
+  <view class="feature-popup feature-popup-more" catch:tap="catchPopup">
+    <view class="feature-more-list">
+      <block wx:for="{{moreOptions}}" wx:key="id">
+        <view wx:if="{{item.id != 'smart' || modeId != 'work'}}" class="feature-more-row dr ac {{item.id == 'smart' && smartMode ? 'feature-text-main text-main-l1' : ''}}" data-id="{{item.id}}" catch:tap="selectMoreFeature">
+          <view class="feature-more-icon dc ac jc bg-l2 cradius">
+            <text class="feature-icon feature-icon-large ft36 {{item.icon}}"></text>
+          </view>
+          <text class="feature-row-name ml24 ft32">{{item.name}}</text>
+          <text wx:if="{{item.id == 'smart' && smartMode}}" class="feature-icon feature-icon-regular ft32 feature-tail mla icon-check"></text>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,13 @@
+<view class="notification-page">
+  <view class="section-group section-group-first">
+    <block wx:if="{{isOverview}}">
+      <yb-subsetting-list-card items="{{summaryItems}}" bind:itemtap="handleNavigate" />
+    </block>
+
+    <block wx:else>
+      <text class="section-title">{{locationsTitle}}</text>
+      <yb-subsetting-list-card items="{{detailItems}}" bind:switchchange="handleSwitchChange" />
+      <text class="section-hint">{{detailHint}}</text>
+    </block>
+  </view>
+</view>

@@ -1,0 +1,125 @@
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skeleton.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+.archived-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.archived-scroll{
+  width: 100%;
+  height: 100%;
+}
+
+.archived-content{
+  width: 92%;
+  min-height: 100%;
+  margin-left: 4%;
+  padding: 156rpx 0 220rpx;
+  box-sizing: border-box;
+}
+.archived-group-title {
+  display: block;
+  margin-top: 40rpx;
+  margin-right: 0;
+  margin-left: 0;
+}
+.archived-row {
+  min-height: 112rpx;
+  display: flex;
+  border-bottom: 1rpx solid var(--ink-10, rgba(0, 0, 0, 0.1));
+  box-sizing: border-box;
+}
+.archived-title {
+  max-width: 100%;
+  font-size: 34rpx;
+  line-height: 1.45;
+}
+.archived-status-layer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 156rpx;
+  bottom: 180rpx;
+  z-index: 2;
+  pointer-events: none;
+}
+.archived-status {
+  width: 100%;
+}
+
+.archived-empty-logo{
+  width: 96rpx;
+}
+
+.archived-loading{
+  width: 100%;
+}
+
+.archived-list-skeleton{
+  width: 100%;
+}
+.archived-skeleton-group {
+  width: 32%;
+  height: 30rpx;
+}
+
+.archived-skeleton-title{
+  height: 34rpx;
+  border-radius: 17rpx;
+}
+
+.archived-search-row{
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  bottom: 42rpx;
+  height: 96rpx;
+  z-index: 3;
+}
+
+.archived-iconfont{
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-search:before{
+  content: "\e77f";
+}
+
+.icon-x:before{
+  content: "\e78f";
+}
+.archived-action {
+  display: flex;
+}
+
+.archived-action-icon{
+  width: 48rpx;
+  margin-right: 20rpx;
+  font-size: 40rpx;
+}
+.archived-eye {
+  width: 38rpx;
+  height: 26rpx;
+  margin-right: 30rpx;
+  border: 3rpx solid var(--text-strong, #1F1F1F);
+  box-sizing: border-box;
+  display: flex;
+}
+.archived-eye-pupil {
+  width: 12rpx;
+  height: 12rpx;
+  border: 3rpx solid var(--text-strong, #1F1F1F);
+  box-sizing: border-box;
+}
+
+.icon-archive:before{ content: "\e796"; }
+.icon-delete:before{ content: "\e79b"; }

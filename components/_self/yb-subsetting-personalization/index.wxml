@@ -1,0 +1,191 @@
+<view class="personalization-page">
+  <block wx:if="{{mode === 'personalization'}}">
+    <view class="section-group section-group-first">
+      <view class="section-card tone-card">
+        <yb-flyout
+          id="basicTonePop"
+          separate-anchor="{{true}}"
+          scrollable="{{true}}"
+          trigger-class="tone-pop-trigger"
+          popup-class="setting-option-pop-surface" theme-style="{{themeStyle}}">
+          <view slot="trigger" class="dr ac ft32">
+            <text class="row-title text-strong">{{i18n.personalization.baseStyle}}</text>
+          </view>
+          <view slot="anchor" class="dr ac ft32">
+            <text class="row-value text-muted">{{selectedBasicToneLabel}}</text>
+            <text class="iconfont icon-a-fenzu1 ft28 text-l2 row-arrow"></text>
+          </view>
+          <view slot="popup" class="setting-option-pop-list" style="height:calc({{basicTonePopupHeightPx}}px - 12rpx - 4px)">
+            <view
+              wx:for="{{basicToneOptions}}"
+              wx:key="value"
+              wx:for-item="option"
+              class="setting-option-pop-item ft32 dr ac"
+              data-field="basicTone"
+              data-value="{{option.value}}"
+              bind:tap="handleOptionChange"
+            >
+              <view class="setting-option-check-slot dr ac jc">
+                <text wx:if="{{option.value == draft.basicTone}}" class="iconfont icon-check ft32 setting-option-check text-main-l1"></text>
+              </view>
+              <view class="setting-option-copy dc jc">
+                <view class="text-l0 {{option.value == draft.basicTone ? 'text-main-l1' : ''}}">{{option.label}}</view>
+                <view wx:if="{{option.desc}}" class="ft28 setting-option-desc text-l2 {{option.value == draft.basicTone ? 'text-main-l1' : ''}}">{{option.desc}}</view>
+              </view>
+            </view>
+          </view>
+        </yb-flyout>
+      </view>
+      <text class="section-hint">{{personalizationCopy.baseStyleDesc}}</text>
+    </view>
+
+    <view class="section-group">
+      <text class="section-title">{{i18n.personalization.traits}}</text>
+      <view class="section-card traits-card">
+        <block wx:for="{{traits}}" wx:key="key" wx:for-index="index">
+          <yb-flyout
+            id="traitPop-{{item.key}}"
+            separate-anchor="{{true}}"
+            scrollable="{{true}}"
+            trigger-class="personalization-row"
+            popup-class="setting-option-pop-surface" theme-style="{{themeStyle}}">
+            <view slot="trigger" class="dr ac ft32">
+              <text class="row-title text-strong">{{item.name}}</text>
+            </view>
+            <view slot="anchor" class="dr ac ft32">
+              <text class="row-value text-muted">{{selectedTraitLabels[item.key]}}</text>
+              <text class="iconfont icon-a-fenzu1 ft28 text-l2 row-arrow"></text>
+            </view>
+            <view slot="popup" class="setting-option-pop-list" style="height:calc({{traitPopupHeightPx}}px - 12rpx - 4px)">
+              <view
+                wx:for="{{traitOptions[item.key]}}"
+                wx:key="value"
+                wx:for-item="option"
+                class="setting-option-pop-item ft32 dr ac"
+                data-field="{{item.key}}"
+                data-value="{{option.value}}"
+                bind:tap="handleOptionChange"
+              >
+                <view class="setting-option-check-slot dr ac jc">
+                  <text wx:if="{{option.value == draft.traits[item.key]}}" class="iconfont icon-check ft32 setting-option-check text-main-l1"></text>
+                </view>
+                <view class="setting-option-copy dc jc">
+                  <view class="text-l0 {{option.value == draft.traits[item.key] ? 'text-main-l1' : ''}}">{{option.label}}</view>
+                  <view wx:if="{{option.desc}}" class="ft28 setting-option-desc text-l2 {{option.value == draft.traits[item.key] ? 'text-main-l1' : ''}}">{{option.desc}}</view>
+                </view>
+              </view>
+            </view>
+          </yb-flyout>
+          <view wx:if="{{index < traits.length - 1}}" class="personalization-line"></view>
+        </block>
+      </view>
+      <text class="section-hint">{{i18n.personalization.traitsDesc}}</text>
+    </view>
+
+    <view class="section-group">
+      <text class="section-title">{{i18n.personalization.customInstructions}}</text>
+      <view class="section-card input-card textarea-card">
+        <textarea
+          class="textarea-control text-strong ft32"
+          maxlength="5000"
+          value="{{draft.customInstruction}}"
+          placeholder="{{personalizationCopy.customInstructionsPlaceholder}}"
+          placeholder-class="input-placeholder"
+          show-confirm-bar="{{false}}"
+          bindinput="handleInput"
+          data-field="customInstruction"
+        ></textarea>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{mode === 'memory'}}">
+    <view class="section-group section-group-first">
+      <view class="section-card memory-toggle-card">
+        <view class="dr ac ft32 personalization-row">
+          <text class="row-title text-strong">{{i18n.personalization.memoryEnabled}}</text>
+          <switch
+            class="mla memory-switch"
+            checked="{{draft.useSavedMemory}}"
+            color="#34C759"
+            bindchange="handleSwitch"
+            data-field="useSavedMemory"
+          ></switch>
+        </view>
+      </view>
+      <text class="section-hint">{{personalizationCopy.memoryDesc}}</text>
+    </view>
+
+    <view class="section-group">
+      <view class="section-card memory-manage-card" bind:tap="handleLongTermMemoryTap">
+        <view class="dr ac ft32 personalization-row">
+          <text class="row-title text-strong">{{i18n.personalization.longTermMemory}}</text>
+          <text class="iconfont icon-arrow-right ft28 text-l2 mla"></text>
+        </view>
+      </view>
+      <text class="section-hint">{{personalizationCopy.longTermMemoryDesc}}</text>
+    </view>
+
+    <view class="section-group">
+      <view class="section-card memory-toggle-card">
+        <view class="dr ac ft32 personalization-row">
+          <text class="row-title text-strong">{{i18n.personalization.chatHistory}}</text>
+          <switch
+            class="mla memory-switch"
+            checked="{{draft.useChatHistory}}"
+            color="#34C759"
+            bindchange="handleSwitch"
+            data-field="useChatHistory"
+          ></switch>
+        </view>
+      </view>
+      <text class="section-hint">{{personalizationCopy.chatHistoryDesc}}</text>
+    </view>
+
+    <view class="section-group">
+      <text class="section-title">{{i18n.personalization.nickname}}</text>
+      <view class="section-card input-card">
+        <input
+          class="input-control text-strong ft32"
+          maxlength="30"
+          value="{{draft.nickName}}"
+          placeholder="{{i18n.profile.name}}"
+          placeholder-class="input-placeholder"
+          bindinput="handleInput"
+          data-field="nickName"
+        />
+      </view>
+    </view>
+
+    <view class="section-group">
+      <text class="section-title">{{i18n.personalization.occupation}}</text>
+      <view class="section-card input-card">
+        <input
+          class="input-control text-strong ft32"
+          maxlength="40"
+          value="{{draft.occupation}}"
+          placeholder="{{i18n.personalization.occupationPlaceholder}}"
+          placeholder-class="input-placeholder"
+          bindinput="handleInput"
+          data-field="occupation"
+        />
+      </view>
+    </view>
+
+    <view class="section-group">
+      <text class="section-title">{{i18n.personalization.details}}</text>
+      <view class="section-card input-card textarea-card">
+        <textarea
+          class="textarea-control text-strong ft32"
+          maxlength="200"
+          value="{{draft.detail}}"
+          placeholder="{{i18n.personalization.detailsPlaceholder}}"
+          placeholder-class="input-placeholder"
+          show-confirm-bar="{{false}}"
+          bindinput="handleInput"
+          data-field="detail"
+        ></textarea>
+      </view>
+    </view>
+  </block>
+</view>

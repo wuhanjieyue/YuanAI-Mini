@@ -1,0 +1,72 @@
+<view class="create-page full-view bg-gray">
+  <yb-title-nav class="z99" feature-name="{{i18n.home.create}}" feature-menu-enabled="{{false}}"
+    tabs="{{tabs}}" active-tab="{{activeTab}}" tabs-disabled="{{actionsOpen}}"
+    bind:tabchange="selectTab" bind:heightchange="handleNavHeightChange" catch:openLeft="openLeft"></yb-title-nav>
+  <scroll-view class="create-scroll" type="custom" scroll-y="{{!actionsOpen}}" enable-passive
+    style="height: {{viewportHeight}};" lower-threshold="100" bind:scrolltolower="loadMoreAssets"
+    refresher-enabled="{{!actionsOpen}}" refresher-triggered="{{refreshing}}" bind:refresherrefresh="refreshAssets">
+    <view style="height: {{navHeight}}px;" aria-hidden="true"></view>
+    <grid-view type="{{activeTab === 'mine' ? 'masonry' : 'aligned'}}" cross-axis-count="2" main-axis-gap="{{gridGap}}" cross-axis-gap="{{gridGap}}" padding="{{gridPadding}}">
+      <view wx:for="{{items}}" wx:key="id" id="asset-{{index}}" data-id="{{item.id}}" data-index="{{index}}"
+        class="asset-card create-asset-card {{selectedId === item.id ? 'asset-card-hidden' : ''}}"
+        style="height: {{activeTab === 'mine' ? item.cardHeight : 411.25}}rpx;"
+        catch:tap="openCreation" bind:longpress="{{activeTab === 'mine' ? 'openAssetActions' : ''}}" aria-role="button" aria-label="{{item.displayName}}">
+        <image wx:if="{{item.url}}" class="asset-photo" src="{{item.url}}" mode="{{activeTab === 'mine' ? 'aspectFit' : 'aspectFill'}}" style="opacity:{{item.loaded ? 1 : 0}};"
+          show-menu-by-longpress="{{false}}" data-id="{{item.id}}" data-url="{{item.url}}" bind:load="assetImageLoaded" bind:error="assetImageFailed" />
+        <view wx:if="{{!item.loaded && !item.loadFailed}}" class="asset-skeleton-fill skeleton-clip" aria-hidden="true"><view class="skeleton-shimmer"></view></view>
+          <view wx:if="{{item.loadFailed}}" class="asset-image-state">{{i18n.assets.imageUnavailable}}</view>
+        <text wx:if="{{item.showTitle && item.loaded}}" class="asset-caption">{{item.displayName}}</text>
+      </view>
+      <view wx:if="{{showSkeleton}}" class="asset-card create-asset-card asset-skeleton skeleton-clip" aria-label="{{i18n.common.loading}}">
+        <view class="asset-skeleton-block skeleton-block"></view>
+        <view class="asset-skeleton-line skeleton-block"></view>
+        <view class="asset-skeleton-line asset-skeleton-short skeleton-block"></view>
+        <view class="skeleton-shimmer" aria-hidden="true"></view>
+      </view>
+    </grid-view>
+    <view wx:if="{{(!loading || failed) && !(failed && !items.length)}}" class="asset-status {{!items.length ? 'asset-empty' : ''}}">
+      <text wx:if="{{loading}}">{{i18n.common.loading}}</text>
+      <block wx:elif="{{failed}}">
+        <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+        <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+        <view class="asset-retry" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
+      </block>
+      <text wx:elif="{{!items.length && (query || activeTab !== 'mine')}}">{{query ? i18n.create.noMatches : i18n.create.empty}}</text>
+      <text wx:elif="{{items.length && !hasMore}}">{{i18n.assets.end}}</text>
+    </view>
+    <view class="create-bottom-space" aria-hidden="true"></view>
+  </scroll-view>
+  <view wx:if="{{activeTab === 'mine' && !query && !items.length && !loading && !failed}}" class="asset-empty-overlay">
+    <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+    <text class="asset-empty-copy">{{i18n.create.empty}}</text>
+  </view>
+  <view wx:if="{{failed && !items.length}}" class="asset-empty-overlay">
+    <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+    <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+    <view class="asset-retry asset-error-action" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
+  </view>
+  <yb-asset-actions id="assetActions" language="{{language}}" theme-style="{{themeStyle}}" bind:statechange="assetActionsChanged" bind:chatAsset="chatAsset" />
+  <view class="create-search-row">
+    <view class="create-search floating-search" aria-role="searchbox" aria-label="{{i18n.create.search}}">
+      <text class="iconfont icon-search floating-search-icon"></text>
+      <input
+        class="floating-search-input"
+        value="{{query}}"
+        maxlength="128"
+        focus="{{inputFocus}}"
+        adjust-position="{{false}}"
+        confirm-type="search"
+        hold-keyboard="{{true}}"
+        placeholder="{{i18n.create.search}}"
+        placeholder-class="floating-search-placeholder"
+        bind:focus="handleSearchFocus"
+        bind:blur="handleSearchBlur"
+        bind:input="handleSearch"
+        bind:keyboardheightchange="handleSearchKeyboardHeightChange" worklet:onkeyboardheightchange="handleSearchKeyboardUpdate"
+      />
+    </view>
+    <view aria-role="button" aria-label="{{i18n.create.clearSearch}}" class="create-clear floating-search-clear" style="pointer-events:{{query ? 'auto' : 'none'}};" bind:tap="clearSearch">
+      <text class="iconfont icon-x floating-search-clear-icon"></text>
+    </view>
+  </view>
+</view>

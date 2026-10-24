@@ -1,0 +1,26 @@
+<view class="data-control-page">
+  <view class="section-group section-group-first">
+    <yb-subsetting-list-card items="{{modelImproveItems}}" bind:switchchange="handleSwitchChange" />
+    <text class="section-hint">{{modelImproveDesc}}<text class="hint-link text-link">{{i18n.common.learnMore}}</text></text>
+  </view>
+
+  <view class="section-group">
+    <text class="section-title">{{i18n.dataControls.voice}}</text>
+    <yb-subsetting-list-card items="{{voiceItems}}" bind:switchchange="handleSwitchChange" />
+    <text class="section-hint">{{voiceDesc}}<text class="hint-link text-link">{{i18n.common.learnMore}}</text></text>
+  </view>
+
+  <view class="section-group">
+    <text class="section-title">{{i18n.dataControls.location}}</text>
+    <yb-subsetting-list-card items="{{locationItems}}" bind:itemtap="handleActionTap" />
+    <text class="section-hint">{{locationDesc}}<text class="hint-link text-link">{{i18n.common.learnMore}}</text></text>
+  </view>
+
+  <view class="section-group">
+    <yb-subsetting-list-card items="{{chatActionItems}}" bind:itemtap="handleActionTap" />
+  </view>
+
+  <view class="section-group">
+    <yb-subsetting-list-card items="{{accountActionItems}}" bind:itemtap="handleActionTap" />
+  </view>
+</view>

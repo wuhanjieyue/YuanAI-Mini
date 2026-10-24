@@ -1,0 +1,27 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "yb-trending-search": "/components/_self/yb-trending-search/index",
+    "yb-models-select": "/components/yb-models-select/index",
+    "assis-done": "/mdPackage/components/assisDone/index",
+    "assis-stream": "/mdPackage/components/assisStream/index",
+    "yb-fun-list": "/components/_self/yb-fun-list/index",
+    "yb-file-list": "/components/yb-file-list/index",
+    "yb-chat-input": "/components/_self/yb-chat-input/index",
+    "yb-gauge-trigger": "/components/yb-gauge-trigger/index",
+    "yb-reasoning-slider": "/components/_self/yb-reasoning-slider/index",
+    "yb-feature-popup": "/components/_self/yb-feature-popup/index",
+    "yb-confirm-dialog": "/components/yb-confirm-dialog/index",
+    "yb-title-nav": "/components/_self/yb-title-nav/index",
+    "yb-log-box": "/components/_self/yb-log-box/index",
+    "yb-user-content": "/components/_self/yb-user-content/index",
+    "yb-notice-capsule": "/components/yb-notice-capsule/index",
+    "yb-read-aloud": "/components/_self/yb-read-aloud/index"
+  },
+  "componentPlaceholder": {
+    "assis-stream": "view",
+    "assis-done": "view",
+    "think-item": "view"
+  }
+}

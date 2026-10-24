@@ -1,0 +1,123 @@
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+.models-icon{
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+}
+
+.icon-arr-up::before{
+  content: "\e7aa";
+}
+
+.icon-arr-down::before{
+  content: "\e7a9";
+}
+
+.icon-lock::before{
+  content: "\e777";
+}
+
+.icon-check::before{
+  content: "\e782";
+}
+
+.models-flyout-content{
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.models-stack{
+  position: absolute;
+  width: 400rpx;
+  bottom: 36rpx;
+}
+
+.models-stack-right{
+  right: 36rpx;
+}
+
+.models-stack-left{
+  left: 36rpx;
+}
+
+.models-base{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  padding-top: 100rpx;
+  box-sizing: border-box;
+  transform-origin: 100% 100%;
+  background: var(--glass-72, rgba(255, 255, 255, 0.72));
+  border: 1rpx solid var(--text-l3);
+  border-color: var(--text-l3, rgba(51, 51, 51, 0.25));
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.models,
+.other-model-panel{
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+.models {
+  position: relative;
+  padding: 6rpx;
+}
+.thinking-model-item {
+  height: 72rpx;
+  padding-left: 0;
+}
+.model-icon-slot {
+  width: 86rpx;
+}
+.other-model-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  z-index: 2;
+  overflow: hidden;
+  transform-origin: 100% 100%;
+  padding: 0 6rpx;
+  background: transparent;
+  border: 1rpx solid transparent;
+  border-radius: 14px;
+  backdrop-filter: none;
+}
+
+.other-model-panel.is-open{
+  background: var(--glass-72, rgba(255, 255, 255, 0.72));
+  border-color: var(--text-l3);
+  border-color: var(--text-l3, rgba(51, 51, 51, 0.25));
+  backdrop-filter: blur(10px);
+}
+.other-model-title {
+  height: 100rpx;
+  min-height: 100rpx;
+  flex: 0 0 100rpx;
+  padding-right: 0;
+}
+.list-divider {
+  width: 80%;
+  height: 1rpx;
+  margin-left: 10%;
+}
+
+.thinking-divider{
+  transform: translateY(-8rpx);
+}
+
+.model-options{
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+.model-option {
+  padding-left: 0;
+}

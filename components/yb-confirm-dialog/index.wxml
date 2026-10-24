@@ -1,0 +1,42 @@
+<view class="dialog-overlay" bind:tap="close" style="{{themeStyle}}">
+    <view class="dialog-container dc ac jc {{centered ? 'dialog-container-centered full-view' : ''}}" style="top: {{anchorPlacement === 'below-start' ? dialogTop + 'px' : 'auto'}}; bottom: {{anchorPlacement === 'below-start' ? 'auto' : dialogBottom + 'px'}}; left: {{dialogLeft}}px;">
+      <view class="dialog-panel dc ac {{dialogVisible ? 'dialog-panel-visible' : ''}}" style="transform-origin: {{dialogTransformOrigin}};" catch:tap="ignoreTap">
+        <view class="dialog-bubble dc plr36 {{centered ? 'dialog-bubble-centered' : ''}}">
+          <view class="dialog-content dc">
+            <text wx:if="{{title}}" class="dialog-title wt6 mb32 ft36 text-strong {{messageAlign === 'left' ? 'dialog-title-left' : 'tc'}}">{{title}}</text>
+            <text wx:if="{{message}}" class="dialog-message ft32 {{mutedText ? 'text-l2' : 'text-strong'}}  {{messageAlign === 'left' ? 'dialog-message-left' : 'tc'}}">{{message}}</text>
+            <input
+              wx:if="{{inputMode}}"
+              class="dialog-input mb32 ft32 bg-l2 text-strong"
+              value="{{inputText}}"
+              focus="{{inputFocused}}"
+              maxlength="50"
+              always-embed="{{true}}"
+              adjust-position="{{false}}"
+              confirm-type="done"
+              bind:input="handleInput"
+              bind:confirm="handleConfirm"
+              bind:keyboardheightchange="handleKeyboardHeightChange"
+            />
+            <view wx:if="{{centered}}" class="dialog-actions dc ac {{!singleAction && (inputMode || horizontalActions) ? 'dialog-actions-horizontal' : ''}}">
+              <view wx:if="{{!singleAction && (inputMode || horizontalActions)}}" class="dialog-btn dr ac jc lradius" catch:tap="close" aria-role="button" aria-label="{{cancelText}}">
+                <text class="dialog-btn-text tc wt5 ft32 text-strong">{{cancelText}}</text>
+              </view>
+              <view class="dialog-btn dr ac jc lradius dialog-confirm-btn {{singleAction ? 'dialog-single-btn' : ''}}  {{danger || confirmTone === 'danger' ? 'dialog-confirm-danger' : ''}}" catch:tap="handleConfirm" aria-role="button" aria-label="{{confirmText}}">
+                <text class="dialog-btn-text tc wt5 ft32 {{singleAction ? 'text-strong' : 'text-r0'}}">{{confirmText}}</text>
+              </view>
+              <view wx:if="{{!singleAction && !inputMode && !horizontalActions}}" class="dialog-btn dr ac jc lradius" catch:tap="close" aria-role="button" aria-label="{{cancelText}}">
+                <text class="dialog-btn-text tc wt5 ft32 text-strong">{{cancelText}}</text>
+              </view>
+            </view>
+            <view wx:else class="dialog-btn dr ac jc lradius" catch:tap="handleConfirm">
+              <text class="dialog-btn-text tc wt5 ft32 {{danger || confirmTone === 'danger' ? 'danger text-err-l1' : (mutedText ? 'text-l2' : 'text-strong')}}">{{confirmText}}</text>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{!centered}}" class="dialog-arrow-wrap {{anchorPlacement === 'below-start' ? 'dialog-arrow-start' : ''}}">
+          <view class="dialog-arrow mla"></view>
+        </view>
+      </view>
+    </view>
+</view>

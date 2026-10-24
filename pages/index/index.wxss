@@ -1,0 +1,27 @@
+.home-shell,
+.full-page,
+.home-feature{
+  position: relative;
+}
+
+.leftview{
+  position: absolute;
+  left: -50vw;
+  top: 0;
+  z-index: 0;
+  opacity: 0;
+}
+
+.drawer-close-area{
+  width: 20vw;
+  height: 100vh;
+}
+.rightview {
+  overflow: hidden;
+}
+
+.home-feature{
+  position: absolute;
+  left: 0;
+  top: 0;
+}

@@ -1,0 +1,5 @@
+<canvas type="2d" class="ec-canvas"
+style="height:{{size.height}}px;"
+bindinit="init"
+bindtouchstart="{{ ec.disableTouch ? '' : 'touchStart' }}" bindtouchmove="{{ ec.disableTouch ? '' : 'touchMove' }}" bindtouchend="{{ ec.disableTouch ? '' : 'touchEnd' }}">
+</canvas>

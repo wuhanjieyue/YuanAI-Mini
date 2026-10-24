@@ -1,0 +1,5 @@
+{
+  "renderer": "webview",
+  "navigationStyle": "default",
+  "disableScroll": true
+}

@@ -1,0 +1,13 @@
+{
+  "usingComponents": {
+    "yb-notice-capsule": "/components/yb-notice-capsule/index",
+    "think-item": "../../components/thinkItem/index",
+    "assis-act": "../../components/assisAct/index",
+    "towxml": "../../components/towxmlstream/towxml",
+    "message-attachments": "../../components/messageAttachments/index",
+    "generated-images": "../../components/generatedImages/index"
+  },
+  "navigationStyle": "custom",
+  "backgroundColorContent": "#ffffff00",
+  "disableScroll": true
+}

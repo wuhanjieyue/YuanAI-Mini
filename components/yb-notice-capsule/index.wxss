@@ -1,0 +1,9 @@
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+:host { display: block; width: 0; height: 0; }
+.notice-origin { position: absolute; top: 0; left: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.notice-capsule { right: auto; width: 86vw; z-index: 1000; gap: 16rpx; transform-origin: 50% 50%; }
+.notice-capsule-hidden { visibility: hidden; pointer-events: none; }
+.notice-capsule-closing { pointer-events: none; }
+.notice-content { flex: 1; min-width: 0; }

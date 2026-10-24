@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "yb-title-nav": "/components/_self/yb-title-nav/index",
+    "yb-task-menu": "/components/_self/yb-task-menu/index"
+  }
+}

@@ -1,0 +1,27 @@
+<yb-flyout id="flyout" animate-trigger="{{false}}" open-on-trigger-tap="{{false}}"
+  popup-width-rpx="640" edge-gap-rpx="0" max-height-ratio="1"
+  popup-transform-origin="{{popupOrigin}}" close-on-mask-tap="{{false}}"
+  bind:masktap="close" bind:afterclose="handleAfterClose" theme-style="{{themeStyle}}">
+  <view slot="popup" class="cascade-stage" style="height:{{stageHeight}}px" catch:tap="close">
+    <view wx:for="{{layers}}" wx:key="depth" wx:for-item="layer"
+      class="cascade-card dc {{alignRight ? 'cascade-right' : 'cascade-left'}} {{layer.trigger ? 'other-model-panel' : 'models-base'}} bshadow cascade-card-{{layer.depth}}" aria-hidden="{{layer.depth != depth}}" catch:tap="handleCardTap"
+      style="width:{{cardWidth}}px;z-index:{{layer.depth + 1}};pointer-events:{{layer.depth == depth ? 'auto' : 'none'}};">
+      <view wx:if="{{layer.trigger}}" class="other-model-title dr ptb32 ac pl64 ft32" catch:tap="back" aria-role="button" aria-label="{{layer.trigger.label}}">
+        <view class="model-label dc jc"><text class="omiTxt">{{layer.trigger.label}}</text></view>
+        <view class="model-icon-slot tc model-icon-tail mla"><text class="models-icon icon-arr-up"></text></view>
+        <view class="cascade-divider bg-l3"></view>
+      </view>
+      <scroll-view class="model-options cascade-options-{{layer.depth}}" type="list" scroll-y show-scrollbar="{{false}}" data-depth="{{layer.depth}}" bind:scroll="rememberScroll">
+        <view wx:for="{{layer.items}}" wx:key="id" list-item
+          class="cascade-item ptb32 ac ft32 {{item.disabled ? 'is-disabled' : ''}}"
+          data-depth="{{layer.depth}}" data-index="{{index}}" catch:tap="choose"
+          aria-role="button" aria-disabled="{{item.disabled || busy}}" aria-label="{{item.label}}">
+          <view class="model-icon-slot tc"></view>
+          <text class="model-label dc jc">{{item.label}}</text>
+          <text wx:if="{{item.hasChildren}}" class="models-icon icon-arr-right tc"></text>
+          <view wx:if="{{item.hasChildren && index != layer.items.length - 1}}" class="cascade-divider bg-l3"></view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</yb-flyout>

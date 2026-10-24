@@ -1,0 +1,4 @@
+@import '/static_wxss/skyother.wxss';
+
+.dr{ display: flex; flex-direction: row; box-sizing: content-box; }
+.dc{ display: flex; flex-direction: column; box-sizing: content-box; }

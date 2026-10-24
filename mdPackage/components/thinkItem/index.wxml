@@ -1,0 +1,31 @@
+<view class="think-row mb24 text-muted ft32" bind:tap="openReasoning">
+  <text max-lines="1" overflow="ellipsis">
+    <block wx:if="{{toolsCompleted || thinkStatus !== 2}}">
+      <text wx:if="{{activityIcon}}" class="iconfont think-icon {{activityIcon}} ft32"></text>
+      <view wx:if="{{activityIcon}}" class="think-icon-gap"></view>
+      <text class="think-title text-muted wt4 ft32">{{activityTitle}}</text>
+      <text wx:if="{{processingOnly}}" class="think-status text-muted wt4 ft32"> {{thinkDurationText}}</text>
+    </block>
+    <block wx:else>
+      <text wx:if="{{turnStatus === 'cancelling'}}" class="think-status text-muted wt4 ft32">{{i18n.reasoning.stopping}}</text>
+      <text wx:elif="{{turnStatus === 'failed'}}" class="think-status text-muted wt4 ft32">{{i18n.common.requestFailed}}</text>
+      <text wx:else class="think-status text-muted wt4 ft32">{{stopped ? i18n.reasoning.stoppedPrefix : i18n.reasoning.processed}} {{thinkDurationText}}{{stopped ? i18n.reasoning.stoppedSuffix : ''}}</text>
+    </block>
+    <block wx:if="{{!processingOnly}}">
+      <view class="think-icon-gap"></view>
+      <text class="iconfont think-arrow text-hint icon-arrow-right ft32"></text>
+    </block>
+    <block wx:if="{{!toolsCompleted && thinkStatus === 1 && thinkText}}">
+      <view class="think-gap"></view>
+      <text class="think-text text-muted wt4 ft32">{{thinkText}}</text>
+    </block>
+  </text>
+  <span wx:if="{{!toolsCompleted && thinkStatus !== 2 && (!timelineNode || nodeRunning) && turnStatus !== 'cancelling' && turnStatus !== 'cancelled' && turnStatus !== 'failed'}}" class="think-shimmer-overlay" aria-hidden="true">
+    <text wx:if="{{activityIcon}}" class="iconfont think-icon {{activityIcon}} ft32"></text>
+    <view wx:if="{{activityIcon}}" class="think-icon-gap"></view>
+    <view class="think-shimmer-clip">
+      <text class="think-title text-muted wt4 ft32">{{activityTitle}}</text>
+      <view class="think-title-shimmer full-bg"></view>
+    </view>
+  </span>
+</view>

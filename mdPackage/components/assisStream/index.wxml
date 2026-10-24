@@ -1,0 +1,43 @@
+<view class="ass-full dc" >
+  <view wx:if="{{!responseOnly}}" class="dc ae mtb24 mlr36" >
+    <message-attachments language="{{language}}" attachments="{{attachments}}" bind:previewFile="previewFile"></message-attachments>
+    <view id="stream-user-{{turnKey}}" class="stream-user-content {{attachments.length ? 'mt16' : ''}}" catch:longpress="pressContent">
+      <view class="user-content xlradius accent-user-bubble ptb24 plr36">
+        <text><text wx:if="{{featureLabel}}" class="chat-feature-label">{{featureLabel}} </text>{{streamContent}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="plr36 ass-stram-item" >
+    <view class="loading-container mb24 dr ac js" wx:if="{{!imging && terminalStatus !== 'cancelling' && terminalStatus !== 'cancelled' && !settled && !turnCreated && !thinkingStarted && !processTrace.length && askStatus}}">
+      <view class="dot mtb8 mlr8 cradius dot1"></view>
+      <view class="dot mtb8 mlr8 cradius dot2"></view>
+      <view class="dot mtb8 mlr8 cradius dot3"></view>
+    </view>
+    <view wx:elif="{{terminalStatus === 'cancelling' || terminalStatus === 'cancelled' || thinkStatus > 0}}">
+      <think-item processing-only="{{timelineMode && !processCollapsed && terminalStatus !== 'cancelling' && terminalStatus !== 'cancelled'}}" turn-status="{{terminalStatus}}" turn-key="{{turnKey}}" language="{{language}}" response-started="{{responseStarted}}" thinking-started="{{thinkingStarted}}" think-open="{{thinkOpen}}" think-status="{{thinkStatus}}" stopped="{{terminalStatus === 'cancelling' || terminalStatus === 'cancelled'}}" think-text="{{timelineMode ? '' : thinkVisibleText}}" think-duration-text="{{thinkDurationText}}" process-trace="{{displayProcessTrace || processTrace}}" full-process-trace="{{timelineMode ? timelineTrace : processTrace}}" process-duration-ms="{{processDurationMs}}" bind:open="open"></think-item>
+    </view>
+    <view class="stream-process">
+      <view wx:if="{{timelineMode}}" class="stream-process-content">
+        <block wx:for="{{timelineEntries}}" wx:key="id">
+          <view wx:if="{{!processCollapsed && !item.hidden}}" id="stream-process-row-{{index}}" class="stream-process-row">
+            <view wx:if="{{item.kind === 'commentary'}}" class="stream-commentary wt4 mb16 ft32 text">
+              <text>{{item.displayText}}</text>
+            </view>
+            <think-item wx:else timeline-node="{{true}}" node-ended="{{item.playbackStopped}}" completed-tools="{{item.completedTools}}" turn-status="{{terminalStatus}}" turn-key="{{turnKey}}" language="{{language}}" think-status="{{1}}" think-text="{{item.displayText}}" process-trace="{{[item.node]}}" full-process-trace="{{timelineTrace}}" process-duration-ms="{{processDurationMs}}" think-duration-text="{{thinkDurationText}}" bind:open="open"/>
+          </view>
+          <generated-images wx:if="{{item.images.length}}" id="stream-images-{{index}}" language="{{language}}" images="{{item.images}}" referenced-ids="{{markdownImageIds}}" content="{{mdText.text}}" settled="{{settled}}" turn-status="{{terminalStatus}}" animate-entrance="{{true}}" theme="{{theme}}" bind:unavailable="unavailableImage"/>
+        </block>
+        <view wx:if="{{!processCollapsed && timelineWaitingTools}}" id="stream-process-waiting" class="stream-process-row">
+          <think-item thinking-started="{{true}}" think-status="{{1}}" turn-status="{{terminalStatus}}" turn-key="{{turnKey}}" language="{{language}}" full-process-trace="{{timelineTrace}}" process-duration-ms="{{processDurationMs}}" think-duration-text="{{thinkDurationText}}" bind:open="open"/>
+        </view>
+      </view>
+    </view>
+    <generated-images wx:if="{{!timelineSummaryPending}}" language="{{language}}" images="{{timelineMode ? standaloneImages : generatedImages}}" referenced-ids="{{markdownImageIds}}" content="{{mdText.text}}" settled="{{settled}}" turn-status="{{terminalStatus}}" animate-entrance="{{true}}" theme="{{theme}}" bind:unavailable="unavailableImage"/>
+    <towxml wx:for="{{markdownKeys}}" wx:key="*this" id="streamMarkdown" data-markdown-key="{{item}}" mdText="{{mdText}}" images="{{generatedImages}}" files="{{generatedFiles}}" speed="{{10}}" isFinish="{{isFinish}}" freeze="{{stopping}}" catch:artifactlink="previewArtifact" bind:imagecards="markdownImageCards" catch:unavailable="unavailableImage" bind:stopped="onTypingStopped" bindfinish="finish" theme="{{theme}}"/>
+    <message-attachments wx:if="{{settled}}" delivery="{{true}}" language="{{language}}" attachments="{{generatedFiles}}" bind:previewFile="previewFile"/>
+  <assis-act language="{{language}}" theme="{{theme}}" haptic-feedback="{{hapticFeedback}}" branch-loading-turn-id="{{branchLoadingTurnId}}" animate-entrance="{{true}}" model-name="{{modelName}}" share-enabled="{{modeId != 'temporary'}}" share-loading="{{shareLoading}}" wx:if="{{settled && (terminalStatus === 'cancelled' || assistantItem.content || generatedImages.length || generatedFiles.length)}}" item="{{assistantItem}}" bind:copy="copy" bind:retryLocal="retryLocal" bind:openSources="openSources" bind:share="share" bind:moreAction="moreAction"></assis-act>
+  </view>
+  <view wx:if="{{layoutOwner}}" class="holder-view"></view>
+
+</view>

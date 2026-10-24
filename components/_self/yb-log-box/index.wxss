@@ -1,0 +1,24 @@
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skycolor.wxss';
+
+
+.log-empty-state{
+  position: absolute;
+  width: 100%;
+  height:100%;
+  top: 38%;
+}
+
+.temporary-description{
+  width: 60%;
+}
+.temporary-more {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-color: var(--text-l1, #333333BF);
+}
+
+.logo-bg{
+  width: 100px;
+  height: 100px;
+}

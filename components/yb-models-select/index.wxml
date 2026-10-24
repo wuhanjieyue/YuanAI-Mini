@@ -1,0 +1,51 @@
+<yb-flyout
+  id="modelFlyout"
+  animate-trigger="{{false}}"
+  close-on-mask-tap="{{false}}"
+  edge-gap-rpx="0"
+  popup-width-rpx="560"
+  popup-transform-origin="100% 100%"
+  popup-class="models-flyout-panel"
+  bind:masktap="handleMaskTap"
+  bind:close="handleFlyoutClose" theme-style="{{themeStyle}}">
+  <view slot="popup" class="models-flyout-content" style="height:{{modelsFlyoutHeightRpx}}rpx" catch:tap="handleMaskTap">
+    <view class="models-stack {{alignRight ? 'models-stack-right' : 'models-stack-left'}}" style="height: {{modelsBaseHeightRpx}}rpx;">
+      <view class="models-base bshadow" catch:tap="handleCardTap">
+        <!-- 思考程度层：固定在底部，不参与其他模型的高度动画 -->
+        <view class="models dc">
+          <view class="list-divider bg-l3 thinking-divider"></view>
+          <view wx:for="{{effortOptions}}" wx:key="id" wx:for-item="item" class="thinking-model-item dr ptb16 ac pr64 ft32" data-kind="effort" data-id="{{item.id}}" catch:tap="changeModel">
+            <view class="model-icon-slot tc">
+              <text class="models-icon {{item.locked ? 'icon-lock' : (item.id == effortId ? 'icon-check' : '')}}"></text>
+            </view>
+            <view class="model-label dc jc">
+              <view>{{item.label}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 模型层：与整体弹层底部对齐，展开时随外层向上增长并覆盖思考程度层 -->
+      <view class="other-model-panel dc {{otherOpen ? 'is-open bshadow' : ''}}" catch:tap="handleCardTap">
+        <view class="other-model-title dr ptb32 ac pl64 ft32" catch:tap="toggleOther">
+          <view class="model-label dc jc">
+            <text>{{selectedModelName}}</text>
+          </view>
+          <view class="model-icon-slot tc model-icon-tail mla">
+            <text class="models-icon {{otherOpen ? 'icon-arr-up' : 'icon-arr-down'}}"></text>
+          </view>
+        </view>
+
+        <scroll-view class="model-options" type="list" scroll-y show-scrollbar="{{false}}">
+          <view class="list-divider bg-l3"></view>
+          <view wx:for="{{modelOptions}}" wx:key="id" list-item data-kind="model" data-id="{{item.id}}" class="model-option dr ptb32 ac pr64 ft32" catch:tap="changeModel">
+            <view class="model-icon-slot tc">
+              <text class="models-icon {{item.locked ? 'icon-lock' : (item.id == modelId ? 'icon-check' : '')}}"></text>
+            </view>
+            <text>{{item.name}}</text>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+  </view>
+</yb-flyout>

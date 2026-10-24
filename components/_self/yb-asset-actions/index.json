@@ -1,0 +1,9 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "yb-flyout": "/components/yb-flyout/index",
+    "yb-confirm-dialog": "/components/yb-confirm-dialog/index",
+    "yb-notice-capsule": "/components/yb-notice-capsule/index"
+  }
+}

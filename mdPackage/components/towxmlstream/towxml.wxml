@@ -1,0 +1,15 @@
+<view class="h2w wt4 ft32 h2w-{{theme}}" catch:codecopy="copyCode">
+	<yb-notice-capsule id="copyNotice" duration="{{500}}" theme-style="{{copyNoticeTheme}}">
+		<view slot="suffix" class="h2w__copyNoticeClose bg-l2 cradius dc ac jc" catch:tap="hideCopyNotice" aria-role="button" aria-label="{{copyCloseLabel}}">
+			<text class="iconfont icon-x ft24"></text>
+		</view>
+	</yb-notice-capsule>
+	<view class="h2w__main">
+		<block wx:if="{{openTyper}}">
+			<block wx:for="{{batchIds}}" wx:for-index="i" wx:for-item="item" wx:key="i">
+				<batch theme="{{theme}}" batchId="{{item}}" context-id="{{contextId}}"/>
+			</block>
+		</block>
+		<decode theme="{{theme}}" wx:else nodes="{{staticNodes}}" stream-mode="{{openTyper}}" context-id="{{contextId}}"/>
+	</view>
+</view>

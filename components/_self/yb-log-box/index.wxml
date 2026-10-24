@@ -1,0 +1,19 @@
+<view class="log-empty-state dc ac">
+  <block wx:if="{{temporaryMode}}">
+    <view class="dr ac jc">
+      <text class="mr8">{{i18n.chat.temporary}}</text>
+    </view>
+    <view class="ft24 text-l1 mt16 tc temporary-description">
+      <text>{{i18n.chat.temporaryNotice}}<text class="temporary-more text-l1" catch:tap="showTemporaryInfo">{{i18n.common.learnMore}}</text></text>
+    </view>
+  </block>
+  <block wx:else>
+    <image class="logo-bg" src="/static/logs/glog.png" mode="widthFix"></image>
+    <view class="dr ac jc mt24">
+      <text class="mr8">{{i18n.chat.work}}</text>
+    </view>
+    <view class="ft24 text-l1 mt16 tc" style="width:100%">
+      <text>{{workMode ? i18n.chat.workReady : i18n.chat.ready}}</text>
+    </view>
+  </block>
+</view>

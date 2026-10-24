@@ -1,0 +1,14 @@
+<view class="h2w__audio mtb16 bg-l1 {{tips.state || 'h2w__audio--loading'}}" bind:tap="playAndPause">
+    <view class="h2w__audioIcon"></view>
+    <view class="h2w__audioCover">
+        <image class="h2w__audioLoading" src="loading.svg"></image>
+        <image class="h2w__audioCoverImg" src="{{data.attrs.poster}}"></image>
+    </view>
+    <view class="h2w__audioInfo pt16">
+        <view class="h2w__audioTips ft20">{{tips.text || 'Error'}}</view>
+        <view class="h2w__audioSchedule" style="width:{{time.schedule}};"></view>
+        <view class="h2w__audioTitle wt7 ft24">{{data.attrs.name}}</view>
+        <view class="h2w__audioAuthor ft20">{{data.attrs.author}}</view>
+        <view class="h2w__audioTime ft20">{{time.currentTime || '00:00:00'}} / {{time.duration || '00:00:00'}}</view>
+    </view>
+</view>

@@ -1,0 +1,91 @@
+<page-meta page-style="{{themeStyle}}" root-background-color="#ffffff00" />
+
+<horizontal-drag-gesture-handler   tag="hor"
+        worklet:should-response-on-move="shouldHorResponse"
+        worklet:should-accept-gesture="shouldHorAccept" 	
+        worklet:ongesture="onSwipeBack"  >
+
+<view class="leftview full-view dr" style="{{themeStyle}}">
+      <yb-left-center
+        id="leftCenter"
+        history-controller="{{false}}"
+        temporary-mode="{{temporaryMode}}"
+        current-feature="{{currentFeature}}"
+        language="{{applicationSettings.language}}"
+        bind:selectconversation="selectConversation"
+        bind:selectfeature="selectFeature"
+        bind:openstoragecategory="openStorageCategory"
+        bind:openconversationactions="openConversationActions"
+        bind:conversationrenamed="conversationRenamed"
+        bind:conversationdeleted="conversationDeleted"
+        bind:conversationarchived="conversationArchived"
+        bind:refreshconversations="refreshConversations"
+        bind:loadmoreconversations="loadMoreConversations"
+        bind:loadmorepinnedconversations="loadMorePinnedConversations"
+        bind:requestclose="closePage"
+        bind:contentready="drawerContentReady"
+      >
+      </yb-left-center>
+      <view style="width: 20vw;height: 100vh;" bind:tap="closePage"></view>
+    </view>
+</horizontal-drag-gesture-handler>
+
+<yb-flyout
+  id="conversationActions"
+  animate-trigger="{{false}}"
+  preview-enabled="{{true}}"
+  preview-width-rpx="{{675}}"
+  preview-height-ratio="{{0.4}}"
+  scrollable="{{true}}"
+  popup-class="setting-option-pop-surface"
+  bind:previewtap="openConversationPreview"
+  bind:close="closeConversationActions"
+  bind:afterclose="conversationActionsHidden" theme-style="{{themeStyle}}">
+  <view slot="preview" class="conversation-preview setting-option-pop-surface dc je text-l0" style="{{themeStyle}};{{accentStyle}}" catch:touchmove="preventPreviewScroll" aria-role="button" aria-label="{{i18n.home.chat}}">
+    <view wx:if="{{conversationPreviewLoading}}" class="conversation-preview-loading ptb24 plr24 dc">
+      <view wx:for="{{[0,1,2,3,4]}}" wx:key="*this" class="conversation-preview-skeleton skeleton-clip {{index % 2 === 0 ? 'conversation-preview-skeleton-user' : ''}}">
+        <view class="skeleton-block conversation-preview-skeleton-line"></view>
+        <view class="skeleton-block conversation-preview-skeleton-line conversation-preview-skeleton-short"></view>
+        <view class="skeleton-shimmer"></view>
+      </view>
+    </view>
+    <view wx:elif="{{conversationPreviewFailed || !conversationPreview.length}}" class="conversation-preview-empty dc ac jc text-l2 ft28"><image wx:if="{{conversationPreviewFailed}}" class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="{{conversationPreviewFailed ? 'asset-empty-copy' : ''}}">{{conversationPreviewFailed ? i18n.chat.sessionLoadFailed : i18n.archive.noMessages}}</text></view>
+    <view wx:else class="conversation-preview-messages">
+      <assis-done wx:for="{{conversationPreview}}" wx:key="messageId" item="{{item}}" index="{{index}}" language="{{applicationSettings.language}}" theme="{{effectiveTheme}}" show-actions="{{false}}" />
+    </view>
+  </view>
+  <view slot="popup" class="setting-option-pop-list" style="{{themeStyle}}">
+    <view
+      wx:for="{{conversationActions}}"
+      wx:key="value"
+      class="setting-option-pop-item ft32 dr ac"
+      data-value="{{item.value}}"
+      bind:tap="changeConversationAction"
+    >
+      <view class="setting-option-check-slot dr ac jc" style="margin-right:24rpx">
+        <text class="iconfont {{item.icon}} ft40 {{item.tone === 'danger' ? 'text-err-l1' : ''}}"></text>
+      </view>
+      <view class="setting-option-copy dc jc">
+        <view class="text-l0 {{item.tone === 'danger' ? 'text-err-l1' : ''}}">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+</yb-flyout>
+
+<yb-confirm-dialog
+  id="conversationDialog"
+  style="position: relative; z-index: 999;"
+  title="{{conversationDialog.title}}"
+  message="{{conversationDialog.message}}"
+  centered="{{conversationDialog.centered}}"
+  input-mode="{{conversationDialog.inputMode}}"
+  input-value="{{conversationDialog.inputValue}}"
+  danger="{{conversationDialog.danger}}"
+  confirm-tone="{{conversationDialog.confirmTone}}"
+  message-align="{{conversationDialog.messageAlign}}"
+  muted-text="{{conversationDialog.mutedText}}"
+  confirm-text="{{conversationDialog.confirmText}}"
+  cancel-text="{{i18n.common.cancel}}"
+  validation-text="{{i18n.validation.nameRequired}}"
+  bind:confirm="confirmConversationAction"
+  bind:close="conversationDialogClosed" theme-style="{{themeStyle}}"></yb-confirm-dialog>

@@ -1,0 +1,9 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "yb-title-nav": "/components/_self/yb-title-nav/index",
+    "yb-flyout": "/components/yb-flyout/index",
+    "yb-feature-popup": "/components/_self/yb-feature-popup/index"
+  }
+}

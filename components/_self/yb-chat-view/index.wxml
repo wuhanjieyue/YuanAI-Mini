@@ -1,0 +1,162 @@
+<view class="chat-shell full-view" style="{{modeId == 'temporary' ? temporaryAccentStyle : accentStyle}}">
+    <view class="chat-disclaimer">{{i18n.chat.disclaimer}}</view>
+    <view class="dc chat-page full-view">
+      <!-- 空状态由 log-box 统一渲染 -->
+      <yb-log-box
+        wx:if="{{chats.length == 0 && sessionTurns.length == 0 && ! streamStatus && ! historyInitialLoading}}"
+        style="position:absolute;top:0;left:0;width:100vw;height:100%;z-index:1;"
+        temporary-mode="{{modeId == 'temporary'}}"
+        work-mode="{{modeId == 'work'}}"
+        language="{{language}}"
+        bind:showTemporaryInfo="showTemporaryInfo"
+      ></yb-log-box>
+<!-- 头部导航栏 -->
+      <yb-title-nav id="titleNav" class="z99" language="{{language}}" feature-name="{{isScheduledTask ? i18n.home.tasks : modeName}}" catch:openLeft="openLeft" catch:showFeatures="showFeatures"></yb-title-nav>
+      <yb-notice-capsule id="uploadNotice" custom-content="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{modeId == 'temporary' ? temporaryAccentStyle : accentStyle}}">
+        <text class="ft28 wt5 text-err-l1">{{uploadNoticeText}}</text>
+        <view wx:if="{{deletedAssetNotice}}" slot="suffix" class="dr ac ft28 wt5 text-l0" catch:tap="openStorageUpgrade" aria-role="button" aria-label="{{i18n.assets.getMoreStorage}}">
+          <text>{{i18n.assets.getMoreStorage}}</text>
+          <text class="iconfont icon-arrow-right ft28"></text>
+        </view>
+        <view wx:else slot="suffix" class="upload-notice-close bg-l2 cradius dc ac jc" catch:tap="hideUploadFailure" aria-role="button" aria-label="{{i18n.archive.close}}">
+          <text class="iconfont icon-x ft24"></text>
+        </view>
+      </yb-notice-capsule>
+      <yb-read-aloud id="readAloud" language="{{language}}" theme-style="{{themeStyle}}" bind:error="showSpeechError" />
+      
+      <scroll-view bind:scroll="rememberScroll" scroll-top="{{restoreScrollTop}}" scroll-into-view="{{sivId}}" scroll-with-animation="{{true}}" scroll-y="{{!historyInitialLoading}}" reverse  type="list" enable-passive="{{true}}" class="chat-view"  	worklet:onscrollupdate="upScroll" worklet:onscrollend="endScroll" 	bind:scrolltolower="toTop">
+        <view  id="assis-up"></view>
+        <view wx:for="{{sessionTurns}}" wx:key="turnKey" list-item wx:if="{{!item.historyInline}}" id="turn-row-{{item.turnKey}}" style="min-height: {{item.preservedHeight || 0}}px;">
+          <template is="session-response" data="{{item, language, effectiveTheme, hapticFeedback: applicationSettings.hapticFeedback}}"/>
+        </view>
+        <view hidden="{{sessionTurns.length > 0 && !sessionTurns[0].historyInline}}" class="history-layout-holder" list-item></view>
+        <view wx:for="{{chats}}" wx:for-index="index" wx:key="index" list-item id="history-row-{{index}}" style="min-height: {{item.preservedHeight || 0}}px;">
+          <template wx:if="{{item.regenerateTurn}}" is="session-response" data="{{item: item.regenerateTurn, language, effectiveTheme, hapticFeedback: applicationSettings.hapticFeedback}}"/>
+          <view wx:elif="{{item.role == 'branchPoint'}}" class="branch-point text-l2 dr ac" aria-label="{{'分支自 ' + item.origin.title}}">
+            <view class="branch-point-rule"></view>
+            <view class="branch-point-label dr ac jc" data-conversation-id="{{item.origin.conversationId}}" catch:tap="openBranchSource" aria-role="button">
+              <text class="branch-point-prefix">分支自 </text><text class="branch-point-source omiTxt">{{item.origin.title}}</text>
+            </view>
+            <view class="branch-point-rule"></view>
+          </view>
+          <assis-done wx:else language="{{language}}" model-name="{{item.modelName || (modeId == 'work' ? workModelName : reasoningModelName)}}" item="{{item}}" share-enabled="{{modeId != 'temporary'}}" share-loading="{{shareLoading}}" branch-loading-turn-id="{{branchLoadingTurnId}}" index="{{index}}" render-token="{{historyRenderToken}}" id="assisdone_{{index}}"  bind:showUserContent="showUserContent" bind:renderready="historyRenderReady" bind:openReasoning="openReasoning" bind:openSources="openSources" bind:copy="copyMessage" bind:previewFile="previewMessageAttachment" bind:unavailableImage="openDeletedMessageAsset" bind:regenerate="regenerate" bind:share="shareMessage" bind:moreAction="moreAction" theme="{{effectiveTheme}}" haptic-feedback="{{applicationSettings.hapticFeedback}}"></assis-done>
+        </view>
+        <view wx:if="{{loadingOlderMessages}}" class="loading-row dc ac jc">
+          <view class="older-message-skeleton skeleton-clip">
+            <view class="older-message-line sradius skeleton-block"></view>
+            <view class="older-message-line sradius older-message-line-short skeleton-block"></view>
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+        <view class="title-view"></view>
+      </scroll-view>
+      <view hidden="{{!historyInitialLoading}}" class="history-initial-loading plr36 dc ac je">
+        <view wx:if="{{historyInitialLoading}}" class="chat-history-skeleton">
+          <view class="chat-skeleton-user-row dc ae">
+            <view class="chat-skeleton-user skeleton-clip"><view class="skeleton-shimmer" aria-hidden="true"></view></view>
+          </view>
+          <view class="chat-skeleton-assistant lradius skeleton-clip">
+            <view class="chat-skeleton-line skeleton-block mt16"></view>
+            <view class="chat-skeleton-line chat-skeleton-line-medium skeleton-block mt16"></view>
+            <view class="chat-skeleton-line chat-skeleton-line-short skeleton-block mt16"></view>
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+          <view class="chat-skeleton-user-row chat-skeleton-user-row-second mt64 dc ae">
+            <view class="chat-skeleton-user chat-skeleton-user-short skeleton-clip"><view class="skeleton-shimmer" aria-hidden="true"></view></view>
+          </view>
+          <view class="chat-skeleton-assistant lradius skeleton-clip">
+            <view class="chat-skeleton-line skeleton-block mt16"></view>
+            <view class="chat-skeleton-line chat-skeleton-line-medium skeleton-block mt16"></view>
+            <view class="skeleton-shimmer" aria-hidden="true"></view>
+          </view>
+        </view>
+      </view>
+      <view class="input-view dc ac jc" >
+
+        <!-- 回到最底按钮 -->
+        <view bind:tap="back2Top" class="cradius xxlsize tc dc ac jc top-icon rshadow bg-gray mb24" >
+          <text  class="iconfont icon-arrow-down ft32" ></text>
+        </view>
+<!--          底部输入-->
+        <view class="dr ae bottom-box fv">
+          <yb-trending-search wx:if="{{trendingSearchMounted}}" items="{{recommendationItems}}" loading="{{recommendationsRefreshing}}" bind:select="selectRecommendation" bind:refresh="refreshRecommendations" bind:exitcomplete="handleTrendingSearchExitComplete" visible="{{trendingSearchVisible}}" class="trending-search-slot" style="pointer-events: {{trendingSearchVisible ? 'auto' : 'none'}};"></yb-trending-search>
+          <view class="bl-01 bg-l0 dc input-box plr24 xlradius {{modeId == 'work' ? 'input-box-disabled' : ''}}" >
+              <!-- 模式 -->
+              <yb-fun-list id="funList" language="{{language}}" feature="{{feature}}" skill="{{selectedSkill}}" catch:closeFun="closeFun" bind:heightchange="changeFunHeight"></yb-fun-list>
+              <!-- 文件列表 -->
+              <yb-file-list id="fileList" files="{{files}}" bind:deleteFile="deleteFile" bind:heightchange="changeFileHeight"></yb-file-list>
+              <view class="dr ae input-row">
+                <view wx:if="{{leftIcon == 'moreFun'}}" class="cradius file-icon input-more-icon xxlsize dc ac jc" catch:tap="moreFun">
+                  <text class="iconfont icon-plus ft48 text-l0"></text>
+                </view>
+                <view wx:if="{{leftIcon == 'stop'}}" data-id="icon" class="cradius tc dc ac jc input-stop-icon xxlsize" catch:tap="cancelVoice" aria-role="button" aria-label="{{i18n.common.cancel}}">
+                  <text class="iconfont icon-x ft40 voice-cancel-icon"></text>
+                </view>
+                <view hidden="{{leftIcon == 'stop' || modeId != 'work'}}" class="model-summary text-l0 dr ac je" catch:tap="showModels">
+                  <text class="ft24 wt6 model-summary-name">{{workModelName}}</text>
+                  <text class="ft24 ml8 model-summary-effort">{{workEffortLabel}}</text>
+                </view>
+                <view wx:if="{{smartMode && leftIcon != 'stop' && modeId != 'work' && !pageHidden}}" class="gauge-trigger-slot xxlsize dr ac je">
+                  <yb-gauge-trigger progress="{{reasoningProgress}}" popup-open="{{(reasoningSliderOpen && !reasoningSliderClosing) || modelPickerOpen}}" accent-color="{{modeId == 'temporary' ? temporaryAccentActionColor : accentActionColor}}" bind:open="showReasoningSlider" theme="{{effectiveTheme}}"></yb-gauge-trigger>
+                </view>
+                <!-- 输入框 -->
+                <yb-chat-input id="chatInput" language="{{language}}" style="width: 100%;flex: 1;min-width: 0;" inputFocus="{{inputFocus}}" settings="{{settings}}" accessory-inset-rpx="{{smartMode ? (modeId == 'work' ? 220 : 56) : 0}}" disabled="{{modeId == 'work'}}" disabled-placeholder="{{modeId == 'work' ? i18n.chat.inDevelopment : ''}}" haptic-feedback="{{applicationSettings.hapticFeedback}}" bind:startChat="startChat" bind:endStream="endStream"
+                bind:getAskText="updateInputValue" bind:focusChange="updateInputFocus" bind:changeLeftIcon="changeLeftIcon" bind:openPlugins="openPlugins" bind:voiceError="voiceError" bind:sendTranscription="sendTranscription"></yb-chat-input>
+              </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <yb-feature-popup
+      id="featurePopup"
+      style="z-index: 200;"
+      mode-options="{{modeOptions}}"
+      mode-popup-width-rpx="{{modePopupWidthRpx}}"
+      more-options="{{moreOptions}}"
+      mode-id="{{modeId}}"
+      smart-mode="{{smartMode}}"
+      conversation-title="{{currentConversationTitle}}"
+      conversation-id="{{currentConversationId}}"
+      conversation-pinned="{{currentConversationPinned}}"
+      unpin-label="{{i18n.chat.unpin}}"
+      conversation-actions="{{conversationActions}}"
+      share-loading="{{shareLoading}}"
+      archive-loading="{{archiveLoading}}"
+      bind:selectMode="selectMode"
+      bind:selectMoreFeature="selectMoreFeature"
+      bind:selectConversationAction="selectConversationAction"
+      bind:close="handleFeaturePopupClose" bind:afterclose="handleFeaturePopupAfterClose" theme-style="{{themeStyle}};{{modeId == 'temporary' ? temporaryAccentStyle : accentStyle}}"></yb-feature-popup>
+    <yb-confirm-dialog
+      id="conversationDeleteDialog"
+      style="position: relative; z-index: 300;"
+      title="{{i18n.sidebar.deleteChat}}"
+      message="{{i18n.sidebar.deletePrompt}}"
+      danger="{{true}}"
+      confirm-tone="danger"
+      message-align="left"
+      muted-text="{{true}}"
+      anchor-placement="below-start"
+      confirm-text="{{i18n.common.delete}}"
+      bind:confirm="confirmConversationDelete"
+      bind:close="conversationDeleteDialogClosed" theme-style="{{themeStyle}};{{modeId == 'temporary' ? temporaryAccentStyle : accentStyle}}"></yb-confirm-dialog>
+    <yb-confirm-dialog
+      id="temporaryInfoDialog"
+      style="position: relative; z-index: 300;"
+      title="{{i18n.chat.temporary}}"
+      message="{{temporaryInfoMessage}}"
+      message-align="left"
+      muted-text="{{true}}"
+      centered="{{true}}"
+      single-action="{{true}}"
+      confirm-text="{{i18n.common.confirm}}" theme-style="{{themeStyle}};{{modeId == 'temporary' ? temporaryAccentStyle : accentStyle}}"></yb-confirm-dialog>
+    <yb-models-select id="modelsSelect" models="{{workModels}}" model-id="{{modeId == 'work' ? workModelSelection.modelId : reasoningModelId}}" effort-id="{{modeId == 'work' ? workModelSelection.effortId : reasoningEffortId}}" bind:changeModel="changeModel" bind:locked="showLockedPlan" bind:close="closeModels" theme-style="{{themeStyle}};{{modeId == 'temporary' ? temporaryAccentStyle : accentStyle}}" class="z199"></yb-models-select >
+    <view class="reasoning-slider-layer">
+      <yb-reasoning-slider id="reasoningSlider" current-model-id="{{reasoningModelId}}" efforts="{{reasoningEfforts}}" current-effort-id="{{reasoningEffortId}}" current-effort-label="{{reasoningEffortLabel}}" bind:commit="commitReasoning" bind:openModels="showModels" bind:locked="showLockedPlan" bind:closing="startCloseReasoningSlider" bind:close="closeReasoningSlider"></yb-reasoning-slider>
+    </view>
+    <yb-user-content id="userContent" language="{{language}}" content="{{contentBig}}" haptic-feedback="{{applicationSettings.hapticFeedback}}" bind:showOldContent="showOldContent" bind:editContent="editContent" class="z199"></yb-user-content>
+  </view>
+
+<template name="session-response">
+<assis-stream language="{{language}}" id="assis-stream-{{item.turnKey}}" turn-key="{{item.turnKey}}" model-name="{{item.modelName}}" branch-loading-turn-id="{{branchLoadingTurnId}}" share-loading="{{shareLoading}}" layout-owner="{{item.layoutOwner}}" response-only="{{item.responseOnly}}" skip-user-entrance="{{item.skipUserEntrance}}" stream-content="{{item.streamContent}}" content-parts="{{item.contentParts}}" attachments="{{item.attachments}}" thinking="{{item.thinking}}" imging="{{item.imging}}" searching="{{item.searching}}" studying="{{item.studying}}" mode-id="{{item.modeId}}" reasoning-enabled="{{item.reasoningEnabled}}" feature="{{item.feature}}" feature-label="{{item.featureLabel}}" conversation-id="{{item.conversationId}}" ephemeral-messages="{{item.ephemeralMessages}}" bind:streammounted="streamMounted" bind:stramready="stramready" bind:conversationready="conversationReady" bind:assetschanged="handleAssetsChanged" bind:finish="finish" bind:showUserContent="showUserContent" bind:openReasoning="openReasoning" bind:openSources="openSources" bind:copy="copyMessage" bind:retryLocal="retryLocalTurn" bind:previewFile="previewMessageAttachment" bind:unavailableImage="openDeletedMessageAsset" bind:regenerate="regenerate" bind:share="shareMessage" bind:moreAction="moreAction" theme="{{effectiveTheme}}" haptic-feedback="{{hapticFeedback}}"></assis-stream>
+</template>

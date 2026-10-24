@@ -1,0 +1,76 @@
+<page-meta page-style="{{themeStyle}}" root-background-color="#ffffff00" />
+<view class="full-bg" bind:tap="closePage" style="{{themeStyle}}"></view>
+
+<draggable-sheet
+  class="sheet"
+  initial-child-size="{{0.5}}"
+  min-child-size="{{0}}"
+  max-child-size="{{1}}"
+  snap="{{true}}"
+  snap-sizes="{{[0.5, 1]}}"
+  worklet:onsizeupdate="onSizeUpdate"
+  style="{{themeStyle}}">
+  <view class="move-box dc ac">
+    <view class="move-bg dc ac ptb24">
+      <view class="sradius move-line"></view>
+    </view>
+  </view>
+
+  <scroll-view
+    associative-container="draggable-sheet"
+    class="scrollable sheet-scroll glass"
+    scroll-y
+    type="list"
+    enable-passive="{{true}}"
+    show-scrollbar="{{false}}"
+  >
+    <view class="reasoning-header plr36" list-item>
+      <text class="reasoning-title wt6 text-l0">{{i18n.reasoning.title}}</text>
+      <text wx:if="{{stopping}}" class="reasoning-text ft32 text-l2">{{i18n.reasoning.stopping}}</text>
+    </view>
+
+    <view wx:for="{{processTrace}}" wx:key="id" class="reasoning-step dr as plr36 {{index === 0 ? 'mt48' : ''}}" list-item>
+      <view class="reasoning-rail reasoning-step-rail dc ac">
+        <view class="reasoning-icon text-l1 cradius dc ac jc">
+          <text class="iconfont ft36 {{item.activityIcon}}"></text>
+        </view>
+        <view wx:if="{{index < processTrace.length - 1}}" class="reasoning-line bg-l2"></view>
+      </view>
+      <view class="reasoning-body ml24 {{item.stage === 'public_commentary' ? 'reasoning-body-commentary' : ''}}">
+        <view class="reasoning-tool-title dr ac" bind:tap="toggleTool" data-id="{{item.id}}">
+          <text class="reasoning-label wt5 ft36 text-l0 {{item.stage === 'public_commentary' ? 'reasoning-commentary' : ''}}">{{item.title}}</text>
+          <text wx:if="{{item.hasDetails}}" class="iconfont reasoning-expand-icon ft36 text-l0 {{item.expanded ? 'icon-arr-up' : 'icon-arr-down'}}"></text>
+        </view>
+        <view wx:if="{{item.hasDetails}}" class="reasoning-details reasoning-details-{{item.detailKey}}">
+          <scroll-view class="reasoning-details-scroll" style="height:{{item.detailHeight}}px;" scroll-y="{{item.expanded}}"
+            type="list" enable-passive="{{true}}" show-scrollbar="{{false}}">
+            <view class="reasoning-details-content" data-id="{{item.id}}" list-item>
+              <text wx:if="{{item.public.summary}}" class="reasoning-text ft32 text-l1">{{item.public.summary}}</text>
+              <text wx:if="{{item.error.message}}" class="reasoning-text ft32 text-l2">{{item.error.message}}</text>
+              <text wx:if="{{item.public.query}}" class="reasoning-text ft32 text-l1">{{item.public.query}}</text>
+              <text wx:for="{{item.public.files}}" wx:for-item="fileName" wx:key="*this" class="reasoning-text ft32 text-l1">{{fileName}}</text>
+              <text wx:if="{{item.detailText}}" class="reasoning-text ft32 reasoning-response text-l1">{{item.detailText}}</text>
+              <text wx:for="{{item.public.sources}}" wx:for-item="source" wx:key="url" class="reasoning-text ft32 text-l1">{{source.title}} · {{source.url}}</text>
+              <text wx:for="{{item.details}}" wx:for-item="detail" wx:key="*this" class="reasoning-text ft32 text-l1">{{detail}}</text>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{!active}}" class="reasoning-complete mt8 dr as plr36" list-item>
+      <view class="reasoning-rail reasoning-complete-rail dc ac">
+        <view class="reasoning-complete-icon text-l1 cradius dc ac jc">
+          <text class="iconfont {{failed ? 'icon-system-error' : 'icon-check'}}"></text>
+        </view>
+      </view>
+      <view class="reasoning-complete-copy dc ml24">
+        <text wx:if="{{failed}}" class="reasoning-complete-title wt5 text-l0">{{i18n.common.requestFailed}}</text>
+        <text wx:elif="{{stopped}}" class="reasoning-complete-title wt5 text-l0">{{i18n.reasoning.stoppedPrefix}} {{durationText}}{{i18n.reasoning.stoppedSuffix}}</text>
+        <text wx:elif="{{durationText}}" class="reasoning-complete-title wt5 text-l0">{{i18n.reasoning.processed}} {{durationText}}</text>
+        <text wx:else class="reasoning-complete-title wt5 text-l0">{{i18n.reasoning.processed}}</text>
+        <text class="reasoning-complete-note text-l2 ft32">{{failed ? i18n.common.retry : stopped ? i18n.chat.stopped : i18n.common.done}}</text>
+      </view>
+    </view>
+  </scroll-view>
+</draggable-sheet>

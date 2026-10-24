@@ -1,0 +1,17 @@
+<view class="recommendations dc plr24 pb24 {{visible ? 'recommendations-visible' : ''}}" aria-hidden="{{!visible}}">
+  <block wx:if="{{loading}}">
+    <view wx:for="{{[76, 58, 68]}}" wx:key="*this" class="recommendation-row ac" aria-hidden="true">
+      <view class="recommendation-skeleton skeleton-clip mradius" style="width: {{item}}%;">
+        <view class="skeleton-shimmer"></view>
+      </view>
+    </view>
+  </block>
+  <block wx:else>
+    <view wx:for="{{items}}" wx:key="id" data-id="{{item.id}}" class="recommendation-row ac" catch:tap="selectItem" aria-role="button" aria-label="{{item.text}}">
+      <text class="recommendation text-l1 ft32" max-lines="1" overflow="ellipsis">{{item.text}}</text>
+      <view wx:if="{{index == 0}}" class="refresh-button xxlsize ac jc ft40 text-l1" catch:tap="refresh" aria-role="button" aria-label="刷新热门趋势搜索">
+        <text class="iconfont icon-refresh-line"></text>
+      </view>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,67 @@
+@import '/static_wxss/skycolor.wxss';
+@import '/static_wxss/skyother.wxss';
+@import '/static_wxss/skyfontline.wxss';
+
+.purchase-backdrop {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: transparent;
+}
+
+.purchase-sheet {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+.purchase-scroll {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 32px 32px 0 0;
+}
+.purchase-card {
+  width: 100%;
+  padding: 36rpx 40rpx calc(28rpx + env(safe-area-inset-bottom));
+}
+.purchase-title {
+  flex-shrink: 0;
+  font-size: 38rpx;
+  line-height: 54rpx;
+}
+.purchase-description {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  width: 100%;
+  font-size: 22rpx;
+  line-height: 38rpx;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.purchase-plan {
+  display: flex;
+  flex-shrink: 0;
+  width: calc(100% - 36rpx);
+  min-height: 132rpx;
+  padding-top: 0;
+  padding-bottom: 0;
+  border: 2rpx solid var(--text-strong);
+  border-radius: 20rpx;
+  box-sizing: border-box;
+}
+.purchase-pack {
+  line-height: 44rpx;
+}
+.purchase-price { font-size: 34rpx; line-height: 44rpx; }
+.purchase-button {
+  flex-shrink: 0;
+  width: calc(100% - 36rpx);
+  min-height: 132rpx;
+  border-radius: 999rpx;
+  background: var(--accent-action-bg);
+  color: var(--accent-action-text);
+}

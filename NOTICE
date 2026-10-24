@@ -1,0 +1,16 @@
+YuanAI Mini Program
+Copyright 2026 YuanAI contributors
+
+YuanAI original code is licensed under the Apache License, Version 2.0.
+Third-party portions retain their original licenses and copyright notices.
+See THIRD_PARTY_NOTICES.md and THIRD_PARTY_LICENSES.md.
+
+The Markdown renderer is derived from Towxml and modified by YuanAI
+contributors for streaming, themes, interaction, citations and file display.
+These modifications do not replace the licenses of the upstream portions.
+
+Apache ECharts (incubating)
+Copyright 2017-2019 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).

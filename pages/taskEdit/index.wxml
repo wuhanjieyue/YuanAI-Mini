@@ -1,0 +1,144 @@
+<page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="transparent" />
+<vertical-drag-gesture-handler tag="taskPan" simultaneous-handlers="{{['taskScroll']}}" worklet:should-response-on-move="shouldPanResponse" worklet:should-accept-gesture="shouldPanAccept" worklet:ongesture="handleVerticalDrag">
+<view class="info-page task-edit" style="{{themeStyle}};{{accentStyle}};height:{{sheetHeight}}px;visibility:{{themeStyle ? 'visible' : 'hidden'}}">
+  <view class="info-toolbar">
+    <view class="info-header-side">
+    <yb-flyout id="discardMenu" open-on-trigger-tap="{{false}}" popup-width-rpx="520" popup-class="task-discard-surface" theme-style="{{themeStyle}};{{accentStyle}}" bind:open="menuOpened" bind:afterclose="discardClosed">
+      <view slot="trigger" class="task-header-button glass-view cradius dr ac jc" bind:tap="closePage" aria-role="button" aria-label="关闭"><text class="iconfont icon-x ft48 text-l0"></text></view>
+      <view slot="popup" class="task-discard-content dc">
+        <text class="ft36 wt6 text-strong mb24">未保存的更改</text>
+        <text class="ft32 text-l2 task-discard-message">确定要放弃更改吗？你所做的全部更改都将丢失。</text>
+        <view class="task-discard-action dr ac jc lradius" bind:tap="keepEditing" aria-role="button"><text class="ft32 wt5 text-strong">保留编辑</text></view>
+        <view class="task-discard-action task-discard-danger dr ac jc lradius" bind:tap="discardChanges" aria-role="button"><text class="ft32 wt5 text-err-l1">放弃更改</text></view>
+      </view>
+    </yb-flyout>
+    </view>
+    <text class="info-title ft32">{{editing ? '编辑任务' : '新建任务'}}</text>
+    <view class="task-header-right-slot dr ac je">
+      <view class="task-header-action-host dr ac je">
+        <view class="task-header-button task-save-button glass-view dr ac jc" bind:tap="saveTask" aria-role="button" aria-label="保存" aria-disabled="{{saveButtonState !== 'idle'}}">
+          <view class="task-save-label-wrap"><text class="task-save-label ft28 text-l0">保存</text></view>
+          <view class="task-save-icon-wrap dr ac jc" aria-hidden="true">
+            <text wx:if="{{saveButtonState === 'saving'}}" class="iconfont icon-loading_flow_iconfont task-save-loading ft48 text-l0"></text>
+            <text wx:else class="iconfont icon-check ft48 text-l0"></text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <vertical-drag-gesture-handler tag="taskScroll" native-view="scroll-view" simultaneous-handlers="{{['taskPan']}}" worklet:should-response-on-move="shouldScrollResponse">
+  <scroll-view worklet:onscrollupdate="scrollUpdated" class="info-scroll" type="list" scroll-y="{{!menuOpen}}" associative-container="pop-gesture" show-scrollbar="{{true}}">
+    <view list-item class="task-form" style="pointer-events:{{saveButtonState === 'idle' ? 'auto' : 'none'}}">
+      <view wx:if="{{task.lastError}}" class="ft28 text-err-l1 mb24">最近执行失败：{{task.lastError}}</view>
+      <view class="task-field task-name"><input class="task-input ft32" value="{{task.name}}" placeholder="任务名称" placeholder-class="task-placeholder" maxlength="100" data-field="name" bind:input="inputChanged" aria-label="任务名称" /></view>
+      <view class="task-field task-description"><textarea class="task-textarea ft32" value="{{task.description}}" placeholder="任务说明" placeholder-class="task-placeholder" maxlength="5000" auto-height="{{true}}" data-field="description" bind:input="inputChanged" aria-label="任务说明" /></view>
+      <view class="task-field">
+        <yb-flyout id="repeatMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="470" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" scrollable="{{true}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+          <text slot="trigger" class="ft32">重复</text>
+          <view slot="anchor" class="dr ac text-muted ft32"><text>{{task.repeat}}</text><text class="iconfont icon-a-fenzu1 ft28 ml24"></text></view>
+          <view slot="popup" class="setting-option-pop-list">
+            <view wx:for="{{repeatOptions}}" wx:key="*this" class="setting-option-pop-item dr ac ft32" data-field="repeat" data-value="{{item}}" bind:tap="selectOption" aria-role="button">
+              <view class="setting-option-check-slot dr ac jc"><text wx:if="{{task.repeat === item}}" class="iconfont icon-check ft32"></text></view><text>{{item}}</text>
+            </view>
+          </view>
+        </yb-flyout>
+        <block wx:if="{{task.repeat !== '从不'}}">
+          <view class="task-divider"></view>
+          <view wx:if="{{task.repeat === '工作日'}}" class="task-row text-muted ft32">周一至周五</view>
+          <yb-flyout wx:else id="frequencyMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="620" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+            <text slot="trigger" class="text-muted ft32">{{task.frequency}}</text>
+            <text slot="anchor" class="iconfont icon-arrow-right ft28 text-muted"></text>
+            <view slot="popup">
+              <picker-view class="task-date-picker" value="{{frequencyValue}}" indicator-style="height:56px" bind:change="frequencyChanged">
+                <picker-view-column><view wx:for="{{intervals}}" wx:key="*this" class="date-wheel-item dr ac jc">每 {{item}} {{unit === '月' ? '个月' : unit}}</view></picker-view-column>
+                <picker-view-column wx:if="{{unit === '周'}}"><view wx:for="{{weekdays}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}</view></picker-view-column>
+                <picker-view-column wx:if="{{unit === '月'}}"><view wx:for="{{monthDays}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}</view></picker-view-column>
+              </picker-view>
+              <text wx:if="{{unit === '月'}}" class="task-schedule-hint text-muted" style="opacity:{{task.monthDay > 28 && task.monthDay !== 32 ? 1 : 0}}">没有该日号的月份将在当月最后一天执行</text>
+              <view class="task-date-done dr ac jc ft32" data-menu="#frequencyMenu" bind:tap="closeDate" aria-role="button">完成</view>
+            </view>
+          </yb-flyout>
+        </block>
+        <block wx:if="{{task.repeat === '自定义'}}">
+          <view class="task-divider"></view>
+          <yb-flyout id="customUnitMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="620" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+            <text slot="trigger" class="ft32">周期单位</text>
+            <view slot="anchor" class="dr ac text-muted ft32"><text>{{task.customUnit}}</text><text class="iconfont icon-a-fenzu1 ft28 ml24"></text></view>
+            <view slot="popup" class="setting-option-pop-list">
+              <view wx:for="{{unitOptions}}" wx:key="*this" class="setting-option-pop-item dr ac ft32" data-field="customUnit" data-value="{{item}}" bind:tap="selectOption" aria-role="button"><view class="setting-option-check-slot"><text wx:if="{{task.customUnit === item}}" class="iconfont icon-check"></text></view><text>{{item}}</text></view>
+            </view>
+          </yb-flyout>
+        </block>
+      </view>
+      <view wx:if="{{task.repeat === '从不' || unit === '小时' || task.repeat === '自定义'}}" class="task-field">
+        <yb-flyout id="runDateMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="620" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+          <text slot="trigger" class="ft32">{{task.repeat === '从不' ? '日期' : '开始日期'}}</text>
+          <text slot="anchor" class="task-date ft32">{{runDatePicker.years[runDatePicker.dateValue[0]]}}年{{runDatePicker.months[runDatePicker.dateValue[1]]}}月{{runDatePicker.days[runDatePicker.dateValue[2]]}}日</text>
+          <view slot="popup"><picker-view class="task-date-picker" value="{{runDatePicker.dateValue}}" indicator-style="height:56px" data-field="runDate" bind:change="dateChanged">
+            <picker-view-column><view wx:for="{{runDatePicker.years}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}年</view></picker-view-column><picker-view-column><view wx:for="{{runDatePicker.months}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}月</view></picker-view-column><picker-view-column><view wx:for="{{runDatePicker.days}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}日</view></picker-view-column>
+          </picker-view><view class="task-date-done dr ac jc ft32" data-menu="#runDateMenu" bind:tap="closeDate" aria-role="button">完成</view></view>
+        </yb-flyout>
+      </view>
+      <view wx:if="{{unit === '小时' && task.repeat !== '从不'}}" class="task-field">
+        <yb-flyout id="minuteMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="620" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+          <text slot="trigger" class="ft32">时间</text><text slot="anchor" class="task-date ft32">第 {{minutes[task.hourlyMinute]}} 分</text>
+          <view slot="popup"><picker-view class="task-date-picker" value="{{minuteValue}}" indicator-style="height:56px" bind:change="minuteChanged"><picker-view-column><view wx:for="{{minutes}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}分</view></picker-view-column></picker-view><view class="task-date-done dr ac jc ft32" data-menu="#minuteMenu" bind:tap="closeDate" aria-role="button">完成</view></view>
+        </yb-flyout>
+      </view>
+      <view wx:if="{{unit !== '小时' || task.repeat === '从不'}}" class="task-field">
+        <yb-flyout wx:if="{{task.repeat !== '从不'}}" id="timeMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="470" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" scrollable="{{true}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+          <text slot="trigger" class="ft32">时间</text>
+          <view slot="anchor" class="dr ac text-muted ft32"><text>{{task.time}}</text><text class="iconfont icon-a-fenzu1 ft28 ml24"></text></view>
+          <view slot="popup" class="setting-option-pop-list">
+            <view wx:for="{{timeOptions}}" wx:key="*this" class="setting-option-pop-item dr ac ft32" data-field="time" data-value="{{item}}" bind:tap="selectOption" aria-role="button">
+              <view class="setting-option-check-slot dr ac jc"><text wx:if="{{task.time === item}}" class="iconfont icon-check ft32"></text></view><text>{{item}}</text>
+            </view>
+          </view>
+        </yb-flyout>
+        <block wx:if="{{task.time === '自定义' || task.repeat === '从不'}}">
+          <view wx:if="{{task.repeat !== '从不'}}" class="task-divider"></view>
+          <yb-flyout id="exactTimeMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="620" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+            <text slot="trigger" class="ft32">{{task.repeat === '从不' ? '时间' : '具体时间'}}</text><text slot="anchor" class="task-date ft32">{{exactTime}}</text>
+            <view slot="popup"><picker-view class="task-date-picker" value="{{timeValue}}" indicator-style="height:56px" bind:change="timeChanged"><picker-view-column><view wx:for="{{hours}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}时</view></picker-view-column><picker-view-column><view wx:for="{{minutes}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}分</view></picker-view-column></picker-view><view class="task-date-done dr ac jc ft32" data-menu="#exactTimeMenu" bind:tap="closeDate" aria-role="button">完成</view></view>
+          </yb-flyout>
+        </block>
+      </view>
+      <view class="task-field task-row dr ac jb" bind:tap="showModels" aria-role="button" aria-label="选择模型">
+        <text class="ft32">模型</text>
+        <view class="task-model-anchor dr ac text-muted ft32">
+          <text class="task-model-value">{{modelLabel || '选择模型'}}</text><text class="iconfont icon-a-fenzu1 ft28 ml24"></text>
+        </view>
+      </view>
+      <view wx:if="{{task.repeat !== '从不'}}" class="task-field">
+        <yb-flyout id="endMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="470" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" scrollable="{{true}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+          <text slot="trigger" class="ft32">结束重复</text>
+          <view slot="anchor" class="dr ac text-muted ft32"><text>{{task.end}}</text><text class="iconfont icon-a-fenzu1 ft28 ml24"></text></view>
+          <view slot="popup" class="setting-option-pop-list">
+            <view wx:for="{{endOptions}}" wx:key="*this" class="setting-option-pop-item dr ac ft32" data-field="end" data-value="{{item}}" bind:tap="selectOption" aria-role="button">
+              <view class="setting-option-check-slot dr ac jc"><text wx:if="{{task.end === item}}" class="iconfont icon-check ft32"></text></view><text>{{item}}</text>
+            </view>
+          </view>
+        </yb-flyout>
+        <block wx:if="{{task.end === '在选定日期结束'}}">
+          <view class="task-divider"></view>
+          <yb-flyout id="dateMenu" separate-anchor="{{true}}" trigger-class="task-row" popup-width-rpx="620" popup-class="setting-option-pop-surface" theme-style="{{themeStyle}};{{accentStyle}}" bind:open="menuOpened" bind:afterclose="menuClosed">
+            <text slot="trigger" class="ft32">日期</text>
+            <text slot="anchor" class="task-date ft32">{{years[dateValue[0]]}}年{{months[dateValue[1]]}}月{{days[dateValue[2]]}}日</text>
+            <view slot="popup" class="task-date-popup">
+              <picker-view class="task-date-picker" value="{{dateValue}}" indicator-style="height:56px" bind:change="dateChanged">
+                <picker-view-column><view wx:for="{{years}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}年</view></picker-view-column>
+                <picker-view-column><view wx:for="{{months}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}月</view></picker-view-column>
+                <picker-view-column><view wx:for="{{days}}" wx:key="*this" class="date-wheel-item dr ac jc">{{item}}日</view></picker-view-column>
+              </picker-view>
+              <view class="task-date-done dr ac jc ft32" bind:tap="closeDate" aria-role="button">完成</view>
+            </view>
+          </yb-flyout>
+        </block>
+      </view>
+    </view>
+  </scroll-view>
+  </vertical-drag-gesture-handler>
+  <yb-models-select id="modelsSelect" models="{{models}}" model-id="{{pickerSelection.modelId}}" effort-id="{{pickerSelection.effortId}}" bind:changeModel="modelChanged" bind:locked="modelLocked" bind:close="menuClosed" theme-style="{{themeStyle}};{{accentStyle}}" />
+  <view wx:if="{{editing}}" class="task-chat ft32" bind:tap="openTaskChat" aria-role="button">打开聊天</view>
+</view>
+</vertical-drag-gesture-handler>
