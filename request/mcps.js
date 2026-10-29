@@ -15,7 +15,7 @@ async function mcpRequest(action, options = {}) {
 
 module.exports = {
   listInstalledMcps: () => mcpRequest('installed'),
-  listRecommendedMcps: ({ query = '', cursor = '', limit = 25 } = {}) => mcpRequest('recommended', { query, cursor, limit }),
+  listRecommendedMcps: ({ query = '', cursor = '', limit = 25, category = '' } = {}) => mcpRequest('recommended', { query, cursor, limit, ...(category ? { category } : {}) }),
   getMcpDetail: ({ id }) => mcpRequest('detail', { id }),
   tryMcp: ({ id }) => mcpRequest('try', { id }),
   enableMcp: ({ id }) => mcpRequest('enable', { id }),

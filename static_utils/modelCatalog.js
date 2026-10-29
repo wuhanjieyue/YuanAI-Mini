@@ -65,7 +65,7 @@ function firstAccessibleEffort(model, accessPlan) {
 
 function normalizeEffort(model, effortId, accessPlan) {
   const selected = model?.efforts.find((effort) => effort.id === effortId)
-  if (selected && canAccessPlan(accessPlan, selected.minPlan)) return selected
+  if (selected && (canAccessPlan(accessPlan, selected.minPlan) || (accessPlan === 'guest' && model.id === 'yuan-go'))) return selected
   const fallback = model?.efforts.find((effort) => effort.id === model.defaultEffortId)
   if (fallback && canAccessPlan(accessPlan, fallback.minPlan)) return fallback
   return firstAccessibleEffort(model, accessPlan)
@@ -102,7 +102,7 @@ function getSelectionView(catalogValue, selection = {}) {
   }
 }
 
-function getReasoningChoices(models = [], modelId = 'yuan-go') {
+function getReasoningChoices(models = [], modelId = 'yuan-go', accessPlan) {
   const model = models.find((item) => item.id === modelId)
   const options = (model?.efforts || []).map((effort) => ({
     ...effort,
@@ -110,7 +110,7 @@ function getReasoningChoices(models = [], modelId = 'yuan-go') {
     modelId:model.id,
     modelName:model.name,
     effortId:effort.id,
-    locked:model.locked === true || effort.locked === true
+    locked:model.locked === true || (effort.locked === true && !(accessPlan === 'guest' && model.id === 'yuan-go'))
   }))
   return { options }
 }

@@ -1,8 +1,10 @@
 const { shared, timing, spring, runOnJS } = wx.worklet
+const { getAccentTheme } = require('../../../static_utils/accentColor')
 
 Component({
   properties: {
     themeStyle: { type: String, value: '' },
+    pointColor: { type: String, value: '默认' },
     modeOptions: {
       type: Array,
       value: []
@@ -30,6 +32,7 @@ Component({
     conversationId: { type: String, value: '' },
     conversationPinned: { type: Boolean, value: false },
     unpinLabel: { type: String, value: '取消置顶' },
+    connectionLabel: { type: String, value: '连接' },
     shareLoading: { type: Boolean, value: false },
     archiveLoading: { type: Boolean, value: false },
     conversationActions: {
@@ -39,7 +42,14 @@ Component({
   },
 
   data: {
+    botIcon: '/static/logs/yuan-bot/cloud-first-frame-EEEDEC.svg',
     popupType: ''
+  },
+
+  observers: {
+    pointColor(value) {
+      this.setData({ botIcon: `/static/logs/yuan-bot/cloud-first-frame-${getAccentTheme(value).color.slice(1)}.svg` })
+    }
   },
 
   lifetimes: {

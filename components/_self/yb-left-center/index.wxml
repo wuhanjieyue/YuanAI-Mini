@@ -1,4 +1,4 @@
-<view class="page-left dc" style="{{temporaryMode ? temporaryAccentStyle : accentStyle}}">
+<view class="page-left dc bg-gray" style="{{temporaryMode ? temporaryAccentStyle : accentStyle}}">
   <view class="title-view move-box dc bg-gray" style="height: {{titleHeight}}px;">
     <view class="more-icon dr ac jb plr24" >
       <view class="bl-01 search-view xlradius bg-l0 dr ac jc" style="width: 90%; height: {{searchHeight}}px;">
@@ -33,6 +33,10 @@
   >
 
     <view class="feature-actions search-collapsible">
+      <view catch:tap="openBot" class="home-action mlr16 mt8 dr ac mradius">
+          <image class="bot-icon" src="{{botIcon}}" mode="aspectFit" />
+          <text class="ft32 ml36" overflow="ellipsis">Bot</text>
+      </view>
       <view data-feature="library" catch:tap="openFeature" class="home-action mlr16 mt8 dr ac mradius {{currentFeature === 'library' ? 'bg-l1' : ''}}">
           <text class="iconfont icon-folde ft40"></text>
           <text class="ft32 ml36" overflow="ellipsis">{{i18n.home.library}}</text>
@@ -78,7 +82,6 @@
             <text wx:if="{{chatRuns[item.conversationId].status === 'queued' || chatRuns[item.conversationId].status === 'running'}}" class="iconfont icon-loading_flow_iconfont conversation-generating-icon lsize tc ft28 text-l1"></text>
             <view wx:elif="{{unreadConversations[item.conversationId]}}" class="chat-unread-dot cradius conversation-unread-dot" style="{{accentStyle}}" aria-hidden="true"></view>
           </view>
-          <text wx:if="{{chatRuns[item.conversationId].status === 'cancelling'}}" class="ft24 text-l1">{{i18n.chat.stopping}}</text>
         </view>
         <view wx:if="{{pinnedHasMore}}" catch:tap="loadMorePinnedConversations" class="pinned-expand-row mlr16">
           <text class="ft32 text-l1">{{i18n.sidebar.expand}}</text>
@@ -107,7 +110,6 @@
           <text wx:if="{{chatRuns[item.conversationId].status === 'queued' || chatRuns[item.conversationId].status === 'running'}}" class="iconfont icon-loading_flow_iconfont conversation-generating-icon lsize tc ft28 text-l1"></text>
           <view wx:elif="{{unreadConversations[item.conversationId]}}" class="chat-unread-dot cradius conversation-unread-dot" style="{{accentStyle}}" aria-hidden="true"></view>
         </view>
-        <text wx:if="{{chatRuns[item.conversationId].status === 'cancelling'}}" class="ft24 text-l1">{{i18n.chat.stopping}}</text>
       </view>
     </block>
     <view wx:if="{{loadingMoreConversations}}" class="loading-row">
@@ -138,8 +140,8 @@
       </view>
     </view>
     <view wx:if="{{!recentConversations.length && (searchQuery || !pinnedConversations.length) && !searchLoading && !initialLoadingConversations}}" class="conversation-state dc ac jc text-l1">
-      <image class="logo-img" src="/static/logs/glog.png" mode="widthFix"></image>
-      <text class="mt32 mb24">{{conversationLoadFailed || searchLoadFailed ? i18n.sidebar.listLoadFailed : appliedSearchQuery ? i18n.sidebar.noMatches : i18n.sidebar.empty}}</text>
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true"></image>
+      <text class="asset-empty-copy">{{conversationLoadFailed || searchLoadFailed ? i18n.sidebar.listLoadFailed : appliedSearchQuery ? i18n.sidebar.noMatches : i18n.sidebar.empty}}</text>
     </view>
   </scroll-view>
   <view class="bottom-actions pt24 pr48 dr ac jb">

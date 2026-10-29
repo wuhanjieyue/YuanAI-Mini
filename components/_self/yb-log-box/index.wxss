@@ -22,3 +22,14 @@
   width: 100px;
   height: 100px;
 }
+
+.bot-logo{
+  position: relative;
+}
+.bot-logo-image{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

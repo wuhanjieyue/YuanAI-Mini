@@ -1,2 +1,3 @@
 <page-meta page-style="{{themeStyle}}" background-color="{{themeBackground}}" root-background-color="{{themeBackground}}" />
 <view class="full-view" bind:tap="intoIndex" style="{{themeStyle}}"></view>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

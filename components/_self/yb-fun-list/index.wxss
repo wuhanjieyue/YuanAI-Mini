@@ -18,6 +18,10 @@
 }
 .feature-label {
   min-width: 0;
+  /* 6 个 28rpx 汉字，加两侧各 16rpx 内边距。 */
+  max-width: 200rpx;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .feature-logo {
   width: 36rpx;

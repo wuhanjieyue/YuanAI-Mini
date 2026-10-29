@@ -45,6 +45,10 @@ Component({
 				return;
 			}
 			if(name === 'tap' && openCitationSource(attrs)) return;
+				if(name === 'tap' && node?.webLink){
+					this.triggerEvent('linkcopy', { text:attrs.href }, { bubbles:true, composed:true });
+					return;
+				}
 
 			const renderContext = getRenderContext(this.data.contextId);
 			const handler = renderContext && renderContext.events && renderContext.events[name];

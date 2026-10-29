@@ -1,3 +1,4 @@
+const { showNotice } = require('../../../static_utils/errorNotice')
 import { clearLocation } from '../../../request/location'
 const i18nBehavior = require('../../../static_utils/i18n/behavior')
 const { t } = require('../../../static_utils/i18n/index')
@@ -193,7 +194,7 @@ Component({
         scope: 'scope.userFuzzyLocation',
         success: () => {
           this.checkLocationPermission()
-          wx.showToast({ title: this.data.i18n.common.enabled, icon: 'success' })
+          showNotice({ title: this.data.i18n.common.enabled })
         },
         fail: () => {
           wx.showModal({

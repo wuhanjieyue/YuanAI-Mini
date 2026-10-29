@@ -11,6 +11,15 @@ function clampProgress(value) {
 
 Component({
   properties: {
+    pageHidden: {
+      type:Boolean,
+      value:false,
+      observer(hidden) {
+        if(!this._ready) return
+        if(hidden) this.releaseCanvas()
+        else wx.nextTick(() => this.initCanvas())
+      }
+    },
     popupOpen: { type:Boolean, value:false, observer(value) { this.animateVisibility(value) } },
     theme: { type: String, value: 'light', observer() { this.drawRing(this._displayProgress) } },
     progress: {
@@ -31,9 +40,15 @@ Component({
 
   lifetimes: {
     attached() {
+      this._canvasVersion = 0
       this.triggerScale = shared(this.data.popupOpen ? 0.8 : 1)
       this.triggerOpacity = shared(this.data.popupOpen ? 0 : 1)
       this.triggerTranslate = shared(0)
+      this._displayProgress = clampProgress(this.data.progress)
+      this.needleProgress = shared(this._displayProgress)
+    },
+    ready() {
+      this._ready = true
       this.applyAnimatedStyle('.gauge-trigger', () => {
         'worklet'
         return {
@@ -41,25 +56,22 @@ Component({
           opacity:`${this.triggerOpacity.value}`
         }
       })
-      this._displayProgress = clampProgress(this.data.progress)
-      this.needleProgress = shared(this._displayProgress)
       this.applyAnimatedStyle('.gauge-needle', () => {
         'worklet'
         const angle = NEEDLE_MIN_ANGLE + NEEDLE_SWEEP_ANGLE * this.needleProgress.value
         return { transform:`rotate(${angle}deg)` }
       })
-    },
-    ready() {
       wx.nextTick(() => this.initCanvas())
     },
     detached() {
-      if(this._canvas && this._animationFrame) this._canvas.cancelAnimationFrame(this._animationFrame)
+      this._ready = false
+      this.releaseCanvas()
     }
   },
 
   methods: {
     open() {
-      if(this.data.popupOpen) return
+      if(this.data.popupOpen || this.data.pageHidden) return
       this.triggerEvent('open', {}, {})
     },
 
@@ -70,13 +82,29 @@ Component({
       this.triggerTranslate.value = sequence(timing(-10, { duration:80 }), timing(0, { duration:80 }))
     },
 
+    releaseCanvas() {
+      this._canvasVersion++
+      clearTimeout(this._canvasRetry)
+      if(this._canvas && this._animationFrame) this._canvas.cancelAnimationFrame(this._animationFrame)
+      this._animationFrame = 0
+      this._canvas = null
+      this._context = null
+    },
+
     initCanvas() {
+      if(!this._ready || this.data.pageHidden) return
+      this.releaseCanvas()
+      const version = this._canvasVersion
       this.createSelectorQuery()
         .select('#gaugeCanvas')
         .fields({ node:true, size:true })
         .exec((res) => {
+          if(!this._ready || this.data.pageHidden || version !== this._canvasVersion) return
           const result = res && res[0]
-          if(!result || !result.node) return
+          if(!result?.node || !(result.width > 0 && result.height > 0)) {
+            this._canvasRetry = setTimeout(() => this.initCanvas(), 50)
+            return
+          }
           const canvas = result.node
           const context = canvas.getContext('2d')
           const dpr = wx.getWindowInfo().pixelRatio || 1
@@ -87,7 +115,12 @@ Component({
           this._context = context
           this._canvasWidth = result.width
           this._canvasHeight = result.height
+          this._displayProgress = clampProgress(this.data.progress)
+          this.needleProgress.value = this._displayProgress
+          // Paint now even if RAF is suspended, then repaint when the native surface resumes.
+          this.drawRing(this._displayProgress)
           this._animationFrame = canvas.requestAnimationFrame(() => {
+            if(version !== this._canvasVersion) return
             this._animationFrame = 0
             this.drawRing(this._displayProgress)
           })
@@ -130,7 +163,9 @@ Component({
       if(this._animationFrame) this._canvas.cancelAnimationFrame(this._animationFrame)
       const from = this._displayProgress
       const startedAt = Date.now()
+      const version = this._canvasVersion
       const animate = () => {
+        if(version !== this._canvasVersion) return
         const elapsed = Math.min(1, (Date.now() - startedAt) / 280)
         const eased = 1 - Math.pow(1 - elapsed, 3)
         this._displayProgress = from + (target - from) * eased

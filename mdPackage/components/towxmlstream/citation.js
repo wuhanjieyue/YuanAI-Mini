@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 const { normalizeCitations } = require('../../../static_utils/chatSources');
 
 function openCitationSource(attrs) {
@@ -9,7 +10,7 @@ function openCitationSource(attrs) {
 		success:res => res.eventChannel.emit('showSources', { citations }),
 		fail:error => {
 			console.error('[sources] navigation failed', error);
-			wx.showToast({ title:'来源加载失败', icon:'none' });
+			showErrorNotice({ title:'来源加载失败' });
 		}
 	});
 	return true;

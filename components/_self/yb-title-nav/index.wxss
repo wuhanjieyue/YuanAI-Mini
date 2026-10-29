@@ -42,13 +42,20 @@
   display: flex;
   box-sizing: border-box;
 }
-.drawer-unread-dot {
-  width: 22rpx;
-  height: 22rpx;
+.drawer-unread-container {
   position: absolute;
   top: 18rpx;
   right: 18rpx;
+  width: 22rpx;
+  height: 22rpx;
+  box-sizing: border-box;
+  padding: 4rpx;
+  background: var(--glass-100, #fff);
   z-index: 1;
+}
+.drawer-unread-dot {
+  width: 14rpx;
+  height: 14rpx;
 }
 .menu-stroke {
   height: 4rpx;

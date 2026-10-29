@@ -1,6 +1,6 @@
 module.exports = {
   common: {
-    confirm: '确认', cancel: '取消', save: '保存', send: '发送', delete: '删除', edit: '编辑', copy: '复制', done: '完成',
+    confirm: '确认', cancel: '取消', save: '保存', send: '发送', delete: '删除', edit: '编辑', copy: '复制', copied: '已复制', done: '完成',
     retry: '请重试', loading: '加载中', loadFailed: '加载失败', requestFailed: '请求失败', operationFailed: '操作失败，请重试',
     saved: '已保存', sent: '已发送', on: '开', off: '关', enabled: '已授权', search: '搜索', file: '文件', image: '图片',
     document: '文档', camera: '相机', photo: '照片', plugin: '插件', default: '默认', system: '系统', overview: '概览',
@@ -13,6 +13,7 @@ module.exports = {
   },
   home: { chat: '聊天', library: '库', tasks: '计划任务', knowledge: '知识库', create: '创作' },
   chat: {
+    askBot: '向Yuan Bot提问吧', connections: '连接',
     disclaimer: 'Yuan是AI，可能会犯错，请核查重要信息。',
     askAnything: '询问任何问题', newChat: '新对话', temporary: '临时聊天', temporaryShort: '临时', work: 'Yuan Bot',
     temporaryNotice: '本次聊天已停用记忆，且不会出现在你的历史记录中。',
@@ -28,6 +29,8 @@ module.exports = {
     generating: '正在生成',
     sessionLoadFailed: '会话加载失败', historyLoadFailed: '更早消息加载失败', modelLoadFailed: '模型目录加载失败，请重试',
     fallback: '我好像有点不舒服，让我歇一会吧！', feedbackLocalUnsupported: '本地消息暂不支持反馈',
+    quotaInsufficient: '额度不够啦，补充后就能继续使用。',
+    quotaReservedBusy: '额度还在处理中，请稍后再试。',
     feedbackUnavailable: '反馈请求未初始化', feedbackFailed: '反馈保存失败', copyMessage: '复制', editMessage: '编辑',
     feedback: '评价回复', like: '良好回复', dislike: '回复不佳'
   },
@@ -45,7 +48,7 @@ module.exports = {
     pending: '附件尚未上传完成', uploading: '附件正在上传，请稍候', limit: '单条消息最多添加 9 个附件',
     guestTooLarge: '未登录时单次上传最多 5 MB',
     tooLarge: '单个附件不能超过 {limit} MB',
-    unsupportedFormat: '不支持该附件格式，请选择 TXT、Office、PDF、MD 或常见图片'
+    unsupportedFormat: '不支持该附件格式，请选择文本/代码文件、Office、PDF 或常见图片'
   },
   tools: {
     image: '创建图片', imageDesc: '可视化呈现任何内容', research: '深度研究', researchDesc: '获取详细报告',
@@ -55,6 +58,11 @@ module.exports = {
   plugins: {
     skills: '技能', tools: '工具', plugins: '插件', skillsSearch: '搜索技能', toolsSearch: '搜索工具',
     skillsEmpty: '暂无可用技能', toolsEmpty: '暂无可用工具', pluginsEmpty: '暂无可用插件',
+    mcpFilter: 'MCP 类型', mcpAll: '全部', mcpDeveloper: '开发者工具', mcpSearch: '搜索工具',
+    mcpData: '数据查询', mcpContent: '内容生成', mcpBusiness: '企业服务', mcpLife: '生活服务',
+    skillFilter: '技能分类', skillGeneral: '通用工具', skillDevelopment: '开发运维', skillFinance: '金融服务',
+    skillBusiness: '企业经营', skillContent: '内容创作', skillLife: '生活服务', skillEducation: '科研教育',
+    skillOffice: '办公效率', skillLegal: '法律合规', skillHealth: '健康医疗', skillData: '数据分析',
     tryMcp: '试用此工具', mcpUnavailable: '工具试用暂未开放',
     updatedAt: '数据修改时间', trySkill: '试用此技能', tryUnavailable: '技能试用暂未开放',
     installed: '已安装', recommended: '推荐', search: '搜索插件', clearSearch: '清除搜索',
@@ -119,6 +127,7 @@ module.exports = {
     title: '图片创作迎来重大升级', description: '更高质量的生成结果、更快的生成速度，以及更智能的创作工具', action: '试试看'
   },
   upgrade: {
+    subscribed: '已订阅',
     title: '获取 YuanAI Pro', intro: '基础体验版的所有功能，以及：', continueFree: '继续使用基础体验版',
     unavailable: 'Pro 订阅暂未开放，你可以继续使用基础体验版。',
     benefits: [
@@ -234,6 +243,7 @@ module.exports = {
     efforts: { light: '轻度', medium: '中', high: '高', 'very-high': '极高', 'ultra-high': '超高' }
   },
   sources: {
+    empty: '暂无来源',
     title: '来源', count: '{count}个来源', viewCount: '查看{count}个来源', hint: '知识库来源可查看证据及原文，网页来源可复制链接',
     openEvidence:'查看知识库证据：{title}', openOriginal:'打开原文', close:'关闭', oldVersion:'历史版本证据', lines:'行',
     copyLink: '复制来源链接：{title}', copied: '链接已复制，可在浏览器查看'

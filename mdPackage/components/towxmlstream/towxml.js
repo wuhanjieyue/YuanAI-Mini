@@ -132,7 +132,7 @@ Component({
     batchSize: 40
   },
   methods: {
-    copyCode(event) {
+    copyText(event) {
       const text = event.detail?.text;
       if (typeof text !== 'string' || !text) return;
       const i18n = messages(wx.getStorageSync('applicationSettings')?.language);
@@ -142,15 +142,13 @@ Component({
         success: () => {
           // 微信剪贴板接口自带成功 toast，立即隐藏后使用顶部胶囊。
           wx.hideToast();
-          if (!this._destroyed) this.selectComponent('#copyNotice')?.show(i18n.renderer.copySuccess);
+          if (!this._destroyed) this.selectComponent('#copyNotice')?.show(
+            event.type === 'linkcopy' ? i18n.sources.copied : i18n.renderer.copySuccess);
         },
         fail: () => {
           if (!this._destroyed) this.selectComponent('#copyNotice')?.show(i18n.renderer.copyFailed);
         }
       });
-    },
-    hideCopyNotice() {
-      this.selectComponent('#copyNotice')?.hide();
     },
     syncImageCards(nodes) {
       const artifactIds = [];
@@ -260,6 +258,39 @@ Component({
           : (_this.data.mdText && typeof _this.data.mdText.text === "string" ? _this.data.mdText.text : "");
         if (batchRenderCb.value[_this.data.batchIds[_this.data.batchIds.length - 1]] == undefined) {
           return
+        }
+        // Restore only the snapshot prefix; later deltas keep the normal typing budget.
+        const initialText = _this.data.mdText?.initialText;
+        if (!_this._stopAtCurrent && initialText && initialText.length > c &&
+            initialText.startsWith(allText) && streamText.startsWith(initialText)) {
+          const tree = towxml(initialText, "markdown", {
+            theme:_this.data.theme, citations:_this.data.mdText.citations, images:_this.data.images, files:_this.data.files
+          });
+          const batchCount = Math.floor(tree.children.length / _this.data.batchSize) + 2;
+          if (_this.data.batchIds.length < batchCount) {
+            _this.setData({batchIds:Array.from({length:batchCount}, (_, i) => i)});
+            return;
+          }
+          if (_this.data.batchIds.some(id => !batchRenderCb.value[id])) return;
+          const previousNodeCount = _this.dataNodes.length;
+          finishIndex = -1;
+          stableFirstLevelChildNodes = [];
+          testAfterMkSyntaxChar = '';
+          isNeedFlushIndex = false;
+          pendingTreeCacheKey = '';
+          frameBudgetRemainder = 0;
+          allText = initialText;
+          c = initialText.length;
+          _this._typedText = initialText;
+          _this.dataNodes = tree.children;
+          tree.children.forEach((node, i) => {
+            batchRenderCb.value[Math.floor(i / _this.data.batchSize)](i % _this.data.batchSize, node);
+          });
+          for (let i = tree.children.length; i < previousNodeCount; i++) {
+            batchRenderCb.value[Math.floor(i / _this.data.batchSize)](i % _this.data.batchSize, {tag:'unknow'});
+          }
+          _this.syncImageCards(tree.children);
+          return;
         }
         if (_this.data.isFinish && c >= streamText.length) {
           isFinalizing = true;

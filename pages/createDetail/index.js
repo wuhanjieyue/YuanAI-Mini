@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 const { messages, toLocale } = require('../../static_utils/i18n/index')
 const { store } = require('../../store/index')
@@ -77,7 +78,7 @@ Page({
       await wx.showShareImageMenu({ path, needShowEntrance: false })
     } catch (error) {
       if (!this._unloaded && !/cancel/i.test(error.errMsg || error.message || '')) {
-        wx.showToast({ title: this.data.i18n.create.shareFailed, icon: 'none' })
+        showErrorNotice({ title: this.data.i18n.create.shareFailed })
       }
     } finally {
       if (!this._unloaded) this.setData({ sharing: false })

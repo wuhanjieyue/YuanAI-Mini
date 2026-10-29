@@ -7,3 +7,5 @@
 .notice-capsule-hidden { visibility: hidden; pointer-events: none; }
 .notice-capsule-closing { pointer-events: none; }
 .notice-content { flex: 1; min-width: 0; }
+.notice-text { display: block; width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.notice-close { flex-shrink: 0; width: 56rpx; height: 56rpx; display: flex; align-items: center; justify-content: center; font-size: 40rpx; }

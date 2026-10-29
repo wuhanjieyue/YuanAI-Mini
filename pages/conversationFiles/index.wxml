@@ -13,3 +13,4 @@
     bind:refreshscopedfiles="loadFiles"
   />
 </view>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

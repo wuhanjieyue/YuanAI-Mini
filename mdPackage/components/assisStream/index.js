@@ -1,4 +1,5 @@
-const { stoppedSegments } = require('../../../static_utils/chatSegments')
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
+const { stoppedSegments, normalizeSegments } = require('../../../static_utils/chatSegments')
 const { finishGeneratedImages } = require('../../../static_utils/generatedImages')
 const { normalizeCitations } = require('../../../static_utils/chatSources')
 const i18nBehavior = require('../../../static_utils/i18n/behavior')
@@ -18,6 +19,10 @@ function processTextWindow(text){
 }
 
 function advanceProcessText(state, kind){
+  if(state.cursor >= state.text.length){
+    state.visible = Array.from(processTextWindow(state.visible)).slice(1).join('')
+    return
+  }
   const char = String.fromCodePoint(state.text.codePointAt(state.cursor))
   state.cursor += char.length
   if(kind === 'command') state.visible += char
@@ -347,6 +352,10 @@ Component({
         if(!this._regenerating) this.streamMinHeight.value = this._that.chatHeight.value
       }
       const renderEpoch = this._renderEpoch
+      let firstSnapshot = true
+      let awaitingRestoreSnapshot = false
+      this._initialMarkdownText = ''
+      this._initialTextSegments = []
       this._unsubscribeTurn = observeTurn(turnKey, record => {
         if(renderEpoch !== this._renderEpoch || this._destroyed || this.data.settled && !this._freezeRequested) return
         const metaChanged = this._chatMeta?.turnId !== record.meta.turnId
@@ -363,7 +372,12 @@ Component({
         }
         this._cloudStatus = record.status
         this.setData({ stopping:record.status === 'cancelling', connectionStatus:record.connection, terminalStatus:record.status })
+        if(firstSnapshot) awaitingRestoreSnapshot = Boolean(record.meta.turnId && record.connection !== 'connected')
+        this._restoringSnapshot = firstSnapshot || awaitingRestoreSnapshot && record.connection === 'connected'
+        if(record.connection === 'connected') awaitingRestoreSnapshot = false
         this.applyCloudSnapshot({ ...record.assistant, status:record.status })
+        this._restoringSnapshot = false
+        firstSnapshot = false
         if(record.user){
           this.setData({
             streamContent:record.user.content || '',
@@ -375,8 +389,15 @@ Component({
         }
         if(record.status === 'cancelling'){ this.stopDisplay(record.cancelView?.processDurationMs); return }
         if(['completed', 'failed', 'cancelled'].includes(record.status)){
-          if(record.status === 'failed' && !(this._streamText || '').trim() && !this.data.generatedImages.some(image => image.status === 'completed')) this.completeWithFallback(renderEpoch,
-            record.error?.code === 'ATTACHMENT_UPLOAD_FAILED' ? t(this.properties.language, 'attachments.attachmentUploadFailed') : '')
+          if(record.status === 'failed' && !(this._streamText || '').trim() && !this.data.generatedImages.some(image => image.status === 'completed')){
+            const errorMessages = {
+              ATTACHMENT_UPLOAD_FAILED:'attachments.attachmentUploadFailed',
+              QUOTA_INSUFFICIENT:'chat.quotaInsufficient',
+              QUOTA_RESERVED_BUSY:'chat.quotaReservedBusy'
+            }
+            const messageKey = Object.hasOwn(errorMessages, record.error?.code) ? errorMessages[record.error.code] : ''
+            this.completeWithFallback(renderEpoch, messageKey ? t(this.properties.language, messageKey) : '')
+          }
           else this.endStream()
         }
       })
@@ -427,6 +448,22 @@ Component({
       this._textSegments = assistant.textSegments || []
       this._modelRequests = assistant.modelRequests || []
       const timeline = assistantProcessTimeline(assistant, this.properties.language)
+      if(this._restoringSnapshot){
+        this._initialTextSegments = normalizeSegments(this._textSegments)
+        this._initialMarkdownText = timeline ? '' : assistant.displayContent || assistant.content || ''
+      }
+      if(timeline){
+        // Pending segments retain their return-time boundary until the server confirms final purpose.
+        let prefix = ''
+        for(const row of normalizeSegments(this._textSegments).filter(row => !row.parentCallId && row.purpose === 'final')){
+          const saved = (this._initialTextSegments || []).find(item => item.messageId === row.messageId &&
+            item.runId === row.runId && item.modelRequestId === row.modelRequestId)
+          if(!saved || !row.content.startsWith(saved.content)) break
+          prefix += saved.content
+          if(saved.content.length < row.content.length) break
+        }
+        this._initialMarkdownText = prefix
+      }
       if(timeline){
         this.applyTimelineSnapshot(assistant, timeline)
         return
@@ -453,6 +490,7 @@ Component({
       this._displayLanguage = this.properties.language
       if(bodyStarted && projection.displayModelRequestId)
         this._displayModelRequestId = projection.displayModelRequestId
+      if(bodyChanged) this._initialMarkdownText = ''
       this._streamText = projection.displayContent
       const processTrace = Array.isArray(assistant.processTrace) ? assistant.processTrace : []
       const bodyRequests = this._mainBodyRequests || (this._mainBodyRequests = new Set())
@@ -500,7 +538,7 @@ Component({
       const artifacts = this.snapshotArtifacts(assistant)
       this.setData({
         ...artifacts,
-        mdText:{ text:this._streamText, citations:artifacts.citations },
+        mdText:{ text:this._streamText, initialText:this._initialMarkdownText, citations:artifacts.citations },
         ...(bodyChanged ? {markdownKeys:[this.data.markdownKeys[0] + 1], markdownImageIds:[]} : {}),
         processTrace,
         responseStarted,
@@ -614,7 +652,7 @@ Component({
         this.syncTimelineEntries(projection.entries)
       }
       if(this._streamText){
-        if(this.data.processCollapsed) this.setData({mdText:{text:this._streamText, citations:this.data.citations}})
+        if(this.data.processCollapsed) this.setData({mdText:{text:this._streamText, initialText:this._initialMarkdownText, citations:this.data.citations}})
         else this.collapseTimeline()
       }else if(terminal) this.collapseTimeline()
       if(turnCreated && !terminal && !this.data.finalStarted && !this._freezeRequested) this.updateProcessClock()
@@ -680,6 +718,14 @@ Component({
             if(state.text !== text) state.waitingSince = null
             state.text = text; state.node = node
           }
+          if(this._restoringSnapshot){
+            state.cursor = state.renderedCursor = state.text.length
+            state.visible = state.text
+            state.waitingSince = Date.now()
+            if(state.visible.trim()) for(const item of items){
+              if(item.node.stage === 'main_reasoning' && item.node.modelRequestId === entry.node.modelRequestId) item.hidden = true
+            }
+          }
           state.isFinish = isFinish
           if(isFinish && state.renderedCursor >= state.text.length) state.finished = true
           items.push({...entry, node:state.node, text:state.text, displayText:state.visible.trimEnd(),
@@ -712,7 +758,7 @@ Component({
         }else state.text = entry.text
         if(playbackStopped){
           state.cursor = entry.text.length
-          if(handoffEnded || entry.node.stage !== 'main_reasoning') state.visible = ''
+          state.visible = ''
         }
         const completedTools = playbackStopped && entry.node.callId && !entries.some(row => row.node.callId &&
           row.node.modelRequestId === entry.node.modelRequestId && ['failed','partial','unknown','cancelled'].includes(row.node.status)) ? entries.filter(row => row.node.callId &&
@@ -735,14 +781,21 @@ Component({
       this.syncToolRotation(active?.node || null, this._displayAssistant || {})
     },
 
-    consumeTimelineText(){
+    consumeTimelineText(drainTail = false){
       if(this._destroyed || this._freezeRequested || this._timelineCollapsing || this.data.processCollapsed) return
       let pending = false
       let summaryFrame = null
       const patch = {}
       this.data.timelineEntries.forEach((entry, index) => {
         const state = this._timelineStates?.get(entry.node.id)
-        if(entry.playbackStopped || !state || state.cursor >= state.text.length) return
+        if(entry.playbackStopped || !state) return
+        if(state.cursor >= state.text.length){
+          if(entry.kind === 'commentary' || !state.visible) return
+          if(drainTail) advanceProcessText(state)
+          pending = pending || Boolean(state.visible)
+          patch[`timelineEntries[${index}].displayText`] = processTextWindow(state.visible)
+          return
+        }
         if(entry.kind === 'commentary'){
           const char = String.fromCodePoint(state.text.codePointAt(state.cursor))
           state.cursor += char.length
@@ -761,7 +814,7 @@ Component({
         if(state.itemStart !== part?.start){state.itemStart = part?.start; state.visible = ''}
         advanceProcessText(state, entry.node.presentation.format === 'code' ? 'command' : entry.node.presentation.format === 'reasoning' ? 'reasoning' : part?.kind)
         if(this._toolIdle?.nodeId === entry.node.id) this._toolIdle.lastOutputAt = Date.now()
-        pending = pending || state.cursor < state.text.length
+        pending = pending || state.cursor < state.text.length || Boolean(state.visible)
         patch[`timelineEntries[${index}].displayText`] = processTextWindow(state.visible)
       })
       if(Object.keys(patch).length){
@@ -784,7 +837,7 @@ Component({
         const timer = setTimeout(() => {
           if(this._timelineTimer !== timer || epoch !== this._renderEpoch || this._destroyed) return
           this._timelineTimer = null
-          this.consumeTimelineText()
+          this.consumeTimelineText(true)
         }, 24)
         this._timelineTimer = timer
       }
@@ -863,7 +916,7 @@ Component({
       this.setData({processCollapsed:true, finalStarted:Boolean(this._streamText), thinkStatus:2,
         markdownKeys:[this.data.markdownKeys[0] + 1],
         markdownImageIds:[],
-        mdText:{text:this._streamText || '', citations:this.data.citations}}, () => {
+        mdText:{text:this._streamText || '', initialText:this._initialMarkdownText, citations:this.data.citations}}, () => {
         if(this._endAfterTimeline){ this._endAfterTimeline = false; this.endStream() }
       })
     },
@@ -945,9 +998,9 @@ Component({
     consumeSearchText(){
       if(this._destroyed) return
       const node = (this._searchNodes || []).find(item => (this._searchCursors[item.id] || 0) < (item.responseContent || '').length)
-      if(!node){
+      if(!node && !this._searchVisible){
         this._searchTimer = null
-        this.setData({ displayProcessTrace:null })
+        this.setData({ displayProcessTrace:null, thinkVisibleText:'' })
         if(this._endAfterSearch){
           this._endAfterSearch = false
           this.setData({ thinkStatus:2 })
@@ -955,18 +1008,23 @@ Component({
         }
         return
       }
-      const cursor = this._searchCursors[node.id] || 0
-      const item = node.responseItems.find(part => cursor >= part.start && cursor < part.end)
-      const key = node.id + ':' + (item?.start || 0)
-      if(this._searchItemKey !== key){ this._searchItemKey = key; this._searchVisible = '' }
-      const char = String.fromCodePoint(node.responseContent.codePointAt(cursor))
-      this._searchCursors[node.id] = cursor + char.length
-      if(item?.kind === 'source'){
-        if(char !== '\n') this._searchVisible += char
-      }else if(/[。？！!?；;.!…\n]/.test(char)) this._searchVisible = ''
-      else this._searchVisible += char
-      this.setData({ thinkVisibleText:processTextWindow(this._searchVisible),
-        displayProcessTrace:[{ ...node, status:'running' }] })
+      if(!node){
+        this._searchVisible = Array.from(processTextWindow(this._searchVisible)).slice(1).join('')
+        this.setData({ thinkVisibleText:this._searchVisible })
+      }else{
+        const cursor = this._searchCursors[node.id] || 0
+        const item = node.responseItems.find(part => cursor >= part.start && cursor < part.end)
+        const key = node.id + ':' + (item?.start || 0)
+        if(this._searchItemKey !== key){ this._searchItemKey = key; this._searchVisible = '' }
+        const char = String.fromCodePoint(node.responseContent.codePointAt(cursor))
+        this._searchCursors[node.id] = cursor + char.length
+        if(item?.kind === 'source'){
+          if(char !== '\n') this._searchVisible += char
+        }else if(/[。？！!?；;.!…\n]/.test(char)) this._searchVisible = ''
+        else this._searchVisible += char
+        this.setData({ thinkVisibleText:processTextWindow(this._searchVisible),
+          displayProcessTrace:[{ ...node, status:'running' }] })
+      }
       const epoch = this._searchEpoch || 0
       this._searchTimer = setTimeout(() => {
         if(epoch !== (this._searchEpoch || 0) || this._destroyed) return
@@ -1005,17 +1063,18 @@ Component({
       if(!this._thinkTimer) this.consumeThinkText()
     },
 
-    consumeThinkText(){
+    consumeThinkText(drainTail = false){
       const state = this._thinkTyping
-      if(!state || this._destroyed || this.data.thinkStatus !== 1 || state.cursor >= state.text.length) return
-      advanceProcessText(state, state.kind)
-      if(this._toolIdle?.nodeId === state.nodeId) this._toolIdle.lastOutputAt = Date.now()
+      if(!state || this._destroyed || this.data.thinkStatus !== 1) return
+      const typing = state.cursor < state.text.length
+      if(typing || drainTail) advanceProcessText(state, state.kind)
+      if(typing && this._toolIdle?.nodeId === state.nodeId) this._toolIdle.lastOutputAt = Date.now()
       this.setData({ thinkVisibleText:processTextWindow(state.visible) })
-      if(state.cursor < state.text.length){
+      if(state.cursor < state.text.length || state.visible){
         this._thinkTimer = setTimeout(() => {
           if(this._thinkTyping !== state) return
           this._thinkTimer = null
-          this.consumeThinkText()
+          this.consumeThinkText(true)
         }, 24)
       }
     },
@@ -1096,6 +1155,8 @@ Component({
       this._textSegments = []
       this._modelRequests = []
       this._streamText = ''
+      this._initialMarkdownText = ''
+      this._initialTextSegments = []
       this._stoppedText = null
       this._freezeRequested = false
       this.setData({
@@ -1177,7 +1238,7 @@ Component({
     previewArtifact(e){
       const detail = artifactAttachmentDetail([...this.data.generatedImages, ...(this.data.generatedFiles || [])], e.detail?.link)
       if(detail) this.triggerEvent('previewFile', detail, {})
-      else wx.showToast({ title:t(this.properties.language, 'assets.previewFailed'), icon:'none' })
+      else showErrorNotice({ title:t(this.properties.language, 'assets.previewFailed') })
     },
     unavailableImage(){
       this.triggerEvent('unavailableImage', {}, {})

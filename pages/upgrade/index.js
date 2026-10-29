@@ -1,3 +1,4 @@
+const { showNotice } = require('../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 const { messages } = require('../../static_utils/i18n/index')
 import { createStoreBindings } from 'mobx-miniprogram-bindings'
@@ -7,7 +8,7 @@ import { initAppData } from '../../static_utils/appDataInit'
 
 Page({
   data: {
-    i18n: messages('中文'), purchasing: false
+    i18n: messages('中文'), purchasing: false, isPro: false
   },
 
   onLoad() {
@@ -15,6 +16,7 @@ Page({
     this.storeBindings = createStoreBindings(this, {
       store,
       fields: {
+        isPro: (state) => state.user?.subscription === 'pro',
         i18n: (state) => messages(state.applicationSettings?.language)
       }
     })
@@ -22,7 +24,7 @@ Page({
 
   onShow() {
     syncThemeNavigation(this)
-    if (store.user?.subscription === 'pro') this.closePage()
+    this.setData({ isPro: store.user?.subscription === 'pro' })
   },
 
   onUnload() {
@@ -36,7 +38,7 @@ Page({
   },
 
   async getPro() {
-    if (store.user?.subscription === 'pro') { this.closePage(); return }
+    if (store.user?.subscription === 'pro') return
     if (this.data.purchasing) return
     this._purchaseRequestId ||= 'pro_' + Date.now() + '_' + Math.random().toString(36).slice(2, 12)
     this.setData({ purchasing: true })
@@ -48,7 +50,7 @@ Page({
         this._purchaseRequestId = null
         await initAppData({ force: true })
       }
-      if (!this._unloaded) wx.showToast({ title: status.fulfilled ? this.data.i18n.usageLimits.paymentConfirmed : this.data.i18n.usageLimits.paymentPending, icon: 'none' })
+      if (!this._unloaded) showNotice({ title: status.fulfilled ? this.data.i18n.usageLimits.paymentConfirmed : this.data.i18n.usageLimits.paymentPending })
     } catch (error) {
       if (!this._unloaded && !String(error.errMsg || '').includes('cancel')) wx.showModal({
         title: this.data.i18n.upgrade.title,

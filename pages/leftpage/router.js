@@ -14,6 +14,18 @@ function clamp(v, lower, upper) {
 }
 const screenWidth = app?.globalData?.su_system?.screenWidth || wx.getWindowInfo().screenWidth;
 
+export const DRAWER_WIDTH_RATIO = 0.78
+
+export function drawerCardStyle(offset, width) {
+  'worklet'
+  const progress = clamp(offset / (width * DRAWER_WIDTH_RATIO), 0, 1)
+  return {
+    transform: `translateX(${offset}px)`,
+    borderRadius: `${width * 112 / 750 * progress}px`,
+    borderWidth: `${progress > 0 ? width / 750 : 0}px`
+  }
+}
+
 const RouteBuilder = (customRouteContext) => {
 	const {
 		primaryAnimation,
@@ -34,16 +46,16 @@ const RouteBuilder = (customRouteContext) => {
     const status = primaryAnimationStatus.value
     if (userGestureInProgress.value || status === AnimationStatus.reverse || exitProgress.value >= 0) {
       if (exitProgress.value < 0) {
-        exitProgress.value = clamp(wx.pageTrans.value / (screenWidth * 0.7), 0, 1)
+        exitProgress.value = clamp(wx.pageTrans.value / (screenWidth * DRAWER_WIDTH_RATIO), 0, 1)
       }
       const t = userGestureInProgress.value ? primaryAnimation.value : _curvePrimaryAnimation.value
       const progress = exitProgress.value * t
-      wx.pageTrans.value = screenWidth * 0.7 * progress
-      wx.pageScale.value = 1 - progress / 10
-      wx.pageFilter.value = clamp(5 * progress, 0, 3)
+      wx.pageTrans.value = screenWidth * DRAWER_WIDTH_RATIO * progress
       wx.leftTrans.value = screenWidth * 0.5 * progress
       wx.leftOp.value = progress
-      if (status === AnimationStatus.completed && !userGestureInProgress.value) exitProgress.value = -1
+      if (status === AnimationStatus.completed && !userGestureInProgress.value) {
+        exitProgress.value = -1
+      }
     }
     // Entry and exit use the same shared translation as the home preview.
     return { width: `${screenWidth}px` }

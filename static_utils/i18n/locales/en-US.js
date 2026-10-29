@@ -1,6 +1,6 @@
 module.exports = {
   common: {
-    confirm: 'Confirm', cancel: 'Cancel', save: 'Save', send: 'Send', delete: 'Delete', edit: 'Edit', copy: 'Copy', done: 'Done',
+    confirm: 'Confirm', cancel: 'Cancel', save: 'Save', send: 'Send', delete: 'Delete', edit: 'Edit', copy: 'Copy', copied: 'Copied', done: 'Done',
     retry: 'Try again', loading: 'Loading', loadFailed: 'Couldn’t load', requestFailed: 'Request failed', operationFailed: 'Couldn’t complete. Try again.',
     saved: 'Saved', sent: 'Sent', on: 'On', off: 'Off', enabled: 'Allowed', search: 'Search', file: 'File', image: 'Image',
     document: 'Document', camera: 'Camera', photo: 'Photo', plugin: 'Plugins', default: 'Default', system: 'System', overview: 'Overview',
@@ -13,6 +13,7 @@ module.exports = {
   },
   home: { chat: 'Chat', library: 'Library', tasks: 'Tasks', knowledge: 'Knowledge', create: 'Create' },
   chat: {
+    askBot: 'Ask Yuan Bot', connections: 'Connections',
     disclaimer: 'Yuan is AI and can make mistakes. Verify important info.',
     askAnything: 'Ask anything', newChat: 'New chat', temporary: 'Temporary chat', temporaryShort: 'Temporary', work: 'Yuan Bot',
     temporaryNotice: 'Memory is off for this chat. It won’t appear in history.',
@@ -28,6 +29,8 @@ module.exports = {
     generating: 'Generating',
     sessionLoadFailed: 'Couldn’t load chat', historyLoadFailed: 'Couldn’t load earlier messages', modelLoadFailed: 'Couldn’t load models. Try again.',
     fallback: 'Something went wrong. Please try again.', feedbackLocalUnsupported: 'Feedback isn’t available for local messages',
+    quotaInsufficient: 'Not enough credits. Add more to keep going.',
+    quotaReservedBusy: 'Your credits are still being processed. Try again shortly.',
     feedbackUnavailable: 'Feedback isn’t ready', feedbackFailed: 'Couldn’t save feedback', copyMessage: 'Copy', editMessage: 'Edit',
     feedback: 'Rate response', like: 'Like', dislike: 'Dislike'
   },
@@ -45,7 +48,7 @@ module.exports = {
     pending: 'Attachments are still uploading', uploading: 'Uploading attachments', limit: 'Up to 9 attachments per message',
     guestTooLarge: 'Up to 5 MB per upload while signed out',
     tooLarge: 'Each attachment must be no larger than {limit} MB',
-    unsupportedFormat: 'Unsupported attachment format. Choose TXT, Office, PDF, MD, or a common image'
+    unsupportedFormat: 'Unsupported attachment format. Choose a text/code file, Office, PDF, or a common image'
   },
   tools: {
     image: 'Create image', imageDesc: 'Visualize anything', research: 'Deep research', researchDesc: 'Get a detailed report',
@@ -55,6 +58,11 @@ module.exports = {
   plugins: {
     skills: 'Skills', tools: 'Tools', plugins: 'Plugins', skillsSearch: 'Search skills', toolsSearch: 'Search tools',
     skillsEmpty: 'No skills available', toolsEmpty: 'No tools available', pluginsEmpty: 'No plugins available',
+    mcpFilter: 'MCP type', mcpAll: 'All', mcpDeveloper: 'Developer tools', mcpSearch: 'Search tools',
+    mcpData: 'Data lookup', mcpContent: 'Content creation', mcpBusiness: 'Business services', mcpLife: 'Lifestyle',
+    skillFilter: 'Skill category', skillGeneral: 'General tools', skillDevelopment: 'Development & operations', skillFinance: 'Finance',
+    skillBusiness: 'Business', skillContent: 'Content creation', skillLife: 'Lifestyle', skillEducation: 'Research & education',
+    skillOffice: 'Productivity', skillLegal: 'Legal & compliance', skillHealth: 'Health', skillData: 'Data analysis',
     tryMcp: 'Try this tool', mcpUnavailable: 'Tool trials are not available yet',
     updatedAt: 'Data updated at', trySkill: 'Try this skill', tryUnavailable: 'Skill trials are not available yet',
     installed: 'Installed', recommended: 'Recommended', search: 'Search plugins', clearSearch: 'Clear search',
@@ -119,6 +127,7 @@ module.exports = {
     title: 'Image creation got a major upgrade', description: 'Higher-quality results, faster generation, and smarter creative tools', action: 'Try it'
   },
   upgrade: {
+    subscribed: 'Subscribed',
     title: 'Get YuanAI Pro', intro: 'Everything in Basic, and:', continueFree: 'Continue with Basic',
     unavailable: 'Pro subscriptions are not available yet. You can continue using Basic.',
     benefits: [
@@ -233,6 +242,7 @@ module.exports = {
     efforts: { light: 'Light', medium: 'Medium', high: 'High', 'very-high': 'Very high', 'ultra-high': 'Max' }
   },
   sources: {
+    empty: 'No sources yet',
     title: 'Sources', count: '{count} sources', viewCount: 'View {count} sources', hint: 'Tap knowledge sources for evidence and originals; web sources copy a link',
     openEvidence:'Open knowledge evidence: {title}', openOriginal:'Open original', close:'Close', oldVersion:'Historical evidence', lines:'Lines',
     copyLink: 'Copy link: {title}', copied: 'Link copied'

@@ -7,7 +7,8 @@
   <view slot="popup">
     <view wx:if="{{popupType == 'mode'}}" class="feature-mode-list">
       <view wx:for="{{modeOptions}}" wx:key="id" class="feature-mode-row dr plr32 ac" data-id="{{item.id}}" catch:tap="selectMode">
-        <text class="feature-icon feature-icon-large ft36 {{item.icon}}"></text>
+        <image wx:if="{{item.id == 'work'}}" class="feature-bot-icon" src="{{botIcon}}" mode="aspectFit" />
+        <text wx:else class="feature-icon feature-icon-large ft36 {{item.icon}}"></text>
         <text class="feature-mode-name ml24 ft36">{{item.name}}</text>
         <view class="feature-check tc mla">
           <text class="feature-icon feature-icon-regular ft32 {{item.id == modeId ? 'icon-check' : ''}}"></text>
@@ -31,11 +32,11 @@
   <view class="feature-popup feature-popup-more" catch:tap="catchPopup">
     <view class="feature-more-list">
       <block wx:for="{{moreOptions}}" wx:key="id">
-        <view wx:if="{{item.id != 'smart' || modeId != 'work'}}" class="feature-more-row dr ac {{item.id == 'smart' && smartMode ? 'feature-text-main text-main-l1' : ''}}" data-id="{{item.id}}" catch:tap="selectMoreFeature">
+        <view wx:if="{{item.id != 'smart' || modeId != 'work'}}" class="feature-more-row dr ac {{item.id == 'smart' && smartMode ? 'feature-text-main text-main-l1' : ''}}" data-id="{{item.id}}" catch:tap="{{modeId == 'work' && item.id == 'plugin' ? '' : 'selectMoreFeature'}}">
           <view class="feature-more-icon dc ac jc bg-l2 cradius">
             <text class="feature-icon feature-icon-large ft36 {{item.icon}}"></text>
           </view>
-          <text class="feature-row-name ml24 ft32">{{item.name}}</text>
+          <text class="feature-row-name ml24 ft32">{{modeId == 'work' && item.id == 'plugin' ? connectionLabel : item.name}}</text>
           <text wx:if="{{item.id == 'smart' && smartMode}}" class="feature-icon feature-icon-regular ft32 feature-tail mla icon-check"></text>
         </view>
       </block>

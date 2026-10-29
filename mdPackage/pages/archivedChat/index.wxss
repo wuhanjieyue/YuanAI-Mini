@@ -38,3 +38,6 @@
   border-radius: 28rpx;
   line-height: 1.6;
 }
+
+.archive-skeleton-user { width: 50%; height: 52rpx; }
+.archive-skeleton-line { height: 44rpx; border-radius: 8rpx; }

@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('./errorNotice')
 import settingRouterBuilder, { SETTING_ROUTE_TYPE } from '../static_router/settingRouter'
 import upRouterBuilder from '../static_router/upPageRouter'
 const { store } = require('../store/index')
@@ -73,7 +74,7 @@ export function openErrorReport(source = 'manual') {
     url: `/pages/reportError/index?source=${source}&route=${encodeURIComponent(route)}`,
     routeType: stacked ? SETTING_ROUTE_TYPE : 'upRouterBuilder',
     ...(stacked ? { routeOptions: { stacked: true } } : {}),
-    fail: () => wx.showToast({ title: messages(store.applicationSettings.language).common.loadFailed, icon: 'none' }),
+    fail: () => showErrorNotice({ title: messages(store.applicationSettings.language).common.loadFailed }),
     complete: () => { opening = false }
   })
 }

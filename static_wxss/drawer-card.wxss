@@ -1,0 +1,5 @@
+.drawer-card-surface {
+  box-sizing: border-box;
+  border: 0 solid var(--border-subtle);
+  box-shadow: -12px 0 36px var(--palette-light-ink-12);
+}

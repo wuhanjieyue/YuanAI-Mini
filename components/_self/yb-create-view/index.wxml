@@ -24,21 +24,16 @@
         <view class="skeleton-shimmer" aria-hidden="true"></view>
       </view>
     </grid-view>
-    <view wx:if="{{(!loading || failed) && !(failed && !items.length)}}" class="asset-status {{!items.length ? 'asset-empty' : ''}}">
-      <text wx:if="{{loading}}">{{i18n.common.loading}}</text>
-      <block wx:elif="{{failed}}">
-        <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
-        <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
-        <view class="asset-retry" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
-      </block>
-      <text wx:elif="{{!items.length && (query || activeTab !== 'mine')}}">{{query ? i18n.create.noMatches : i18n.create.empty}}</text>
-      <text wx:elif="{{items.length && !hasMore}}">{{i18n.assets.end}}</text>
+    <view wx:if="{{failed && items.length}}" class="asset-status">
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+      <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+      <view class="asset-retry" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
     </view>
     <view class="create-bottom-space" aria-hidden="true"></view>
   </scroll-view>
-  <view wx:if="{{activeTab === 'mine' && !query && !items.length && !loading && !failed}}" class="asset-empty-overlay">
+  <view wx:if="{{!items.length && !loading && !failed}}" class="asset-empty-overlay">
     <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
-    <text class="asset-empty-copy">{{i18n.create.empty}}</text>
+    <text class="asset-empty-copy">{{query ? i18n.create.noMatches : i18n.create.empty}}</text>
   </view>
   <view wx:if="{{failed && !items.length}}" class="asset-empty-overlay">
     <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />

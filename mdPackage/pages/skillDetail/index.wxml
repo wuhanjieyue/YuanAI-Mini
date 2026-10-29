@@ -4,9 +4,16 @@
   initial-child-size="{{0.6}}" min-child-size="{{0}}" max-child-size="{{maxSheetSize}}"
   snap="{{true}}" snap-sizes="{{[0.6]}}" worklet:onsizeupdate="onSizeUpdate">
   <scroll-view class="skill-scroll bg-l0" type="list" scroll-y show-scrollbar="{{false}}" associative-container="draggable-sheet">
-    <view wx:if="{{loading || failed}}" list-item class="skill-status plr32 ft28 dc ac jc">
-      <image wx:if="{{failed}}" class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
-      <text class="{{failed ? 'asset-empty-copy' : 'text-l2'}}">{{loading ? i18n.common.loading : i18n.common.loadFailed}}</text>
+    <view wx:if="{{loading}}" list-item class="skill-header plr32 as" aria-hidden="true">
+      <view class="skill-logo skeleton-clip"><view class="skeleton-shimmer"></view></view>
+      <view class="skill-copy pl24">
+        <view class="skill-skeleton-title skeleton-clip"><view class="skeleton-shimmer"></view></view>
+        <view class="skill-skeleton-description mt16 skeleton-clip"><view class="skeleton-shimmer"></view></view>
+      </view>
+    </view>
+    <view wx:elif="{{failed}}" list-item class="skill-status plr32 ft28 dc ac jc">
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+      <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
       <view wx:if="{{failed}}" class="skill-retry ptb24 plr24" bind:tap="loadSkill" aria-role="button" aria-label="{{i18n.common.retry}}">
         <text>{{i18n.common.retry}}</text>
       </view>
@@ -40,8 +47,10 @@
   </view>
   <view class="skill-footer">
     <view class="skill-try-button wt6 dr ac jc {{loading || failed || trying || removing || !item.canTry ? 'skill-try-button-disabled' : ''}} ft32"
-      bind:tap="trySkill" aria-role="button" aria-label="{{kind === 'mcp' ? i18n.plugins.tryMcp : i18n.plugins.trySkill}}" aria-disabled="{{loading || failed || trying || removing || !item.canTry}}">
-      <text>{{trying ? i18n.common.loading : item && !item.canTry ? (kind === 'mcp' ? i18n.plugins.mcpUnavailable : i18n.plugins.tryUnavailable) : (kind === 'mcp' ? i18n.plugins.tryMcp : i18n.plugins.trySkill)}}</text>
+      bind:tap="trySkill" aria-role="button" aria-label="{{trying ? i18n.common.loading : kind === 'mcp' ? i18n.plugins.tryMcp : i18n.plugins.trySkill}}" aria-busy="{{trying}}" aria-disabled="{{loading || failed || trying || removing || !item.canTry}}">
+      <text wx:if="{{trying && kind === 'mcp'}}" class="iconfont icon-loading_flow_iconfont skill-try-loading ft40" aria-hidden="true"></text>
+      <text wx:else>{{trying ? i18n.common.loading : item && !item.canTry ? (kind === 'mcp' ? i18n.plugins.mcpUnavailable : i18n.plugins.tryUnavailable) : (kind === 'mcp' ? i18n.plugins.tryMcp : i18n.plugins.trySkill)}}</text>
     </view>
   </view>
 </draggable-sheet>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

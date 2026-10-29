@@ -142,3 +142,4 @@
   <view wx:if="{{editing}}" class="task-chat ft32" bind:tap="openTaskChat" aria-role="button">打开聊天</view>
 </view>
 </vertical-drag-gesture-handler>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

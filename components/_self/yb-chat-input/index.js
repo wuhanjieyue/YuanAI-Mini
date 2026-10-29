@@ -67,6 +67,7 @@ Component({
    * 组件的属性列表
    */
   properties: {
+    placeholder: { type:String, value:'' },
     disabled: { type:Boolean, value:false },
     disabledPlaceholder: { type:String, value:'' },
       inputFocus: { // 输入框是否获取焦点
@@ -111,7 +112,9 @@ Component({
 
         this.startX = 0;
         this.startY = 0;
-        wx.nextTick(()=>{
+      },
+      ready() {
+          if(this._disposed) return
           this._that = this.selectOwnerComponent()
           const screenWidth = this.screenWidth
           const singleAreaHeight = rpx2px(52, screenWidth)
@@ -125,7 +128,9 @@ Component({
           this.accessoryInset = shared(rpx2px(this.data.accessoryInsetRpx, screenWidth))
           this._layoutState = 'compact'
           this._smartMode = this._that.data.smartMode === true
-          this.resetInputLayout(0)
+          this.setAreaHeight(this.data.askText, 0)
+          this._pendingLayoutBindings = 2
+          const inputHeight = this._that.inputHeight
           this.riconScale = shared(1)
           this.riconOpa = shared(1)
           this.applyAnimatedStyle('.right-icon', () => {
@@ -135,19 +140,19 @@ Component({
 
           this.applyAnimatedStyle('.input-content', () => {
               'worklet'
-              return {height: `${Math.max(actionHeight, this._that.inputHeight.value)}px`}
-          })
+              return {height: `${Math.max(actionHeight, inputHeight.value)}px`}
+          }, {}, () => this.finishLayoutBinding())
 
           // 输入框高度变化动画
           this.applyAnimatedStyle('.input-area', () => {
               'worklet'
-              const progress = Math.max(0, Math.min(1, (this._that.inputHeight.value - singleAreaHeight) / (expandedStartHeight - singleAreaHeight)))
+              const progress = Math.max(0, Math.min(1, (inputHeight.value - singleAreaHeight) / (expandedStartHeight - singleAreaHeight)))
               return {
                 height: `${this.inputAreaHeight.value}px`,
                 left: `${actionSlot * (1 - progress)}px`,
                 right: `${actionSlot - (actionSlot - expandedRightSlot) * progress + this.accessoryInset.value}px`
               }
-          })
+          }, {}, () => this.finishLayoutBinding())
 
           // 录音音轨
           this.voiceScax = shared(0)
@@ -161,7 +166,7 @@ Component({
           
           this.applyAnimatedStyle('.right-icon-clear', () => {
             'worklet'
-            const visible = this._that.inputHeight.value >= maxInputHeight - 1
+            const visible = inputHeight.value >= maxInputHeight - 1
             const size = visible ? expandedRightSlot : 0
             return {
               width: `${size}px`,
@@ -170,7 +175,6 @@ Component({
               opacity: `${visible ? 1 : 0}`
             }
           })
-        })
       },
       detached(){
         this._disposed = true
@@ -185,6 +189,7 @@ Component({
     hide() { this.cancelVoice() }
   },
   data: {
+      layoutReady:false,
       placeHolder:placeHolder,
       askText:'',
       askStatus:2,  // 问答状态 0:等待提问 1:正在响应 2:等待语音
@@ -214,6 +219,12 @@ Component({
    * 组件的方法列表
    */
   methods: {
+    finishLayoutBinding(){
+      if(this._disposed) return
+      this._pendingLayoutBindings -= 1
+      // 原生 textarea 聚焦前，容器和文本区域都必须完成首帧布局绑定。
+      if(this._pendingLayoutBindings === 0) this.setData({layoutReady:true})
+    },
     syncAskStatus(askText = this.data.askText, responding = this.data.askStatus === 1, animate = false){
       const askStatus = responding ? 1 : (String(askText || '').trim().length > 0 ? 0 : 2)
       if(this.data.askStatus === askStatus) return
@@ -267,8 +278,8 @@ Component({
         ? rpx2px(52, screenWidth)
         : rpx2px(42 * normalizedLineCount + 10, screenWidth)
       const totalHeight = expanded ? areaHeight + this.inputActionHeight : areaHeight
-      this.inputAreaHeight.value = timing(areaHeight,{duration})
-      this._that.inputHeight.value = timing(totalHeight,{duration})
+      this.inputAreaHeight.value = duration === 0 ? areaHeight : timing(areaHeight,{duration})
+      this._that.inputHeight.value = duration === 0 ? totalHeight : timing(totalHeight,{duration})
     },
     resetInputLayout(duration = durationTime){
       this._layoutState = this._smartMode ? 'smart' : 'compact'
@@ -276,12 +287,12 @@ Component({
     },
     setSmartMode(smartMode){
       this._smartMode = smartMode === true
-      this.resetInputLayout()
+      this.setAreaHeight()
     },
-    setAreaHeight(askText = this.data.askText){
+    setAreaHeight(askText = this.data.askText, duration = durationTime){
       const text = String(askText || '')
       if(text.length === 0){
-        this.resetInputLayout()
+        this.resetInputLayout(duration)
         return
       }
       const explicitLineCount = (text.match(/\n/g) || []).length + 1
@@ -290,11 +301,11 @@ Component({
       if(this._smartMode){
         const smartLineCount = Math.max(2, lineCount)
         this._layoutState = smartLineCount > 2 ? 'expanded' : 'smart'
-        this.updateInputLayout(smartLineCount, true)
+        this.updateInputLayout(smartLineCount, true, duration)
         return
       }
       this._layoutState = lineCount > 1 ? 'expanded' : 'compact'
-      this.updateInputLayout(lineCount, lineCount > 1)
+      this.updateInputLayout(lineCount, lineCount > 1, duration)
     },
     tap(){
       if(this.data.disabled && this.data.askStatus !== 1) return

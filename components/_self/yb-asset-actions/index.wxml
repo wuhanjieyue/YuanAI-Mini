@@ -34,7 +34,7 @@
   </view>
 </yb-flyout>
 
-<yb-notice-capsule id="assetNotice" theme-style="{{themeStyle}}" />
+<yb-notice-capsule id="assetNotice" closable="{{true}}" theme-style="{{themeStyle}}" />
 <root-portal>
   <view class="asset-operation-origin" aria-hidden="true"></view>
   <yb-confirm-dialog id="assetDialog" style="position:absolute;top:{{-originTop}}px;left:{{-originLeft}}px;z-index:999;" theme-style="{{themeStyle}}"

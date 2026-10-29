@@ -10,9 +10,9 @@ const CHAT_MODE_OPTIONS = [
   { id: CHAT_MODE_IDS.TEMPORARY, name: '临时', icon: 'icon-ghost' }
 ]
 
-function createSmartModePreferences() {
+function createSmartModePreferences(accessPlan = 'guest') {
   return {
-    [CHAT_MODE_IDS.CHAT]: true,
+    [CHAT_MODE_IDS.CHAT]: accessPlan === 'user' || accessPlan === 'pro',
     [CHAT_MODE_IDS.TEMPORARY]: false
   }
 }

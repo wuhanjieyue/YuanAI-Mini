@@ -13,6 +13,10 @@
   content: "\e7a8";
 }
 
+.icon-skill-tool::before{
+  content: "\e7b7";
+}
+
 .icon-pin::before{
   content: "\e7a7";
 }
@@ -39,10 +43,6 @@
 
 .icon-camera::before{
   content: "\e78e";
-}
-
-.icon-agent::before{
-  content: "\e78b";
 }
 
 .icon-ghost::before{
@@ -109,6 +109,12 @@
   min-height: 92rpx;
   padding-top: 0;
   padding-bottom: 0;
+}
+.feature-bot-icon {
+  width: 36rpx;
+  height: 36rpx;
+  flex: 0 0 36rpx;
+  transform: scale(1.7);
 }
 .feature-mode-name {
   white-space: nowrap;

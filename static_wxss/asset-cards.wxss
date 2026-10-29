@@ -52,4 +52,4 @@
 .asset-list-description { display: block; padding-top: 4rpx; line-height: 36rpx; }
 
 .asset-error-action { pointer-events: auto; }
-.asset-failure-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320rpx; text-align: center; }
+.asset-empty-state, .asset-failure-state { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320rpx; text-align: center; }

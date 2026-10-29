@@ -1,5 +1,6 @@
 {
   "usingComponents": {
+    "yb-notice-capsule": "/components/yb-notice-capsule/index",
     "yb-left-center": "/components/_self/yb-left-center/index",
     "yb-flyout": "/components/yb-flyout/index",
     "yb-confirm-dialog": "/components/yb-confirm-dialog/index",

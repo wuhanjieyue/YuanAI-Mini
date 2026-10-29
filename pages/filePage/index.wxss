@@ -28,3 +28,6 @@ page { background-color: transparent; }
     rgba(0, 0, 0, 0)
   );
 }
+
+.util-skeleton-title { width: 55%; height: 44rpx; border-radius: 8rpx; }
+.util-skeleton-description { width: 85%; height: 34rpx; border-radius: 8rpx; }

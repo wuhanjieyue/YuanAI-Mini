@@ -2,7 +2,9 @@
   <view class="title-view" style="height: {{titleHeight}}px;">
     <view class="more-icon dr plr24 ac z99">
         <view class="drawer-trigger ac jc glass-view cradius" catch:tap="openLeft">
-          <view wx:if="{{hasUnreadConversations}}" class="chat-unread-dot cradius drawer-unread-dot" style="{{accentStyle}}" aria-hidden="true"></view>
+          <view wx:if="{{hasUnreadConversations}}" class="drawer-unread-container cradius" aria-hidden="true">
+            <view class="chat-unread-dot cradius drawer-unread-dot" style="{{accentStyle}}"></view>
+          </view>
           <view>
             <view class="menu-stroke mradius menu-stroke-wide"></view>
             <view class="menu-stroke-gap"></view>

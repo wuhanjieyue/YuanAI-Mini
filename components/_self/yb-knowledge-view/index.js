@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 const { prepareSearchClose } = require('../../../static_utils/searchAnimation')
 const i18nBehavior = require('../../../static_utils/i18n/behavior')
 const assetListBehavior = require('../../../static_utils/assetListBehavior')
@@ -103,7 +104,7 @@ Component({
       const version = ++this._assetVersion
       const current = () => !this._assetDetached && epoch === store.assetCacheEpoch && version === this._assetVersion
       this._knowledgeBusy = true
-      this.setData({ loading:true, showSkeleton:!this.data.items.length, failed:false })
+      this.setData({ loading:true, showSkeleton:!this.data.items.length || !reset, failed:false })
       try {
         const page = await listKnowledge({ category:this.data.activeCategory, query:this.data.query,
           cursor:reset ? '' : this.data.nextCursor, limit:20 })
@@ -137,13 +138,13 @@ Component({
     async retryAssets() {
       if (this._pendingImportIds) {
         try { await importKnowledge(this._pendingImportIds); this._pendingImportIds = null }
-        catch (error) { wx.showToast({ title:error.message, icon:'none' }); return }
+        catch (error) { showErrorNotice({ title:error.message }); return }
       }
       return this.loadAssetPage(true)
     },
     async retryDocument(e) {
       try { await retryKnowledge(e.currentTarget.dataset.id); await this.loadAssetPage(true) }
-      catch (error) { wx.showToast({ title:error.message, icon:'none' }) }
+      catch (error) { showErrorNotice({ title:error.message }) }
     },
     ensureAssetImages() { return Promise.resolve(!this._assetDetached) },
     selectCategory(e) {
@@ -180,7 +181,6 @@ Component({
       const height = Math.max(0, e.detail.height)
       const progress = Math.min(1, height / startHeight)
       this._keyboardOffset.value = height + 12 * progress
-      this._searchActionProgress.value = this._searchCloseProgress.value * progress
       if (height === 0) this._searchCloseKeyboardHeight.value = 0
     },
     handleSearchKeyboardHeightChange(e) {
@@ -192,7 +192,7 @@ Component({
       this.animateKeyboardOffset(height ? height + 12 : 0)
     },
     clearSearch() {
-      prepareSearchClose(this)
+      prepareSearchClose(this, true)
       this.setData({ query: '', inputFocus: false }, () => this.loadAssetPage())
       wx.hideKeyboard()
     },
@@ -230,7 +230,7 @@ Component({
       this._addOpening = false
       this.setData({ addMenuOpen: false })
       this.assetActionsChanged({ detail: { open: false } })
-      if (action === 'note') wx.showToast({ title: messages(this.properties.language).assets.unavailable, icon: 'none' })
+      if (action === 'note') showErrorNotice({ title: messages(this.properties.language).assets.unavailable })
       else if (action) this.chooseKnowledgeFiles(action)
     },
     chooseKnowledgeFiles(action) {
@@ -240,7 +240,7 @@ Component({
       const current = () => !this._assetDetached && epoch === store.assetCacheEpoch
       const fail = error => {
         if (current() && !/cancel/i.test(error.errMsg || error.message || '')) {
-          wx.showToast({ title: messages(this.properties.language).knowledge.chooseFailed, icon: 'none' })
+          showErrorNotice({ title: messages(this.properties.language).knowledge.chooseFailed })
         }
       }
       const options = {
@@ -264,7 +264,7 @@ Component({
             this.setData({ query:'', activeCategory:'all' })
             await this.loadAssetPage(true)
           } catch (error) {
-            if (current()) { this.setData({ failed:true }); wx.showToast({ title:error.message, icon:'none' }) }
+            if (current()) { this.setData({ failed:true }); showErrorNotice({ title:error.message }) }
           } finally { this._knowledgeUploading = false; wx.hideLoading() }
         },
         fail,

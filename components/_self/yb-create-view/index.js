@@ -135,7 +135,6 @@ Component({
       const height = Math.max(0, e.detail.height)
       const progress = Math.min(1, height / startHeight)
       this._keyboardOffset.value = height + 12 * progress
-      this._searchActionProgress.value = this._searchCloseProgress.value * progress
       if (height === 0) this._searchCloseKeyboardHeight.value = 0
     },
     handleSearchKeyboardHeightChange(e) {
@@ -151,7 +150,7 @@ Component({
 
     clearSearch() {
       this._searchAssets.cancel()
-      prepareSearchClose(this)
+      prepareSearchClose(this, true)
       this.setData({ query: '', inputFocus: false }, () => {
         wx.hideKeyboard()
         this.loadAssetPage(true)

@@ -7,6 +7,7 @@ import { triggerHaptic } from '../../static_utils/haptic'
 import { getConversationMessages } from '../../request/chatStream'
 import { chatRuntime } from '../../request/chatRuntime'
 import eventBus, { CHAT_SESSION_RESET } from '../../static_utils/eventBus'
+import { DRAWER_WIDTH_RATIO, drawerCardStyle } from './router'
 const { normalizeHistoryMessage } = require('../../static_utils/chatHistoryMessages')
 const { normalizeHomeFeature } = require('../../static_utils/homeFeature')
 const { messages, t } = require('../../static_utils/i18n/index')
@@ -118,7 +119,7 @@ Page({
       triggerHaptic(this.data.applicationSettings?.hapticFeedback, 'light')
     })
 
-    this.widthActual = shared(app.globalData.su_system.screenWidth * 0.7)
+    this.widthActual = shared(app.globalData.su_system.screenWidth * DRAWER_WIDTH_RATIO)
 
     this.leftActual = shared(app.globalData.su_system.screenWidth * 0.5)
 
@@ -142,7 +143,7 @@ Page({
   onSwipeBack(evt){
     'worklet';
     if (evt.state === GestureState.BEGIN) {
-        this.lrhandleDragStart();
+        return;
     } else if (evt.state === GestureState.ACTIVE) {
         const delta = evt.deltaX  ;
 
@@ -155,19 +156,11 @@ Page({
     }
   },
 
-  lrhandleDragStart() {
-    'worklet'
-  },
-
   lrhandleDragUpdate(delta) {
       'worklet';
       const newVal = wx.pageTrans.value + delta
       wx.pageTrans.value = clamp(newVal, 0.0, this.widthActual.value);
-      wx.pageScale.value = 1 -  (wx.pageTrans.value / this.widthActual.value / 10)
-
-      wx.pageFilter.value = clamp(50 * (wx.pageTrans.value / this.widthActual.value / 10),0.0,3.0)
-
-      wx.leftTrans.value = wx.pageTrans.value  * 5/7
+      wx.leftTrans.value = wx.pageTrans.value / this.widthActual.value * this.leftActual.value
       wx.leftOp.value = wx.leftTrans.value / this.leftActual.value
   },
 
@@ -213,7 +206,7 @@ Page({
     const feature = normalizeHomeFeature(e?.detail?.feature)
     this.setData({ currentFeature: feature })
     if(this.eventChannel && this.eventChannel.emit){
-      this.eventChannel.emit('selectFeature', { feature })
+      this.eventChannel.emit('selectFeature', { feature, ...(e?.detail?.modeId ? { modeId: e.detail.modeId } : {}) })
     }
   },
   refreshConversations(){
@@ -348,8 +341,6 @@ Page({
   pageNavFun(animateForward,durationTime){
     'worklet'
     wx.pageTrans.value = timing(animateForward ? this.widthActual.value : 0 ,{duration:durationTime})
-    wx.pageScale.value = timing(animateForward ? 0.9: 1,{duration:durationTime})
-    wx.pageFilter.value = timing(animateForward ? 3.0 : 0,{duration:durationTime})
 
    
     wx.leftOp.value = timing(animateForward ? 1 : 0,{duration:durationTime})
@@ -359,6 +350,36 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady() {
+    const screenWidth = app.globalData.su_system.screenWidth
+    this.applyAnimatedStyle('.drawer-page-background', () => {
+      'worklet'
+      const card = drawerCardStyle(wx.pageTrans.value, screenWidth)
+      return {
+        transform: card.transform,
+        borderRadius: card.borderRadius,
+        borderWidth: card.borderWidth,
+        opacity: wx.drawerRouteVisible.value ? 1 : 0
+      }
+    }, { flush: 'sync' })
+    this.applyAnimatedStyle('.drawer-viewport', () => {
+      'worklet'
+      return { width: `${wx.pageTrans.value}px` }
+    }, { flush: 'sync' })
+    this.applyAnimatedStyle('.drawer-close-area', () => {
+      'worklet'
+      const card = drawerCardStyle(wx.pageTrans.value, screenWidth)
+      // 显式列出字段，避免跨 Worklet 的对象展开停留在首帧。
+      return {
+        transform: card.transform,
+        borderRadius: card.borderRadius,
+        borderWidth: card.borderWidth,
+        opacity: wx.drawerRouteVisible.value ? 1 : 0
+      }
+    }, { flush: 'sync' })
+    this.applyAnimatedStyle('.drawer-close-hitbox', () => {
+      'worklet'
+      return { width: `${Math.max(0, screenWidth - wx.pageTrans.value)}px` }
+    }, { flush: 'sync' })
     this.applyAnimatedStyle('.leftview', () => {
       'worklet'
       return {
@@ -408,8 +429,6 @@ Page({
     triggerHaptic(this.data.applicationSettings?.hapticFeedback, 'light')
     
     wx.pageTrans.value = 0
-    wx.pageScale.value = 1
-    wx.pageFilter.value = 0
     wx.leftTrans.value = 0
     wx.leftOp.value = 0
     wx.drawerRouteVisible.value = false

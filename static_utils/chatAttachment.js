@@ -1,5 +1,10 @@
 const DOCUMENT_EXTENSIONS = new Set(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'rtf'])
-const TEXT_EXTENSIONS = new Set(['md', 'markdown', 'txt', 'json', 'csv'])
+const TEXT_EXTENSIONS = new Set([
+  'c', 'cc', 'conf', 'cpp', 'css', 'csv', 'go', 'h', 'hpp', 'html', 'ini',
+  'java', 'js', 'json', 'jsx', 'log', 'md', 'markdown', 'php', 'properties',
+  'py', 'rb', 'rs', 'sh', 'sql', 'toml', 'ts', 'tsx', 'txt', 'vue', 'xml',
+  'yaml', 'yml'
+])
 const FILE_ICON_TYPES = {
   image: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'bmp', 'heic', 'tif', 'tiff'],
   pdf: ['pdf'], word: ['doc', 'docx', 'rtf'], spreadsheet: ['xls', 'xlsx', 'csv', 'ods'],
@@ -26,7 +31,7 @@ function getFileIconClass(file = {}) {
   return FILE_ICON_CLASSES[getFileIconType(file)] || 'icon-other'
 }
 const ANALYZABLE_FILE_EXTENSIONS = [
-  'txt', 'doc', 'docx', 'pdf', 'xls', 'xlsx', 'md', 'ppt', 'pptx',
+  ...TEXT_EXTENSIONS, 'doc', 'docx', 'pdf', 'xls', 'xlsx', 'ppt', 'pptx',
   'jpg', 'jpeg', 'png', 'gif', 'bmp'
 ]
 const ANALYZABLE_FILE_EXTENSION_SET = new Set(ANALYZABLE_FILE_EXTENSIONS)

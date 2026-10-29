@@ -247,7 +247,7 @@
                 <view style="width: 36rpx;height: 36rpx;background-color: black" class="cradius mr24"></view>
                 <text>{{miniProgramLabel}}</text>
               </view>
-              <text class="text-l2 ml8 mt8">{{appInfo.appVersion}}</text>
+              <text wx:if="{{appVersion}}" class="text-l2 ml8 mt8">{{appVersion}}</text>
             </view>
 
             <view wx:if="{{user.login}}" class="set-box bg-l0 ptb36 plr36 lradius dc mt24">
@@ -331,7 +331,12 @@
               </view>
 
               <view class="long-term-memory-panel full-bg">
-                <yb-dot-matrix-loading wx:if="{{longTermMemoryLoading}}" active="{{longTermMemoryLoading}}" theme="{{effectiveTheme}}" color="{{accentLoadingColor}}"/>
+                <view wx:if="{{longTermMemoryLoading}}" class="long-term-memory-content" aria-hidden="true">
+                  <view class="long-term-memory-section">
+                    <view class="memory-skeleton-title skeleton-clip"><view class="skeleton-shimmer"></view></view>
+                    <view wx:for="{{[100, 100, 64]}}" wx:key="index" class="memory-skeleton-body skeleton-clip" style="width:{{item}}%;"><view class="skeleton-shimmer"></view></view>
+                  </view>
+                </view>
                 <vertical-drag-gesture-handler
                   wx:else
                   tag="longTermMemoryScroll"
@@ -350,8 +355,8 @@
                   >
                     <view class="long-term-memory-content {{longTermMemorySections.length ? '' : 'long-term-memory-content-empty'}}">
                       <view wx:if="{{!longTermMemorySections.length}}" class="long-term-memory-empty dc ac jc text-l1">
-                        <image class="long-term-memory-empty-logo" src="/static/logs/glog.png" mode="widthFix"></image>
-                        <text class="mt32 mb24">{{i18n.memory.empty}}</text>
+                        <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true"></image>
+                        <text class="asset-empty-copy">{{i18n.memory.empty}}</text>
                       </view>
                       <block wx:for="{{longTermMemorySections}}" wx:key="id">
                         <view class="long-term-memory-section">
@@ -583,10 +588,6 @@
                     <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.creditsDescription}}</text>
                     <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
                   </view>
-                  <view wx:if="{{usageLimitsPending}}" class="usage-credit-description mt16 text-l2 usage-skeleton-slot" aria-hidden="{{usageLimitsLoading}}" list-item>
-                    <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.pending}} {{usageLimitsPending}} · ¥{{usageLimitsReserved}}</text>
-                    <view wx:if="{{usageLimitsLoading}}" class="storage-placeholder usage-skeleton-mask full-bg"><view class="storage-loading-sweep full-bg"></view></view>
-                  </view>
                   <view class="usage-card usage-credit-card ptb24 ac jb dr mt48" bind:tap="openQuotaPurchase" aria-role="button" aria-label="{{i18n.usageLimits.buyCredits}}" aria-disabled="{{usageLimitsLoading}}" aria-hidden="{{usageLimitsLoading}}" list-item>
                     <view class="usage-purchase-label ft32 usage-skeleton-slot">
                       <text class="{{usageLimitsLoading ? 'usage-skeleton-copy' : ''}}">{{i18n.usageLimits.buyCredits}}</text>
@@ -639,4 +640,5 @@
   theme-style="{{themeStyle}}"
 />
 
-<yb-notice-capsule id="dataActionNotice" theme-style="{{themeStyle}}" />
+<yb-notice-capsule id="dataActionNotice" closable="{{true}}" theme-style="{{themeStyle}}" />
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

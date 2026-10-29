@@ -3,7 +3,7 @@
       <!-- 语音 -->
       <text class="iconfont input-icon ft32 input-icon-muted text-l2 icon-x"></text>
     </view>
-    <textarea data-id="textarea" class="input-area text-l0 {{touchEndStatus == 'input' ? '' : 'input-area-hidden'}}" placeholder-class="text-l1" 	cursor-color="#619EFA"  cursor-spacing="{{12}}" maxlength="{{-1}}" disabled="{{disabled}}" focus="{{inputFocus && !disabled}}" confirm-type="return" value="{{disabled && disabledPlaceholder ? '' : askText}}" cursor="{{cursor}}"	adjust-position="{{false}}" placeholder="{{disabled && disabledPlaceholder ? disabledPlaceholder : placeHolder}}" bind:focus="keyFocus" bind:blur="keyBlur" bind:input="inputAsk" 	hold-keyboard="{{true}}" bind:keyboardheightchange="keybordChange"  bind:linechange="linChange" ></textarea>
+    <textarea data-id="textarea" class="input-area text-l0 {{touchEndStatus == 'input' ? '' : 'input-area-hidden'}}" placeholder-class="text-l1" 	cursor-color="#619EFA"  cursor-spacing="{{12}}" maxlength="{{-1}}" disabled="{{disabled}}" focus="{{layoutReady && inputFocus && !disabled}}" confirm-type="return" value="{{disabled && disabledPlaceholder ? '' : askText}}" cursor="{{cursor}}"	adjust-position="{{false}}" placeholder="{{disabled && disabledPlaceholder ? disabledPlaceholder : (placeholder || placeHolder)}}" bind:focus="keyFocus" bind:blur="keyBlur" bind:input="inputAsk" 	hold-keyboard="{{true}}" bind:keyboardheightchange="keybordChange"  bind:linechange="linChange" ></textarea>
 
     <view class="voice-box row-centered ac surface-bg bg-l0">
       <view class="wave-area row-centered ac surface-bg bg-l0 {{voiceLoading ? 'jc' : ''}}">

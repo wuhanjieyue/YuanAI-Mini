@@ -6,9 +6,3 @@
 
 /**主题配色（深色样式）**/
 @import './style/theme/dark.wxss';
-
-.h2w__copyNoticeClose {
-  width: 46rpx;
-  height: 46rpx;
-  flex: 0 0 46rpx;
-}

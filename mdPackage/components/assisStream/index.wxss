@@ -38,7 +38,7 @@
 }
 .stream-user-content{
   transform: scale(0,0);
-  transform-origin: 100% 0%;
+  transform-origin: 0% 100%;
 }
 
 .user-content{

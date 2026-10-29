@@ -1,3 +1,4 @@
+const { showErrorNotice, showNotice } = require('../../../static_utils/errorNotice')
 const { layoutContent } = require('../../../static_utils/userContentLayout')
 const { getThemeStyle } = require('../../../static_utils/theme')
 const { normalizeHistoryMessage } = require('../../../static_utils/chatHistoryMessages')
@@ -96,7 +97,7 @@ const initialWorkView = getSelectionView(initialCatalog, initialWorkSelection)
 const initialReasoningChoices = getReasoningChoices(withLockedModels(
   initialCatalog.models.filter((model) => model.modes.includes(CHAT_MODE_IDS.CHAT)),
   initialCatalog.accessPlan
-), initialChatSelection.modelId)
+), initialChatSelection.modelId, initialCatalog.accessPlan)
 
 let userBigContentIndex = 0;
 const THINK = "thinking"
@@ -170,7 +171,7 @@ Component({
       { id:'plugin', name:'插件', icon:'icon-plugin' },
       { id:'smart', name:'深入思考', icon:'icon-gauge' }
     ],
-    smartMode:!!initialChatSelection.effortId,
+    smartMode:!!initialChatSelection.effortId && initialCatalog.accessPlan !== 'guest',
     reasoningModelId:initialChatSelection.modelId,
     reasoningEffortId:initialChatSelection.effortId,
     reasoningModelName:initialChatView.modelName,
@@ -288,7 +289,7 @@ Component({
       this._activeTurnKey = ''
       this._activeRuntimeTurnKey = ''
       this._sessionCompletedChats = []
-      this._smartModePreferences = createSmartModePreferences()
+      this._smartModePreferences = createSmartModePreferences(this.data.accessPlan)
       this._historyRenderWaiting = false
       this._historyRenderTimer = null
       this._userContentSource = null
@@ -384,6 +385,7 @@ Component({
   leaveConversation(save = true){
     this.selectComponent('#readAloud')?.stop()
     this.selectComponent('#chatInput')?.cancelVoice?.()
+    this.stopMockReply()
     if(save) this.saveConversationView()
     chatRuntime.setVisibleTurn()
     if(this._regenerateObserver) this._regenerateObserver()
@@ -411,6 +413,7 @@ Component({
   },
   syncModelCatalogState(){
     const catalog = normalizeModelCatalog(this.data.modelCatalog)
+    if(catalog.accessPlan !== this.data.accessPlan) this._smartModePreferences = createSmartModePreferences(catalog.accessPlan)
     const reasoningMode = this.data.modeId === CHAT_MODE_IDS.TEMPORARY ? CHAT_MODE_IDS.TEMPORARY : CHAT_MODE_IDS.CHAT
     const chatSelection = normalizeModeSelection(catalog, reasoningMode, {
       modelId:this.data.reasoningModelId,
@@ -418,12 +421,12 @@ Component({
     })
     const modelCatalogReady = !!chatSelection.modelId && !!chatSelection.effortId
     const smartMode = modelCatalogReady && resolveSmartMode(this.data.modeId,
-      this._smartModePreferences || createSmartModePreferences())
+      this._smartModePreferences || createSmartModePreferences(this.data.accessPlan))
     const reasoningChoices = getReasoningChoices(withLockedModels(
       catalog.models.filter((model) => model.modes.includes(reasoningMode)),
       catalog.accessPlan,
       this.properties.language
-    ), chatSelection.modelId)
+    ), chatSelection.modelId, catalog.accessPlan)
     const workSelection = normalizeModeSelection(catalog, CHAT_MODE_IDS.WORK, this.data.workModelSelection)
     const chatView = getSelectionView(catalog, chatSelection)
     const workView = getSelectionView(catalog, workSelection)
@@ -469,15 +472,14 @@ Component({
       this.syncModelCatalogState()
       return true
     }
-    wx.showToast({ title:t(this.properties.language, 'chat.modelLoadFailed'), icon:'none' })
+    showErrorNotice({ title:t(this.properties.language, 'chat.modelLoadFailed') })
     return false
   },
 
   showLockedPlan(e){
     const minPlan = e?.detail?.minPlan || 'user'
-    wx.showToast({
-      title:this.data.accessPlan === 'guest' ? t(this.properties.language, 'auth.loginRequired') : t(this.properties.language, 'auth.upgradeRequired', { plan: minPlan }),
-      icon:'none'
+    showErrorNotice({
+      title:this.data.accessPlan === 'guest' ? t(this.properties.language, 'auth.loginRequired') : t(this.properties.language, 'auth.upgradeRequired', { plan: minPlan })
     })
   },
 
@@ -549,7 +551,6 @@ Component({
     })
     const compactInputHeight = rpx2px(52, this.systemInfo.screenWidth)
     const expandedInputHeight = rpx2px(94, this.systemInfo.screenWidth) + rpx2px(64, this.systemInfo.screenWidth)
-    this.inputHeight.value = this.data.smartMode ? expandedInputHeight : compactInputHeight
     const compactInputRadius = rpx2px(36, this.systemInfo.screenWidth)
     const expandedInputRadius = rpx2px(28, this.systemInfo.screenWidth)
     this.applyAnimatedStyle('.input-box', () => {
@@ -575,6 +576,11 @@ Component({
     })
 
     this.applyAnimatedStyle('.history-layout-holder', () => {
+      'worklet'
+      return {minHeight: `${this.chatHeight.value}px`}
+    })
+
+    this.applyAnimatedStyle('.mock-turn', () => {
       'worklet'
       return {minHeight: `${this.chatHeight.value}px`}
     })
@@ -606,12 +612,13 @@ Component({
       this._historyRenderTimer = null
     }
     this._historyRenderWaiting = false
+    this._historyRenderIndex = -1
     if(updateData && this.data.historyInitialLoading) this.setData({ historyInitialLoading:false })
   },
 
   historyRenderReady(e){
     if(!this.data.historyInitialLoading || !this._historyRenderWaiting) return
-    if(e?.detail?.renderToken !== this.data.historyRenderToken) return
+    if(e?.detail?.renderToken !== this.data.historyRenderToken || e.detail.index !== this._historyRenderIndex) return
     this.clearHistoryInitialLoading()
   },
 
@@ -674,14 +681,15 @@ Component({
   },
 
   resetChatComposer(){
-    this._smartModePreferences = createSmartModePreferences()
+    this._smartModePreferences = createSmartModePreferences(this.data.accessPlan)
+    const smartMode = this.data.modelCatalogReady && resolveSmartMode(CHAT_MODE_IDS.CHAT, this._smartModePreferences)
     this.dismissReasoningSlider()
     const input = this.selectComponent('#chatInput')
     if(input){
       if(input.finish) input.finish()
       if(input.setAskText) input.setAskText('')
       if(input.setPlaceHolder) input.setPlaceHolder(t(this.properties.language, 'chat.askAnything'))
-      if(input.setSmartMode) input.setSmartMode(this.data.modelCatalogReady)
+      if(input.setSmartMode) input.setSmartMode(smartMode)
     }
 
     const funList = this.selectComponent('#funList')
@@ -702,7 +710,7 @@ Component({
       modeName: t(this.properties.language, 'home.chat'),
       feature: '',
       selectedSkill: null,
-      smartMode: this.data.modelCatalogReady,
+      smartMode,
       modelPickerOpen:false,
       placeHolder: t(this.properties.language, 'chat.askAnything'),
       thinking: false,
@@ -752,9 +760,32 @@ Component({
      * askTextTmp
      */
     async startChat(e){
-        if(this.data.modeId === CHAT_MODE_IDS.WORK || this.data.historyInitialLoading || this.data.validatingConversation || this._attachmentSending || this._startingChat) return
+        if(this.data.historyInitialLoading || this.data.validatingConversation || this._attachmentSending || this._startingChat) return
         const askText = e.detail.askText.trim()
         if(!askText) return
+        // shortcut: Yuan Bot 暂用本地回复，正式上线时接入真实轮次。
+        if(this.data.modeId === CHAT_MODE_IDS.WORK){
+          if(this.data.streamStatus) return
+          this.chatHeight.value = this.systemInfo.screenHeight - e.detail.keyHeight - this.menuRect.bottom - 18 - (this.pdheight.value + this.inputHeight.value)
+          const reply = '我还在准备上线中呀，过阵子再来找我玩吧～'
+          let length = 0
+          this.setData({ streamStatus:true, chats:[
+            { role:'assistant', content:'', mock:true },
+            { role:'user', content:askText },
+            ...this.data.chats
+          ], sivId:'' }, () => this.setData({ sivId:'assis-up' }))
+          this.selectComponent('#chatInput')?.acceptSend(e.detail.askText)
+          const tick = () => {
+            this.setData({ chats:[
+              { ...this.data.chats[0], content:reply.slice(0, ++length) },
+              ...this.data.chats.slice(1)
+            ] })
+            if(length === reply.length) this.stopMockReply()
+            else this._mockReplyTimer = setTimeout(tick, 60)
+          }
+          this._mockReplyTimer = setTimeout(tick, 60)
+          return
+        }
         this._startingChat = true
         const viewVersion = this._conversationLoadVersion
         const accountVersion = chatRuntime.epoch
@@ -912,11 +943,12 @@ Component({
       this.selectComponent('#chatInput')?.setCopytext(item.exampleMessage)
     },
 
-    sendCreationPrompt(prompt, files = []){
+    prefillCreationPrompt(prompt, files = []){
       const text = String(prompt || '').trim()
       if(!text) return
       this.selectFeature(IMG, t(this.properties.language, 'tools.imageDesc'))
-      return this.startChat({ detail:{ askText:text, keyHeight:0, files } })
+      this.addSelectedFiles(files)
+      this.selectComponent('#chatInput')?.setCopytext(text)
     },
 
     async retryLocalTurn(e){
@@ -961,7 +993,7 @@ Component({
           if(valid()) this.selectComponent(`#assis-stream-${turnKey}`)?.restartLocalTurn(next)
         })
       } catch(error) {
-        if(valid()) wx.showToast({ title:error.message || t(this.properties.language, 'common.operationFailed'), icon:'none' })
+        if(valid()) showErrorNotice({ title:error.message || t(this.properties.language, 'common.operationFailed') })
       } finally {
         if(this._retryingLocalTurnKey === turnKey) this._retryingLocalTurnKey = ''
       }
@@ -1091,7 +1123,7 @@ Component({
           this.loadConversation(item.conversationId)
         } else if(record.status === 'failed') {
           restore()
-          wx.showToast({ title:record.error?.message || t(this.properties.language, 'common.operationFailed'), icon:'none' })
+          showErrorNotice({ title:record.error?.message || t(this.properties.language, 'common.operationFailed') })
         }
       }
       this.setData({
@@ -1113,7 +1145,19 @@ Component({
     /**
      * 输入框组件手动结束对话回调
      */
+    stopMockReply(){
+        if(!this._mockReplyTimer) return
+        clearTimeout(this._mockReplyTimer)
+        this._mockReplyTimer = null
+        this.setData({ streamStatus:false })
+        this.selectComponent('#chatInput')?.finish()
+    },
+
     async endStream(){
+        if(this._mockReplyTimer){
+          this.stopMockReply()
+          return
+        }
         const runtimeKey = chatRuntime.getRunningKey(this.data.currentConversationId || this._queueGroup)
           || this._activeRuntimeTurnKey
         const turn = this.data.sessionTurns.find(item => (item.runtimeKey || item.turnKey) === runtimeKey)
@@ -1125,7 +1169,7 @@ Component({
         this.selectComponent('#chatInput')?.finish()
         this.setData({ streamStatus:false })
         try { await chatRuntime.cancelTurn(runtimeKey, displayStop) }
-        catch(error) { wx.showToast({ title:t(this.properties.language, 'common.operationFailed'), icon:'none' }) }
+        catch(error) { showErrorNotice({ title:t(this.properties.language, 'common.operationFailed') }) }
     },
 
     /**
@@ -1344,7 +1388,7 @@ Component({
     }
     if(!conversationId){
       this.closeFeaturePopup()
-      wx.showToast({ title:t(this.properties.language, 'chat.temporaryActionUnavailable'), icon:'none' })
+      showErrorNotice({ title:t(this.properties.language, 'chat.temporaryActionUnavailable') })
       return
     }
     if(id === 'pin') this.closeFeaturePopup()
@@ -1406,6 +1450,7 @@ Component({
 
   selectMoreFeature(e){
     const id = e.detail?.id ?? e.currentTarget?.dataset?.id
+    if(id === 'plugin' && this.data.modeId === CHAT_MODE_IDS.WORK) return
     this.closeFeaturePopup()
     if(id === 'smart'){
       this.setSmartMode(!this.data.smartMode)
@@ -1558,7 +1603,7 @@ Component({
       : chat.role === 'assistant' && ['cancelling', 'cancelled'].includes(chat.status)
         ? {...chat, ...normalizeHistoryMessage(chat, this.properties.language)} : chat)
     const historyInitialLoading = options.historyInitialLoading === true
-    const historyRenderToken = options.historyRenderToken ?? this.data.historyRenderToken
+    const historyRenderToken = Math.max(options.historyRenderToken ?? 0, this.data.historyRenderToken + 1)
     const conversation = snapshot.conversation || {}
     if(conversation.titleGenerationStatus === 'pending') chatRuntime.refreshConversationTitle(conversationId)
     const mode = this.data.modeOptions.find((item) => item.id === conversation.modeId)
@@ -1569,7 +1614,11 @@ Component({
     this._activeRuntimeTurnKey = chatRuntime.getRunningKey(conversationId) || snapshot.activeSessionTurn?.runtimeKey || this._activeTurnKey
     if(!this.data.pageHidden) chatRuntime.setVisibleTurn(this._activeRuntimeTurnKey)
     this._sessionCompletedChats = []
-    this._historyRenderWaiting = historyInitialLoading && chats.length > 0
+    this.clearHistoryInitialLoading(false)
+    this._historyRenderIndex = chats.findIndex(chat => !chat.regenerateTurn && chat.role === 'assistant' && chat.content?.trim())
+    if(this._historyRenderIndex < 0) this._historyRenderIndex = chats.findIndex(chat => !chat.regenerateTurn && chat.role !== 'branchPoint')
+    this._historyRenderWaiting = historyInitialLoading && this._historyRenderIndex >= 0
+    if(historyInitialLoading && chats.length) this.startHistoryRenderFallback(this._conversationLoadVersion)
     this.resetChatComposer()
     this.setData({
       chats,
@@ -1630,13 +1679,12 @@ Component({
     const valid = () => !this._destroyed && loadVersion === this._conversationLoadVersion && accountVersion === chatRuntime.epoch
     const cached = this.getChatMessageCacheEntry(conversationId)
     if(cached){
-      this.clearHistoryInitialLoading()
+      this.setData({ validatingConversation:true })
       this.applyConversationSnapshot(conversationId, cached, {
         fromCache:true,
-        historyInitialLoading:false,
+        historyInitialLoading:true,
         historyRenderToken:loadVersion
       })
-      this.setData({ validatingConversation:true })
       try {
         const statusRes = await getConversationMessagesStatus({ conversationId })
         if(!valid()) return
@@ -1664,20 +1712,26 @@ Component({
           }
           this.saveConversationView()
           this.setData({ streamStatus:false })
+          if(!cached.chats.length) this.clearHistoryInitialLoading()
           this.restoreConversationView(conversationId)
           return
         }
         const res = await getConversationMessages({ conversationId })
         if(!valid()) return
         this.saveConversationView()
-      const snapshot = this.createConversationSnapshot(res?.data || {})
+        const snapshot = this.createConversationSnapshot(res?.data || {})
         this.applyConversationSnapshot(conversationId, snapshot, {
-          historyInitialLoading:false,
+          historyInitialLoading:snapshot.chats.length > 0,
           historyRenderToken:loadVersion
         })
         this.saveConversationSnapshot(conversationId, snapshot)
       } catch (error) {
-        if(valid()){ this.saveConversationView(); this.setData({ streamStatus:false }); this.restoreConversationView(conversationId) }
+        if(valid()){
+          this.saveConversationView()
+          this.setData({ streamStatus:false })
+          if(!cached.chats.length) this.clearHistoryInitialLoading()
+          this.restoreConversationView(conversationId)
+        }
       } finally {
         if(valid()) this.setData({ validatingConversation:false })
       }
@@ -1702,12 +1756,10 @@ Component({
         historyRenderToken:loadVersion
       })
       this.saveConversationSnapshot(conversationId, snapshot)
-      if(snapshot.chats.length > 0) this.startHistoryRenderFallback(loadVersion)
-      else this.clearHistoryInitialLoading()
     } catch (error) {
       if(valid()) {
         this.clearHistoryInitialLoading()
-        wx.showToast({ title:t(this.properties.language, 'chat.sessionLoadFailed'), icon:'none' })
+        showErrorNotice({ title:t(this.properties.language, 'chat.sessionLoadFailed') })
       }
     }
   },
@@ -1775,7 +1827,7 @@ Component({
     }
     const available = Math.max(0, 9 - this.data.files.length)
     if(selectedFiles.length > available){
-      wx.showToast({ title:t(this.properties.language, 'attachments.limit'), icon:'none' })
+      showErrorNotice({ title:t(this.properties.language, 'attachments.limit') })
     }
     const incomingFiles = selectedFiles.slice(0, available).map((file, index) => {
       const normalized = normalizeSelectedFile(file)
@@ -1917,7 +1969,7 @@ Component({
       })
     } catch (error) {
       if(this._destroyed || accountVersion !== chatRuntime.epoch || loadVersion !== this._conversationLoadVersion) return
-      wx.showToast({ title:t(this.properties.language, 'chat.historyLoadFailed'), icon:'none' })
+      showErrorNotice({ title:t(this.properties.language, 'chat.historyLoadFailed') })
     } finally {
       if(loadVersion === this._conversationLoadVersion && conversationId === this.data.currentConversationId) {
         this.setData({ loadingOlderMessages: false })
@@ -1942,6 +1994,7 @@ Component({
     this.triggerEvent('openLeft')
   },
   openPlugins(){
+    if(this.data.modeId === CHAT_MODE_IDS.WORK) return
     this.setFoucs(false)
     this.openFilePage('', true)
   },
@@ -1987,7 +2040,7 @@ Component({
     const view = getSelectionView(this.data.modelCatalog, selection)
     const reasoningEfforts = getReasoningChoices(withLockedModels(
       this.data.modelCatalog.models, this.data.accessPlan, this.properties.language
-    ), selection.modelId).options
+    ), selection.modelId, this.data.accessPlan).options
     const index = getReasoningIndex(reasoningEfforts, selection.modelId, selection.effortId)
     this.setData({
       reasoningModelId:selection.modelId,
@@ -2049,7 +2102,7 @@ Component({
       this.triggerEvent('conversationCreated')
       this.loadConversation(newId)
     } catch(error) {
-      wx.showToast({ title:'创建失败', icon:'none' })
+      showErrorNotice({ title:'创建失败' })
     } finally {
       this.setData({ branchLoadingTurnId:'' })
     }
@@ -2059,10 +2112,13 @@ Component({
     if(sourceId) this.loadConversation(sourceId)
   },
   showSpeechError(e){
-    wx.showToast({ title:e.detail.message, icon:'none' })
+    showErrorNotice({ title:e.detail.message })
   },
   copyMessage(e){
-    wx.setClipboardData({ data:e.detail?.content || '' })
+    wx.setClipboardData({ data:e.detail?.content || '', success: () => {
+      wx.hideToast()
+      showNotice({ title:t(this.properties.language, 'common.copied') })
+    } })
   },
   async previewMessageAttachment(e){
     if(this._previewingMessageAttachment) return

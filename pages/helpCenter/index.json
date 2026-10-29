@@ -1,5 +1,6 @@
 {
-  "usingComponents": { "assis-done": "/mdPackage/components/assisDone/index" },
+  "usingComponents": {
+    "yb-notice-capsule": "/components/yb-notice-capsule/index", "assis-done": "/mdPackage/components/assisDone/index" },
   "componentPlaceholder": { "assis-done": "view" },
   "navigationStyle": "custom",
   "backgroundColorContent": "#ffffff00",

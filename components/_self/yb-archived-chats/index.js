@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 import { listArchivedConversations, unarchiveConversation, deleteArchivedConversation } from '../../../request/chatStream'
 import { store } from '../../../store/index'
 import { triggerHaptic } from '../../../static_utils/haptic'
@@ -163,7 +164,7 @@ Component({
         this.removeConversationFromView(conversationId)
         this.triggerEvent('conversationchanged', { conversationId, action })
       } catch (error) {
-        if (!this._detached) wx.showToast({ title: error?.message || this.data.i18n.archive.actionFailed, icon: 'none' })
+        if (!this._detached) showErrorNotice({ title: error?.message || this.data.i18n.archive.actionFailed })
       } finally {
         this._actionBusy = false
       }

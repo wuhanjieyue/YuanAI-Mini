@@ -1,5 +1,5 @@
 @import '/static_wxss/skyother.wxss';
-@import '/static_wxss/skeleton.wxss';
+@import '/static_wxss/asset-cards.wxss';
 @import '/static_wxss/skycolor.wxss';
 
 .archived-page {
@@ -52,9 +52,6 @@
   width: 100%;
 }
 
-.archived-empty-logo{
-  width: 96rpx;
-}
 
 .archived-loading{
   width: 100%;

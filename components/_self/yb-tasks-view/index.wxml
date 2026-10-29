@@ -12,7 +12,13 @@
       </view>
     </block>
     <view wx:if="{{error}}" list-item class="ptb32 plr32 text-muted ft28" bind:tap="retry">{{error}}，点击重试</view>
-    <view wx:if="{{loading}}" list-item class="ptb32 plr32 text-muted ft28">加载中…</view>
+    <view wx:if="{{loading}}" list-item class="task-item dr ac" aria-hidden="true">
+      <view class="task-copy">
+        <view class="task-title task-skeleton-title skeleton-clip"><view class="skeleton-shimmer"></view></view>
+        <view class="task-subtitle"><view class="task-skeleton-subtitle skeleton-clip"><view class="skeleton-shimmer"></view></view></view>
+      </view>
+      <view wx:if="{{activeTab !== 'completed'}}" class="task-skeleton-menu dr ac jc"><view class="task-skeleton-icon skeleton-clip"><view class="skeleton-shimmer"></view></view></view>
+    </view>
     <view wx:elif="{{hasMore}}" list-item class="ptb32 plr32 text-muted ft28" bind:tap="loadMore">加载更多</view>
     <view list-item class="tasks-bottom-space"></view>
   </scroll-view>

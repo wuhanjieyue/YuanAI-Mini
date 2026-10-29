@@ -18,10 +18,9 @@
         bind:openstoragecategory="openStorageCategory"
         bind:requestclose="closeLeftPage"
       ></yb-left-center>
-      <view class="drawer-close-area" bind:tap="closeLeftPage"></view>
     </view>
 
-    <view class="full-page full-view rightview z99">
+    <view class="full-page full-view rightview drawer-card-surface bg-gray z99">
       <view
         wx:if="{{currentFeature === 'chat'}}"
         class="home-feature full-view"
@@ -74,6 +73,8 @@
           bind:chatAsset="startAssetChat"
         ></yb-create-view>
       </view>
+      <view class="drawer-home-close full-view bg-l0" bind:tap="closeLeftPage"></view>
     </view>
   </view>
 </horizontal-drag-gesture-handler>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

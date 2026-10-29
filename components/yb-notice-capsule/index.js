@@ -8,7 +8,12 @@ Component({
   options: { multipleSlots: true },
   properties: {
     text: { type: String, value: '' },
-    duration: { type: Number, value: 2000 },
+    notice: { type: Object, value: null, observer(notice) {
+      if (this._ready && notice) this.show(notice.text)
+    } },
+    closable: { type: Boolean, value: false },
+    closeLabel: { type: String, value: '关闭' },
+    duration: { type: Number, value: 2500 },
     resumeOnReplace: { type: Boolean, value: false },
     heightRpx: { type: Number, value: 120, observer(height) {
       if (this._heightRpx) this._heightRpx.value = height
@@ -35,6 +40,8 @@ Component({
         const startY = topDelta - this._heightRpx.value / 2 * unit
         return { transform: `translateY(${startY * (1 - progress)}px) scale(${0.6 + 0.4 * progress})`, opacity: (0.3 + 0.7 * progress) * this._opacity.value }
       })
+      this._ready = true
+      if (this.properties.notice) this.show(this.properties.notice.text)
     },
     detached() {
       this._detached = true
@@ -46,6 +53,7 @@ Component({
   },
   pageLifetimes: { hide() { this.hide() } },
   methods: {
+    close() { this.hide() },
     show(message = this.properties.text) {
       if (this._detached) return
       if (this.properties.resumeOnReplace) resumableCapsule = this

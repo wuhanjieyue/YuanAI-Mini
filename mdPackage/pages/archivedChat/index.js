@@ -1,3 +1,4 @@
+const { showErrorNotice, showNotice } = require('../../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../../static_utils/themeBinding')
 import { getConversationMessages, unarchiveConversation } from '../../../request/chatStream'
 import { store } from '../../../store/index'
@@ -38,7 +39,7 @@ Page({
   async previewArtifact(e) {
     const message = this.data.messages.find(item => item.messageId === e.currentTarget.dataset.messageId)
     const detail = artifactAttachmentDetail(message?.contentParts, e.detail?.link)
-    if (!detail) return wx.showToast({ title: this.data.i18n.assets.previewFailed, icon: 'none' })
+    if (!detail) return showErrorNotice({ title: this.data.i18n.assets.previewFailed })
     await this.previewMessageAttachment({ detail })
   },
   async previewMessageAttachment(e) {
@@ -131,14 +132,17 @@ Page({
       this._eventChannel.emit('unarchived', { conversationId: this._conversationId })
       if (this._alive) this.closePage()
     } catch (error) {
-      if (this._alive) wx.showToast({ title: error?.message || this.data.i18n.archive.actionFailed, icon: 'none' })
+      if (this._alive) showErrorNotice({ title: error?.message || this.data.i18n.archive.actionFailed })
     } finally {
       if (this._alive) this.setData({ unarchiving: false })
     }
   },
 
   copyMessage(e) {
-    wx.setClipboardData({ data: e.detail.content || '' })
+    wx.setClipboardData({ data: e.detail.content || '', success: () => {
+      wx.hideToast()
+      showNotice({ title:this.data.i18n.common.copied })
+    } })
   },
 
   openSources(e) {

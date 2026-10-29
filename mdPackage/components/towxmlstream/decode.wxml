@@ -9,6 +9,7 @@
 	<block wx:elif="{{item.tag==='span'}}">
 		<span data-data="{{item}}" class="{{item.attrs.class}}" data="{{item.attrs.data}}" id="{{item.attrs.id}}" style="{{item.attrs.style}}" catch:tap="_tap">
 			<text wx:if="{{item.artifactLink}}">{{item.artifactText}}</text>
+			<text wx:elif="{{item.webLink && item.webText !== undefined}}">{{item.webText}}</text>
 			<decode theme="{{theme}}" wx:elif="{{item.children}}" nodes="{{item}}" stream-mode="{{streamMode}}" context-id="{{contextId}}"/>
 		</span>
 	</block>

@@ -76,21 +76,16 @@
         <view class="asset-list-copy"><view class="library-skeleton-title skeleton-clip"><view class="skeleton-shimmer"></view></view><view class="library-skeleton-description mt16 skeleton-clip"><view class="skeleton-shimmer"></view></view></view>
       </view>
     </list-view>
-    <view wx:if="{{(!loading || failed) && !(failed && !items.length)}}" class="asset-status {{!items.length ? 'asset-empty' : ''}}">
-      <text wx:if="{{loading}}">{{i18n.common.loading}}</text>
-      <block wx:elif="{{failed}}">
-        <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
-        <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
-        <view class="asset-retry" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
-      </block>
-      <text wx:elif="{{!items.length && query}}">{{i18n.assets.noMatches}}</text>
-      <text wx:elif="{{items.length && !hasMore}}">{{i18n.assets.end}}</text>
+    <view wx:if="{{failed && items.length}}" class="asset-status">
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+      <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
+      <view class="asset-retry" hover-class="asset-pressed" bind:tap="retryAssets" aria-role="button">{{i18n.common.retry}}</view>
     </view>
     <view class="library-bottom-space"></view>
   </scroll-view>
-  <view wx:if="{{!items.length && !loading && !failed && !query}}" class="asset-empty-overlay">
+  <view wx:if="{{!items.length && !loading && !failed}}" class="asset-empty-overlay">
     <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
-    <text class="asset-empty-copy">{{i18n.assets.empty}}</text>
+    <text class="asset-empty-copy">{{query ? i18n.assets.noMatches : i18n.assets.empty}}</text>
   </view>
   <view wx:if="{{failed && !items.length}}" class="asset-empty-overlay">
     <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
@@ -146,7 +141,7 @@
             </view>
             <view class="library-source-panel {{sourceMenuOpen ? 'setting-option-pop-surface' : ''}}" catch:tap="handleFilterCard">
               <view class="library-source-header setting-option-pop-item dr ac" catch:tap="toggleSourceMenu" aria-role="button" aria-label="{{origin ? i18n.library[origin] : i18n.library.filter}}" aria-expanded="{{sourceMenuOpen}}">
-                <text class="iconfont icon-filter_2_line library-menu-icon"></text><text class="library-menu-label ft32" max-lines="1" overflow="ellipsis">{{origin ? i18n.library[origin] : i18n.library.filter}}</text><text class="iconfont {{sourceMenuOpen ? 'icon-arr-down' : 'icon-arrow-right'}} mla ft28"></text>
+                <text class="iconfont {{origin === 'uploaded' ? 'icon-share' : (origin === 'generated' ? 'icon-image-create' : 'icon-filter_2_line')}} library-menu-icon"></text><text class="library-menu-label ft32" max-lines="1" overflow="ellipsis">{{origin ? i18n.library[origin] : i18n.library.filter}}</text><text class="iconfont {{sourceMenuOpen ? 'icon-arr-down' : 'icon-arrow-right'}} mla ft28"></text>
               </view>
               <view class="library-source-options" style="pointer-events:{{sourceMenuOpen ? 'auto' : 'none'}};" aria-hidden="{{!sourceMenuOpen}}">
                 <view class="library-menu-divider" aria-hidden="true"></view>

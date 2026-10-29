@@ -13,10 +13,10 @@ async function listInstalledSkills({ query = '' } = {}) {
   return skillRequest('/skills/installed', { query })
 }
 
-async function listRecommendedSkills({ query = '', cursor = '', limit = 25 } = {}) {
+async function listRecommendedSkills({ query = '', cursor = '', limit = 25, category = '' } = {}) {
   if (!Number.isInteger(limit) || limit < 1 || limit > 25) throw new RangeError('Invalid skill page limit')
   if (typeof cursor !== 'string') throw new TypeError('Invalid skill cursor')
-  return skillRequest('/skills/recommended', { query, cursor, limit })
+  return skillRequest('/skills/recommended', { query, cursor, limit, ...(category ? { category } : {}) })
 }
 
 async function getSkillDetail({ id }) {

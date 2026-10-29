@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 const i18nBehavior = require('../../../static_utils/i18n/behavior')
 const { messages, t } = require('../../../static_utils/i18n/index')
 import { store } from '../../../store/index'
@@ -95,7 +96,7 @@ Component({
       const pending = { action, item, source, epoch, version: this._actionVersion }
       if (!this.assetActionCurrent(pending) || action === 'save' && !item.isImage) return
       if (action === 'chat' && !isSupportedChatAttachment(item)) {
-        wx.showToast({ title: messages(this.properties.language).attachments.unsupportedFormat, icon: 'none' })
+        showErrorNotice({ title: messages(this.properties.language).attachments.unsupportedFormat })
         return
       }
       this._operationBusy = true
@@ -274,7 +275,7 @@ Component({
       this._shareFile = null
       if (action?.action === 'share') return
       if (action && ['creation', 'library', 'knowledge'].includes(action.source)) this.handleAssetAction({ detail: action })
-      else if (action) wx.showToast({ title: messages(this.properties.language).assets.unavailable, icon: 'none' })
+      else if (action) showErrorNotice({ title: messages(this.properties.language).assets.unavailable })
     }
   }
 })

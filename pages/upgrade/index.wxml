@@ -18,7 +18,8 @@
     </view>
   </scroll-view>
   <view class="upgrade-actions dc ac">
-    <view style="width:75vw;" hover-class="upgrade-pressed" hover-start-time="20" hover-stay-time="70"><button class="upgrade-primary" hover-class="none" bind:tap="getPro" style="width:75vw;margin:0;padding:0;border-radius:999rpx;min-height:104rpx;line-height:104rpx;font-size:32rpx;font-weight:500;background:var(--accent-action-bg);color:var(--accent-action-text);border:0;" plain="{{true}}">{{i18n.upgrade.title}}</button></view>
-    <view style="width:100%;" hover-class="upgrade-pressed" hover-start-time="20" hover-stay-time="70"><button class="upgrade-secondary" hover-class="none" bind:tap="closePage" style="color:var(--text-l1);width:100%;margin:0;padding:0;border-radius:999rpx;margin-top:12rpx;min-height:84rpx;line-height:84rpx;font-size:26rpx;background:transparent;border:0;" plain="{{true}}">{{i18n.upgrade.continueFree}}</button></view>
+    <view style="width:75vw;" hover-class="{{isPro || purchasing ? 'none' : 'upgrade-pressed'}}" hover-start-time="20" hover-stay-time="70"><button class="upgrade-primary" hover-class="none" bind:tap="getPro" disabled="{{isPro || purchasing}}" style="width:75vw;margin:0;padding:0;border-radius:999rpx;min-height:104rpx;line-height:104rpx;font-size:32rpx;font-weight:500;background:var(--accent-action-bg);color:var(--accent-action-text);border:0;opacity:{{isPro || purchasing ? 0.5 : 1}};" plain="{{true}}">{{isPro ? i18n.upgrade.subscribed : i18n.upgrade.title}}</button></view>
+    <view wx:if="{{!isPro}}" style="width:100%;" hover-class="upgrade-pressed" hover-start-time="20" hover-stay-time="70"><button class="upgrade-secondary" hover-class="none" bind:tap="closePage" style="color:var(--text-l1);width:100%;margin:0;padding:0;border-radius:999rpx;margin-top:12rpx;min-height:84rpx;line-height:84rpx;font-size:26rpx;background:transparent;border:0;" plain="{{true}}">{{i18n.upgrade.continueFree}}</button></view>
   </view>
 </view>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

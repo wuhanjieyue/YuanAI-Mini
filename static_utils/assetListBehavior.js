@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('./errorNotice')
 const { assetContext, assetContextCurrent, cachedAssetEntry, assetRecentlyChecked, saveAssetEntry, requestAssetPage, renewAssetUrls } = require('../request/assetCache')
 const eventBusModule = require('./eventBus')
 const eventBus = eventBusModule.default
@@ -192,17 +193,10 @@ module.exports = Behavior({
       if (!item?.url) return
       const images = this.data.items.filter(item => item.isImage && item.url && !item.loadFailed)
       const version = this._assetVersion
-      const showError = () => wx.showToast({ title: messages(this.properties.language).assets.imageUnavailable, icon: 'none' })
+      const showError = () => showErrorNotice({ title: messages(this.properties.language).assets.imageUnavailable })
       this._previewingAsset = true
       try {
-        const urls = await Promise.all(images.map(image => {
-          if (!image.url.startsWith('/static/images/create/')) return image.url
-          // Native preview needs local files, not package paths. Overwrite only these six fixed sample copies.
-          const destPath = `${wx.env.USER_DATA_PATH}/yuanai-create-preview-${image.sampleKey}.jpg`
-          return new Promise((resolve, reject) => wx.getFileSystemManager().copyFile({
-            srcPath: image.url, destPath, success: () => resolve(destPath), fail: reject
-          }))
-        }))
+        const urls = images.map(image => image.url)
         if (this._assetDetached || version !== this._assetVersion || this.data.actionsOpen || this._openingAsset) return
         wx.previewImage({ current: urls[images.indexOf(item)], urls, fail: showError })
       } catch (error) {

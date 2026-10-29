@@ -261,7 +261,7 @@ Component({
       if (this._closing) return
       const value = this.data.inputText.trim()
       if (this.data.inputMode && !value) {
-        wx.showToast({ title: this.data.validationText, icon:'none' })
+        this.selectComponent('#validationNotice').show(this.data.validationText)
         return
       }
       this.triggerEvent('confirm', this.data.inputMode ? { value } : {})

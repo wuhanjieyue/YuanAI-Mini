@@ -1,3 +1,4 @@
+const { showErrorNotice, showNotice } = require('../../../static_utils/errorNotice')
 const i18nBehavior = require('../../../static_utils/i18n/behavior')
 import { listTasks, taskStatus, taskAction, taskView } from '../../../request/tasks'
 import eventBus, { CHAT_SESSION_RESET } from '../../../static_utils/eventBus'
@@ -56,11 +57,18 @@ Component({
         this._loading = false
         if (!this._destroyed) {
           this.setData({ loading:false })
-          if (this._visible && version !== this._version && !this.data.tasks.length) this.reload()
+          if (this._reloadPending || (this._visible && version !== this._version && !this.data.tasks.length)) {
+            this._reloadPending = false
+            this.reload()
+          }
         }
       }
     },
-    reload() { return this.loadTasks() },
+    reload() {
+      this._version++
+      if (this._loading) { this._reloadPending = true; return }
+      return this.loadTasks()
+    },
     loadMore() { return this.loadTasks(true) },
     retry() { return this.loadTasks(this._failedMore) },
     async poll() {
@@ -98,9 +106,9 @@ Component({
         if (this._destroyed) return
         if (kind === 'chat') this.triggerEvent('openTaskChat', result)
         else this.updateTask(result)
-        if (kind === 'run') wx.showToast({ title:'任务已加入执行队列', icon:'none' })
+        if (kind === 'run') showNotice({ title:'任务已加入执行队列' })
       } catch (error) {
-        if (!this._destroyed) wx.showToast({ title:error.message, icon:'none' })
+        if (!this._destroyed) showErrorNotice({ title:error.message })
       } finally { this._busy = false }
     }
   },
@@ -126,7 +134,7 @@ Component({
     }
   },
   pageLifetimes:{
-    show() { this._visible = true; this.reload(); this.schedulePoll() },
-    hide() { this._visible = false; this._version++; clearTimeout(this._pollTimer) }
+    show() { this._visible = true; this.schedulePoll() },
+    hide() { this._visible = false; clearTimeout(this._pollTimer) }
   }
 })

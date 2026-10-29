@@ -40,3 +40,5 @@
       </view>
     </view>
 </view>
+
+<yb-notice-capsule id="validationNotice" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}}" />

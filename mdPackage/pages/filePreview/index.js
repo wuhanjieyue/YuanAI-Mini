@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../../static_utils/themeBinding')
 const { messages } = require('../../../static_utils/i18n/index')
 const { store } = require('../../../store/index')
@@ -11,6 +12,7 @@ const settingRouterBuilder = require('../../../static_router/settingRouter').def
 const { getSettingSheetMetrics, SETTING_ROUTE_DURATION } = require('../../../static_router/settingRouter')
 const { static: parseMarkdown } = require('../../components/towxmlstream/index')
 const { resolvePreviewFile } = require('../../../static_utils/filePreview')
+const { TEXT_EXTENSIONS } = require('../../../static_utils/chatAttachment')
 
 const MIN_FLING_VELOCITY = 500
 const CLOSE_PROGRESS_THRESHOLD = 0.6
@@ -67,7 +69,7 @@ Page({
 
   async loadFile({ filePath, attachment, name, extension } = {}) {
     const kind = extension === 'md' || extension === 'markdown' ? 'markdown'
-      : ['txt', 'json', 'csv'].includes(extension) || String(attachment?.mimeType || '').startsWith('text/') ? 'text' : ''
+      : TEXT_EXTENSIONS.has(extension) || String(attachment?.mimeType || '').startsWith('text/') ? 'text' : ''
     this._filePath = ''
     this.setData({ title: name || this.data.i18n.common.document, kind, loading: true, failed: false })
     if ((!filePath && !attachment) || !kind) {
@@ -102,7 +104,7 @@ Page({
       })
     } catch (error) {
       if (this._alive && !/cancel/i.test(error?.errMsg || '')) {
-        wx.showToast({ title: this.data.i18n.assets.downloadFailed, icon: 'none' })
+        showErrorNotice({ title: this.data.i18n.assets.downloadFailed })
       }
     } finally {
       if (this._alive) this.setData({ downloading: false })

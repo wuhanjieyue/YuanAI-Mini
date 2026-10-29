@@ -11,9 +11,12 @@
   </view>
   <scroll-view class="info-scroll" scroll-y type="list" associative-container="pop-gesture" show-scrollbar="{{false}}">
     <view class="info-article" list-item>
-      <text wx:if="{{loading}}" class="ft28 text-muted">{{i18n.common.loading}}</text>
+      <view wx:if="{{loading}}" aria-hidden="true">
+        <view wx:for="{{[100, 100, 100, 64]}}" wx:key="index" class="knowledge-chunk-skeleton-line skeleton-clip" style="width:{{item}}%;"><view class="skeleton-shimmer"></view></view>
+      </view>
       <view wx:elif="{{failed}}" class="asset-failure-state" bind:tap="loadChunk" aria-role="button" aria-label="{{i18n.common.retry}}"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{error}} · {{i18n.common.retry}}</text></view>
       <towxml wx:elif="{{article}}" nodes="{{article}}" openTyper="{{false}}" theme="{{effectiveTheme}}" />
     </view>
   </scroll-view>
 </view>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

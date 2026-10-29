@@ -1,4 +1,5 @@
 {
   "component": true,
-  "styleIsolation": "isolated"
+  "styleIsolation": "isolated",
+  "usingComponents": { "yb-notice-capsule": "/components/yb-notice-capsule/index" }
 }

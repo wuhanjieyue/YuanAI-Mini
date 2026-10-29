@@ -1,3 +1,5 @@
+@import '/static_wxss/drawer-card.wxss';
+
 .home-shell,
 .full-page,
 .home-feature{
@@ -12,12 +14,16 @@
   opacity: 0;
 }
 
-.drawer-close-area{
-  width: 20vw;
-  height: 100vh;
-}
 .rightview {
   overflow: hidden;
+}
+.drawer-home-close {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .home-feature{

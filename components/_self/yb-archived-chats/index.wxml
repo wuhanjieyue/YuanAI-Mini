@@ -55,12 +55,12 @@
 
   <view class="archived-status-layer dc ac jc">
     <view wx:if="{{requestStatus === 'success' && !loading && !groups.length}}" class="archived-status dc ac jc archived-empty text-l1 ft32">
-      <image class="archived-empty-logo" src="/static/logs/glog.png" mode="widthFix"></image>
-      <text class="archived-empty-message mb24 mt32">{{appliedQuery ? i18n.archive.noMatches : i18n.archive.empty}}</text>
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit"></image>
+      <text class="asset-empty-copy">{{appliedQuery ? i18n.archive.noMatches : i18n.archive.empty}}</text>
     </view>
     <view wx:elif="{{!loading && failed && !groups.length}}" class="archived-status dc ac jc archived-error text-l1 ft32">
-      <image class="archived-empty-logo" src="/static/logs/glog.png" mode="widthFix" aria-hidden="true"></image>
-      <text class="archived-empty-message mb24 mt32">{{i18n.archive.loadFailed}}</text>
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true"></image>
+      <text class="asset-empty-copy">{{i18n.archive.loadFailed}}</text>
     </view>
   </view>
 

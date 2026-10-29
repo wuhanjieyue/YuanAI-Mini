@@ -8,7 +8,13 @@
     </view>
   </block>
   <block wx:else>
-    <image class="logo-bg" src="/static/logs/glog.png" mode="widthFix"></image>
+    <view wx:if="{{workMode}}" class="logo-bg bot-logo">
+      <block wx:for="{{botLogos}}" wx:key="token">
+        <image class="bot-logo-image" src="{{item.poster}}" mode="aspectFit" style="opacity:{{botLogoLoaded ? 0 : 1}};" />
+        <image class="bot-logo-image" src="{{item.src}}" mode="aspectFit" data-token="{{item.token}}" bind:load="handleBotLogoLoad" bind:error="handleBotLogoError" style="opacity:{{botLogoLoaded ? 1 : 0}};" />
+      </block>
+    </view>
+    <image wx:else class="logo-bg" src="/static/logs/glog.png" mode="widthFix"></image>
     <view class="dr ac jc mt24">
       <text class="mr8">{{i18n.chat.work}}</text>
     </view>

@@ -3,10 +3,11 @@
     <view class="dc chat-page full-view">
       <!-- 空状态由 log-box 统一渲染 -->
       <yb-log-box
-        wx:if="{{chats.length == 0 && sessionTurns.length == 0 && ! streamStatus && ! historyInitialLoading}}"
+        wx:if="{{chats.length == 0 && sessionTurns.length == 0 && ! streamStatus && ! historyInitialLoading && ! validatingConversation}}"
         style="position:absolute;top:0;left:0;width:100vw;height:100%;z-index:1;"
         temporary-mode="{{modeId == 'temporary'}}"
         work-mode="{{modeId == 'work'}}"
+        point-color="{{applicationSettings.pointColor}}"
         language="{{language}}"
         bind:showTemporaryInfo="showTemporaryInfo"
       ></yb-log-box>
@@ -26,11 +27,18 @@
       
       <scroll-view bind:scroll="rememberScroll" scroll-top="{{restoreScrollTop}}" scroll-into-view="{{sivId}}" scroll-with-animation="{{true}}" scroll-y="{{!historyInitialLoading}}" reverse  type="list" enable-passive="{{true}}" class="chat-view"  	worklet:onscrollupdate="upScroll" worklet:onscrollend="endScroll" 	bind:scrolltolower="toTop">
         <view  id="assis-up"></view>
+        <view hidden="{{!chats[0].mock}}" class="mock-turn dc" list-item>
+          <block wx:if="{{chats[0].mock}}">
+            <assis-done id="assisdone_1" item="{{chats[1]}}" index="{{1}}" language="{{language}}" theme="{{effectiveTheme}}" bind:showUserContent="showUserContent"/>
+            <assis-done id="assisdone_0" item="{{chats[0]}}" index="{{0}}" language="{{language}}" theme="{{effectiveTheme}}" show-actions="{{false}}"/>
+            <view class="mock-turn-holder"></view>
+          </block>
+        </view>
         <view wx:for="{{sessionTurns}}" wx:key="turnKey" list-item wx:if="{{!item.historyInline}}" id="turn-row-{{item.turnKey}}" style="min-height: {{item.preservedHeight || 0}}px;">
           <template is="session-response" data="{{item, language, effectiveTheme, hapticFeedback: applicationSettings.hapticFeedback}}"/>
         </view>
-        <view hidden="{{sessionTurns.length > 0 && !sessionTurns[0].historyInline}}" class="history-layout-holder" list-item></view>
-        <view wx:for="{{chats}}" wx:for-index="index" wx:key="index" list-item id="history-row-{{index}}" style="min-height: {{item.preservedHeight || 0}}px;">
+        <view hidden="{{chats[0].mock || (sessionTurns.length > 0 && !sessionTurns[0].historyInline)}}" class="history-layout-holder" list-item></view>
+        <view wx:for="{{chats}}" wx:for-index="index" wx:key="index" list-item wx:if="{{!chats[0].mock || index > 1}}" id="history-row-{{index}}" style="min-height: {{item.preservedHeight || 0}}px;">
           <template wx:if="{{item.regenerateTurn}}" is="session-response" data="{{item: item.regenerateTurn, language, effectiveTheme, hapticFeedback: applicationSettings.hapticFeedback}}"/>
           <view wx:elif="{{item.role == 'branchPoint'}}" class="branch-point text-l2 dr ac" aria-label="{{'分支自 ' + item.origin.title}}">
             <view class="branch-point-rule"></view>
@@ -39,7 +47,7 @@
             </view>
             <view class="branch-point-rule"></view>
           </view>
-          <assis-done wx:else language="{{language}}" model-name="{{item.modelName || (modeId == 'work' ? workModelName : reasoningModelName)}}" item="{{item}}" share-enabled="{{modeId != 'temporary'}}" share-loading="{{shareLoading}}" branch-loading-turn-id="{{branchLoadingTurnId}}" index="{{index}}" render-token="{{historyRenderToken}}" id="assisdone_{{index}}"  bind:showUserContent="showUserContent" bind:renderready="historyRenderReady" bind:openReasoning="openReasoning" bind:openSources="openSources" bind:copy="copyMessage" bind:previewFile="previewMessageAttachment" bind:unavailableImage="openDeletedMessageAsset" bind:regenerate="regenerate" bind:share="shareMessage" bind:moreAction="moreAction" theme="{{effectiveTheme}}" haptic-feedback="{{applicationSettings.hapticFeedback}}"></assis-done>
+          <assis-done wx:else show-actions="{{!item.mock}}" language="{{language}}" model-name="{{item.modelName || (modeId == 'work' ? workModelName : reasoningModelName)}}" item="{{item}}" share-enabled="{{modeId != 'temporary'}}" share-loading="{{shareLoading}}" branch-loading-turn-id="{{branchLoadingTurnId}}" index="{{index}}" render-token="{{historyRenderToken}}" id="assisdone_{{index}}"  bind:showUserContent="showUserContent" bind:renderready="historyRenderReady" bind:openReasoning="openReasoning" bind:openSources="openSources" bind:copy="copyMessage" bind:previewFile="previewMessageAttachment" bind:unavailableImage="openDeletedMessageAsset" bind:regenerate="regenerate" bind:share="shareMessage" bind:moreAction="moreAction" theme="{{effectiveTheme}}" haptic-feedback="{{applicationSettings.hapticFeedback}}"></assis-done>
         </view>
         <view wx:if="{{loadingOlderMessages}}" class="loading-row dc ac jc">
           <view class="older-message-skeleton skeleton-clip">
@@ -80,7 +88,7 @@
 <!--          底部输入-->
         <view class="dr ae bottom-box fv">
           <yb-trending-search wx:if="{{trendingSearchMounted}}" items="{{recommendationItems}}" loading="{{recommendationsRefreshing}}" bind:select="selectRecommendation" bind:refresh="refreshRecommendations" bind:exitcomplete="handleTrendingSearchExitComplete" visible="{{trendingSearchVisible}}" class="trending-search-slot" style="pointer-events: {{trendingSearchVisible ? 'auto' : 'none'}};"></yb-trending-search>
-          <view class="bl-01 bg-l0 dc input-box plr24 xlradius {{modeId == 'work' ? 'input-box-disabled' : ''}}" >
+          <view class="bl-01 bg-l0 dc input-box plr24 xlradius" >
               <!-- 模式 -->
               <yb-fun-list id="funList" language="{{language}}" feature="{{feature}}" skill="{{selectedSkill}}" catch:closeFun="closeFun" bind:heightchange="changeFunHeight"></yb-fun-list>
               <!-- 文件列表 -->
@@ -96,11 +104,11 @@
                   <text class="ft24 wt6 model-summary-name">{{workModelName}}</text>
                   <text class="ft24 ml8 model-summary-effort">{{workEffortLabel}}</text>
                 </view>
-                <view wx:if="{{smartMode && leftIcon != 'stop' && modeId != 'work' && !pageHidden}}" class="gauge-trigger-slot xxlsize dr ac je">
-                  <yb-gauge-trigger progress="{{reasoningProgress}}" popup-open="{{(reasoningSliderOpen && !reasoningSliderClosing) || modelPickerOpen}}" accent-color="{{modeId == 'temporary' ? temporaryAccentActionColor : accentActionColor}}" bind:open="showReasoningSlider" theme="{{effectiveTheme}}"></yb-gauge-trigger>
+                <view wx:if="{{smartMode && leftIcon != 'stop' && modeId != 'work'}}" class="gauge-trigger-slot xxlsize dr ac je">
+                  <yb-gauge-trigger progress="{{reasoningProgress}}" popup-open="{{(reasoningSliderOpen && !reasoningSliderClosing) || modelPickerOpen}}" accent-color="{{modeId == 'temporary' ? temporaryAccentActionColor : accentActionColor}}" page-hidden="{{pageHidden}}" bind:open="showReasoningSlider" theme="{{effectiveTheme}}"></yb-gauge-trigger>
                 </view>
                 <!-- 输入框 -->
-                <yb-chat-input id="chatInput" language="{{language}}" style="width: 100%;flex: 1;min-width: 0;" inputFocus="{{inputFocus}}" settings="{{settings}}" accessory-inset-rpx="{{smartMode ? (modeId == 'work' ? 220 : 56) : 0}}" disabled="{{modeId == 'work'}}" disabled-placeholder="{{modeId == 'work' ? i18n.chat.inDevelopment : ''}}" haptic-feedback="{{applicationSettings.hapticFeedback}}" bind:startChat="startChat" bind:endStream="endStream"
+                <yb-chat-input id="chatInput" language="{{language}}" style="width: 100%;flex: 1;min-width: 0;" inputFocus="{{inputFocus}}" settings="{{settings}}" accessory-inset-rpx="{{smartMode ? (modeId == 'work' ? 220 : 56) : 0}}" placeholder="{{modeId == 'work' ? i18n.chat.askBot : ''}}" haptic-feedback="{{applicationSettings.hapticFeedback}}" bind:startChat="startChat" bind:endStream="endStream"
                 bind:getAskText="updateInputValue" bind:focusChange="updateInputFocus" bind:changeLeftIcon="changeLeftIcon" bind:openPlugins="openPlugins" bind:voiceError="voiceError" bind:sendTranscription="sendTranscription"></yb-chat-input>
               </view>
           </view>
@@ -112,6 +120,7 @@
       id="featurePopup"
       style="z-index: 200;"
       mode-options="{{modeOptions}}"
+      point-color="{{applicationSettings.pointColor}}"
       mode-popup-width-rpx="{{modePopupWidthRpx}}"
       more-options="{{moreOptions}}"
       mode-id="{{modeId}}"
@@ -120,6 +129,7 @@
       conversation-id="{{currentConversationId}}"
       conversation-pinned="{{currentConversationPinned}}"
       unpin-label="{{i18n.chat.unpin}}"
+      connection-label="{{i18n.chat.connections}}"
       conversation-actions="{{conversationActions}}"
       share-loading="{{shareLoading}}"
       archive-loading="{{archiveLoading}}"

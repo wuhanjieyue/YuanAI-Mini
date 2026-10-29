@@ -1,8 +1,9 @@
+const { showErrorNotice } = require('../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 // pages/index/index.js
 import { createStoreBindings } from 'mobx-miniprogram-bindings'
 import { store } from '../../store/index'
-import routeBuilder from '../leftpage/router'
+import routeBuilder, { DRAWER_WIDTH_RATIO, drawerCardStyle } from '../leftpage/router'
 import upRouterBuilder from '../../static_router/upPageRouter'
 import settingRouterBuilder from '../../static_router/settingRouter'
 import tryItRouterBuilder, { TRY_IT_ROUTE_TYPE } from '../../static_router/tryItRouter'
@@ -81,33 +82,35 @@ Page({
 
   initContainer() {
     wx.pageTrans = shared(0)
-    wx.pageScale = shared(1)
-    wx.pageFilter = shared(0)
     wx.leftTrans = shared(0)
     wx.leftOp = shared(0)
     wx.drawerRouteVisible = shared(false)
 
     const screenWidth = app.globalData.su_system.screenWidth
-    this.widthActual = shared(screenWidth * 0.7)
+    this.widthActual = shared(screenWidth * DRAWER_WIDTH_RATIO)
     this.leftActual = shared(screenWidth * 0.5)
     this.reasoningSliderOpen = shared(false)
     this.assetActionsOpen = shared(false)
 
     this.applyAnimatedStyle('.rightview', () => {
       'worklet'
-      return {
-        transform: `translateX(${wx.pageTrans.value}px) scale(${wx.pageScale.value})`,
-        filter: `blur(${wx.pageFilter.value}px)`
-      }
+      return drawerCardStyle(wx.pageTrans.value, screenWidth)
     }, { flush: 'sync' })
 
     this.applyAnimatedStyle('.leftview', () => {
       'worklet'
       return {
-        zIndex: wx.leftOp.value > 0 ? 199 : 0,
         transform: `translateX(${wx.leftTrans.value}px)`,
         opacity: wx.drawerRouteVisible.value ? 0 : wx.leftOp.value,
         pointerEvents: wx.drawerRouteVisible.value || wx.leftOp.value === 0 ? 'none' : 'auto'
+      }
+    }, { flush: 'sync' })
+
+    this.applyAnimatedStyle('.drawer-home-close', () => {
+      'worklet'
+      return {
+        opacity: 0.45 * wx.leftOp.value,
+        pointerEvents: wx.leftOp.value > 0 && !wx.drawerRouteVisible.value ? 'auto' : 'none'
       }
     }, { flush: 'sync' })
 
@@ -176,7 +179,7 @@ Page({
         const chatView = this.getChatView()
         if(!chatView) return
         chatView.resetChatSession()
-        wx.nextTick(() => chatView.sendCreationPrompt(action.prompt, action.files || []))
+        wx.nextTick(() => chatView.prefillCreationPrompt(action.prompt, action.files || []))
       })
     })
   },
@@ -225,10 +228,20 @@ Page({
   },
 
   switchHomeFeature(value) {
+    const modeId = value?.detail?.modeId || value?.modeId
     const requested = typeof value === 'string'
       ? value
       : (value?.detail?.feature || value?.feature)
     const currentFeature = normalizeHomeFeature(requested)
+    if(currentFeature === HOME_FEATURES.CHAT && modeId === CHAT_MODE_IDS.WORK) {
+      this.setData({ currentFeature }, () => {
+        const chatView = this.getChatView()
+        if(!chatView) return
+        chatView.resetChatSession()
+        chatView.selectMode({ detail: { id: CHAT_MODE_IDS.WORK } })
+      })
+      return
+    }
     if(currentFeature === this.data.currentFeature) return
 
     this.setData({ currentFeature })
@@ -283,7 +296,7 @@ Page({
       success:res => res.eventChannel.emit('showSources', { citations }),
       fail:error => {
         console.error('[sources] navigation failed', error)
-        wx.showToast({ title:require('../../static_utils/i18n/index').t(this.data.language, 'common.loadFailed'), icon:'none' })
+        showErrorNotice({ title:require('../../static_utils/i18n/index').t(this.data.language, 'common.loadFailed') })
       }
     })
   },
@@ -329,7 +342,7 @@ Page({
       routeType: 'settingRouterBuilder',
       routeOptions: { stacked:true },
       success: res => res.eventChannel.emit('showConversationFiles', detail),
-      fail: () => wx.showToast({ title:t(this.data.language, 'common.loadFailed'), icon:'none' })
+      fail: () => showErrorNotice({ title:t(this.data.language, 'common.loadFailed') })
     })
   },
 
@@ -348,7 +361,7 @@ Page({
         leftCenter?.refreshConversations()
         if (chatView?.data.currentConversationId === conversationId) chatView.setData({ currentConversationPinned:!!conversation.pinnedAt })
       } catch (error) {
-        wx.showToast({ title:error?.message || t(this.data.language, pinned ? 'sidebar.pinFailed' : 'sidebar.unpinFailed'), icon:'none' })
+        showErrorNotice({ title:error?.message || t(this.data.language, pinned ? 'sidebar.pinFailed' : 'sidebar.unpinFailed') })
       }
       return
     }
@@ -362,7 +375,7 @@ Page({
         chatView.resetChatSession()
       }
     } catch (error) {
-      wx.showToast({ title:error?.message || t(this.data.language, 'sidebar.archiveFailed'), icon:'none' })
+      showErrorNotice({ title:error?.message || t(this.data.language, 'sidebar.archiveFailed') })
     } finally {
       this.setData({ archiveLoading:false })
     }
@@ -374,7 +387,7 @@ Page({
     deleteConversation({ conversationId }).then(() => {
       this.getLeftCenter()?.removeConversationFromViews(conversationId)
     }).catch(error => {
-      wx.showToast({ title:error?.message || t(this.data.language, 'sidebar.deleteFailed'), icon:'none' })
+      showErrorNotice({ title:error?.message || t(this.data.language, 'sidebar.deleteFailed') })
     })
   },
 
@@ -383,11 +396,11 @@ Page({
       url:'/pages/taskEdit/index',
       routeType:'settingRouterBuilder',
       events:{
-        taskUpdated: update => this.selectComponent('#tasksView')?.updateTask(update),
+        taskUpdated: () => this.selectComponent('#tasksView')?.reload(),
         openTaskChat: data => this.loadConversation(data)
       },
       success: res => res.eventChannel.emit('editTask', e.detail),
-      fail: () => wx.showToast({ title:t(this.data.language, 'common.loadFailed'), icon:'none' })
+      fail: () => showErrorNotice({ title:t(this.data.language, 'common.loadFailed') })
     })
   },
 
@@ -396,7 +409,7 @@ Page({
       url: '/pages/setting/index',
       routeType: 'settingRouterBuilder',
       events: {
-        selectFeature: (data) => this.switchHomeFeature(data && data.feature),
+        selectFeature: (data) => this.switchHomeFeature(data),
         openStorageCategory: (data) => this.openStorageCategory(data),
         archivedConversationChanged: ({ action, conversationId }) => {
           this.selectComponent('yb-left-center')?.refreshConversations()
@@ -428,7 +441,7 @@ Page({
         skillRemoved: item => { if (epoch === store.assetCacheEpoch) this.selectComponent('#pluginsView')?.updateSkill(item) },
         cancelSkillTrial: () => { this._pendingSkillTrial = null }
       },
-      fail: () => wx.showToast({ title: t(this.data.language, 'common.loadFailed'), icon: 'none' }),
+      fail: () => showErrorNotice({ title: t(this.data.language, 'common.loadFailed') }),
       complete: () => { this._openingSkill = false }
     })
   },
@@ -443,7 +456,7 @@ Page({
         tryCreationPrompt: ({ prompt, files }) => { this._pendingCreationTurn = { prompt, files } }
       },
       success: res => res.eventChannel.emit('showCreation', e.detail.item),
-      fail: () => wx.showToast({ title: require('../../static_utils/i18n/index').t(this.data.language, 'common.loadFailed'), icon: 'none' }),
+      fail: () => showErrorNotice({ title: require('../../static_utils/i18n/index').t(this.data.language, 'common.loadFailed') }),
       complete: () => { this._openingCreation = false }
     })
   },
@@ -536,9 +549,7 @@ Page({
   lrhandleDragUpdate(delta) {
     'worklet'
     wx.pageTrans.value = clamp(wx.pageTrans.value + delta, 0, this.widthActual.value)
-    wx.pageScale.value = 1 - wx.pageTrans.value / this.widthActual.value / 10
-    wx.pageFilter.value = clamp(50 * (wx.pageTrans.value / this.widthActual.value / 10), 0, 3)
-    wx.leftTrans.value = wx.pageTrans.value * 5 / 7
+    wx.leftTrans.value = wx.pageTrans.value / this.widthActual.value * this.leftActual.value
     wx.leftOp.value = wx.leftTrans.value / this.leftActual.value
   },
 
@@ -569,7 +580,7 @@ Page({
       routeType: 'leftRoute',
       events: {
         selectConversation: (data) => this.loadConversation(data && data.conversationId),
-        selectFeature: (data) => this.switchHomeFeature(data && data.feature),
+        selectFeature: (data) => this.switchHomeFeature(data),
         openStorageCategory: (data) => this.openStorageCategory(data),
         refreshConversations: () => this.getLeftCenter()?.refreshConversations(),
         loadMoreConversations: () => this.getLeftCenter()?.loadMoreConversations(),
@@ -603,8 +614,6 @@ Page({
   pageNavFun(animateForward, duration) {
     'worklet'
     wx.pageTrans.value = timing(animateForward ? this.widthActual.value : 0, { duration })
-    wx.pageScale.value = timing(animateForward ? 0.9 : 1, { duration })
-    wx.pageFilter.value = timing(animateForward ? 3 : 0, { duration })
     wx.leftOp.value = timing(animateForward ? 1 : 0, { duration })
     wx.leftTrans.value = timing(animateForward ? this.leftActual.value : 0, { duration })
   },
@@ -629,10 +638,10 @@ Page({
         if (data.shareScope === 'conversation') this.getChatView()?.closeConversationSharePopup(data.conversationId)
         return result
       }
-      wx.showToast({ title: '对话分享未就绪，请重试', icon: 'none' })
+      showErrorNotice({ title: '对话分享未就绪，请重试' })
       return base
     }).catch(() => {
-      wx.showToast({ title: '对话分享失败，请重试', icon: 'none' })
+      showErrorNotice({ title: '对话分享失败，请重试' })
       return base
     }).finally(() => {
       clearTimeout(timer)

@@ -1,3 +1,4 @@
+const { showNotice } = require('../../../static_utils/errorNotice')
 // components/_self/yb-user-content/index.js
 import { triggerHaptic } from '../../../static_utils/haptic'
 
@@ -109,7 +110,11 @@ Component({
     copy(){
       wx.setClipboardData({
         data:this.data.content,
-        success:() => this.close()
+        success:() => {
+          wx.hideToast()
+          showNotice({ title:this.data.i18n.common.copied })
+          this.close()
+        }
       })
     },
     edit(){

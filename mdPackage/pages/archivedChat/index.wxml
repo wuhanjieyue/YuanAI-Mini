@@ -19,16 +19,19 @@
 
   <scroll-view class="archive-messages" type="list" scroll-y show-scrollbar="{{false}}"
     associative-container="pop-gesture" scroll-into-view="{{scrollIntoView}}" scroll-with-animation="{{false}}">
-    <view wx:if="{{hasMore && messages.length && !failed}}" list-item class="archive-status ptb32 plr32 tc ft28 text-muted">
-      <button class="archive-load-button" disabled="{{loading}}" bind:tap="loadMessages" style="background:transparent;color:var(--text-muted);font-size:28rpx;border:0;" plain="{{true}}">{{loading ? i18n.common.loading : i18n.archive.loadEarlier}}</button>
+    <view wx:if="{{hasMore && messages.length && !failed && !loading}}" list-item class="archive-status ptb32 plr32 tc ft28 text-muted">
+      <button class="archive-load-button" disabled="{{loading}}" bind:tap="loadMessages" style="background:transparent;color:var(--text-muted);font-size:28rpx;border:0;" plain="{{true}}">{{i18n.archive.loadEarlier}}</button>
     </view>
-    <view wx:if="{{loading && !messages.length}}" list-item class="archive-status ptb32 plr32 tc ft28 text-muted">{{i18n.common.loading}}</view>
+    <view wx:if="{{loading}}" list-item class="archive-message plr36 pb32" aria-hidden="true">
+      <view class="archive-user ae"><view class="archive-user-bubble ptb24 archive-skeleton-user skeleton-clip"><view class="skeleton-shimmer"></view></view></view>
+      <view wx:for="{{[100, 100, 64]}}" wx:key="index" class="archive-skeleton-line mt24 skeleton-clip" style="width:{{item}}%;"><view class="skeleton-shimmer"></view></view>
+    </view>
     <view wx:if="{{failed}}" list-item class="archive-status asset-failure-state ptb32 plr32 tc ft28 text-muted">
       <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
       <text class="asset-empty-copy">{{i18n.archive.messageLoadFailed}}</text>
       <button class="archive-load-button" bind:tap="loadMessages" style="background:transparent;color:var(--text-muted);font-size:28rpx;border:0;" plain="{{true}}">{{i18n.common.retry}}</button>
     </view>
-    <view wx:if="{{!loading && !failed && !messages.length}}" list-item class="archive-status ptb32 plr32 tc ft28 text-muted">{{i18n.archive.noMessages}}</view>
+    <view wx:if="{{!loading && !failed && !messages.length}}" list-item class="archive-status asset-empty-state ptb32 plr32"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{i18n.archive.noMessages}}</text></view>
 
     <view wx:for="{{messages}}" wx:key="messageId" id="{{item.domId}}" list-item class="archive-message plr36 pb32">
       <view wx:if="{{item.role === 'user'}}" class="archive-user ae">
@@ -48,3 +51,4 @@
     <view id="archive-bottom" list-item style="height:{{safeBottom}}px"></view>
   </scroll-view>
 </view>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

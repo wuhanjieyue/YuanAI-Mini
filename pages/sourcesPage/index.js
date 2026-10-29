@@ -1,3 +1,4 @@
+const { showErrorNotice, showNotice } = require('../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 const { sourceIconUrl } = require('../../static_utils/sourceIcons')
 const { shared, runOnJS } = wx.worklet
@@ -26,8 +27,15 @@ Page({
           showSite:!knowledgeCitationId(item.url),
           showTitle:item.title !== '来源' && item.title !== i18n.sources.title && item.title.toLowerCase().replace(/^www\./, '') !== item.domain && item.title !== item.siteName,
           iconUrl:sourceIconUrl(item),
-          ariaLabel:t(language, knowledgeCitationId(item.url) ? 'sources.openEvidence' : 'sources.copyLink', { title:item.title })
+          description:(item.description || '').replace(/\s+/g, ' '),
+          ariaLabel:t(language, knowledgeCitationId(item.url) ? 'sources.openOriginal' : 'sources.copyLink', { title:item.title })
         })) })
+        this.data.citations.forEach((item, index) => {
+          if (knowledgeCitationId(item.url) && !item.showTitle) {
+            this.setData({ [`citations[${index}].title`]:i18n.sources.openOriginal, [`citations[${index}].showTitle`]:true })
+            this.loadKnowledgeTitle(index, item.url)
+          }
+        })
       })
     }
 
@@ -68,8 +76,24 @@ Page({
     if (knowledgeId) { this.openKnowledgeEvidence(knowledgeId); return }
     wx.setClipboardData({
       data:item.url,
-      success:() => wx.showToast({ title:this.data.i18n.sources.copied, icon:'none' })
+      success:() => { wx.hideToast(); showNotice({ title:this.data.i18n.sources.copied }) }
     })
+  },
+
+  async loadKnowledgeTitle(index, url) {
+    const epoch = store.assetCacheEpoch
+    const current = () => !this._unloaded && epoch === store.assetCacheEpoch && this.data.citations[index]?.url === url
+    try {
+      const evidence = await resolveKnowledgeCitation(knowledgeCitationId(url))
+      if (!current()) return
+      this.setData({
+        [`citations[${index}].title`]:evidence.title,
+        [`citations[${index}].description`]:(evidence.text || '').replace(/\s+/g, ' ').trim().slice(0, 500),
+        [`citations[${index}].ariaLabel`]:this.data.i18n.sources.openOriginal
+      })
+    } catch (error) {
+      if (current()) showErrorNotice({ title:error.message || '资料暂不可访问' })
+    }
   },
 
   async openKnowledgeEvidence(id) {
@@ -80,15 +104,10 @@ Page({
     try {
       const evidence = await resolveKnowledgeCitation(id)
       if (!current()) return
-      const labels = this.data.i18n.sources
-      const version = evidence.revision !== evidence.currentRevision ? `\n${labels.oldVersion} (${evidence.revision})` : ''
-      const position = evidence.heading || (evidence.location.lineStart ? `${labels.lines} ${evidence.location.lineStart}–${evidence.location.lineEnd}` : '')
-      const result = await wx.showModal({ title:evidence.title.slice(0, 32),
-        content:`${position}${version}\n${evidence.text.slice(0, 3000)}`.trim(),
-        showCancel:Boolean(evidence.file), confirmText:evidence.file ? labels.openOriginal : labels.close, cancelText:labels.close })
-      if (result.confirm && evidence.file && current()) await previewStorageFile(evidence.file, { language:store.applicationSettings.language })
+      if (!evidence.file) throw new Error('原文件已不可访问')
+      await previewStorageFile(evidence.file, { language:store.applicationSettings.language })
     } catch (error) {
-      if (current()) wx.showToast({ title:error.message || '资料暂不可访问', icon:'none' })
+      if (current()) showErrorNotice({ title:error.message || '资料暂不可访问' })
     } finally { this._openingKnowledge = false }
   },
 

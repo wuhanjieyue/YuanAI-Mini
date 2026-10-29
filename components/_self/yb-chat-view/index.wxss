@@ -42,16 +42,6 @@
   box-sizing: border-box;
 }
 
-.input-box.input-box-disabled{
-  background-color: var(--bg-l1);
-  border-color: var(--bg-l2);
-}
-
-.input-box-disabled .input-more-icon .iconfont,
-.input-box-disabled .model-summary{
-  color: var(--text-l2);
-}
-
 .bottom-box{
   position: relative;
 }
@@ -102,6 +92,11 @@
 
 .chat-view{
   width: 100vw;flex: auto;
+}
+.mock-turn-holder {
+  flex: 1;
+  flex-shrink: 0;
+  min-height: 124rpx;
 }
 .branch-point {
   width: 100%;

@@ -215,6 +215,11 @@ const parse2 = require('./parse2/index'),
                         o.artifactLink = true;
                         if(/^artifact:/i.test(attrs.href || '') && !parseArtifactLink(attrs.href)) delete attrs.href;
                     }
+                    if(item.name === 'a' && !o.artifactLink && attrs['data-citation'] !== 'true' &&
+                        /^https?:\/\/[^\s<>"\\\x00-\x1f]+$/i.test(attrs.href || '')){
+                        o.tag = 'span';
+                        o.webLink = true;
+                    }
                     attrs.class = attrs.class ? `h2w__${item.name} ${attrs.class}` : `h2w__${item.name}`;
 
                     if(item.name === 'img'){
@@ -280,6 +285,9 @@ const parse2 = require('./parse2/index'),
                 }
                 if(o.artifactLink){
                     o.artifactText = (o.children || []).map(getNodeText).join('');
+                }
+                if(o.webLink && (o.children || []).every(isInlineNode)){
+                    o.webText = (o.children || []).map(getNodeText).join('');
                 }
                 if(o.tag === 'text' && !(o.children || []).every(child => child.tag === undefined)){
                     o.textPlain = true;

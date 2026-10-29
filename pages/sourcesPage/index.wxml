@@ -37,6 +37,11 @@
       <text wx:if="{{item.description}}" class="source-description text-l1 ft32" max-lines="2" overflow="ellipsis">{{item.description}}</text>
       <view class="source-divider bg-l2"></view>
     </view>
-    <view class="sources-footer pt24 ft24 plr36 text-l2" list-item>{{i18n.sources.hint}}</view>
+    <view wx:if="{{!citations.length}}" list-item class="asset-empty-state plr36">
+      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
+      <text class="asset-empty-copy">{{i18n.sources.empty}}</text>
+    </view>
+    <view wx:if="{{citations.length}}" class="sources-footer pt24 ft24 plr36 text-l2" list-item>{{i18n.sources.hint}}</view>
   </scroll-view>
 </draggable-sheet>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

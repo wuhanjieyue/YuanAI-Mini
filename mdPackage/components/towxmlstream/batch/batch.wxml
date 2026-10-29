@@ -7,7 +7,8 @@
 	</block>
 	<block wx:elif="{{item.tag==='span'}}">
 		<span data-data="{{item}}" class="{{item.attrs.class}}" data="{{item.attrs.data}}" id="{{item.attrs.id}}" style="{{item.attrs.style}}" catch:tap="_tap">
-			<decode theme="{{theme}}" wx:if="{{item.children}}" nodes="{{item}}" context-id="{{contextId}}"/>
+			<text wx:if="{{item.webLink && item.webText !== undefined}}">{{item.webText}}</text>
+			<decode theme="{{theme}}" wx:elif="{{item.children}}" nodes="{{item}}" context-id="{{contextId}}"/>
 		</span>
 	</block>
 	<block wx:elif="{{item.tag==='scroll-view'}}">

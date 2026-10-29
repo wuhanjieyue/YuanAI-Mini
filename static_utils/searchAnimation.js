@@ -1,13 +1,16 @@
-function prepareSearchClose(view) {
+function prepareSearchClose(view, independentAction = false) {
+  if (independentAction) view.animateSearchAction(false)
   const keyboardHeight = Math.max(0, view._keyboardOffset.value - 12)
   view._searchCloseProgress.value = view._searchActionProgress.value
   view._searchCloseKeyboardHeight.value = keyboardHeight
   if (keyboardHeight > 0) {
     view._keyboardOffset.value = keyboardHeight + 12
-    view._searchActionProgress.value = view._searchCloseProgress.value
-    view._searchActionActive = false
+    if (!independentAction) {
+      view._searchActionProgress.value = view._searchCloseProgress.value
+      view._searchActionActive = false
+    }
   } else {
-    view.animateSearchAction(false)
+    if (!independentAction) view.animateSearchAction(false)
     view.animateKeyboardOffset(0)
   }
 }

@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 const {shared} = wx.worklet
 const i18nBehavior = require('../../../static_utils/i18n/behavior')
 const { artifactAttachmentDetail } = require('../../../static_utils/chatArtifacts')
@@ -124,7 +125,7 @@ Component({
     previewArtifact(e){
       const detail = artifactAttachmentDetail(this.data.item?.contentParts, e.detail?.link)
       if(detail) this.triggerEvent('previewFile', detail, {})
-      else wx.showToast({ title:t(this.properties.language, 'assets.previewFailed'), icon:'none' })
+      else showErrorNotice({ title:t(this.properties.language, 'assets.previewFailed') })
     },
     unavailableImage(){
       this.triggerEvent('unavailableImage', {}, {})

@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../static_utils/errorNotice')
 import { saveTask as persistTask, taskAction } from '../../request/tasks'
 import { store } from '../../store/index'
 import { loadModelCatalog } from '../../static_utils/appDataInit'
@@ -102,7 +103,7 @@ Page({
       this.syncTaskModels()
       if (!this.data.pickerSelection.modelId) {
         this.menuClosed()
-        wx.showToast({ title:'暂无可用模型', icon:'none' })
+        showErrorNotice({ title:'暂无可用模型' })
         return
       }
       const query = this.createSelectorQuery()
@@ -114,7 +115,7 @@ Page({
     } catch (error) {
       if (!this._destroyed) {
         this.menuClosed()
-        wx.showToast({ title:'模型加载失败，请重试', icon:'none' })
+        showErrorNotice({ title:'模型加载失败，请重试' })
       }
     } finally { this._openingModels = false }
   },
@@ -125,7 +126,7 @@ Page({
     this.setData({ 'task.modelId':selection.modelId, 'task.effortId':selection.effortId })
     this.syncTaskModels()
   },
-  modelLocked() { wx.showToast({ title:'当前套餐暂不支持此选项', icon:'none' }) },
+  modelLocked() { showErrorNotice({ title:'当前套餐暂不支持此选项' }) },
   closePage() {
     if (this.data.saveButtonState !== 'idle') return
     if (formSnapshot(this.data.task) === this._initialForm) return this.leavePage()
@@ -247,7 +248,7 @@ Page({
       if (this._destroyed) return
       this._pendingChat = result
       this.closePage()
-    } catch (error) { wx.showToast({ title:error.message, icon:'none' }) }
+    } catch (error) { showErrorNotice({ title:error.message }) }
     finally { this._openingChat = false }
   },
   leavePage() {
@@ -259,11 +260,11 @@ Page({
     if (this.data.saveButtonState !== 'idle') return
     const task = this.data.task
     if (!task.name.trim() || !task.description.trim()) {
-      wx.showToast({ title:'请填写任务名称和任务说明', icon:'none' })
+      showErrorNotice({ title:'请填写任务名称和任务说明' })
       return
     }
     if ((task.repeat === '按小时' || task.repeat === '自定义') && task.end === '在选定日期结束' && task.endDate < task.runDate) {
-      wx.showToast({ title:'结束日期不能早于开始日期', icon:'none' })
+      showErrorNotice({ title:'结束日期不能早于开始日期' })
       return
     }
     this.setData({ saveButtonState:'saving' })
@@ -283,7 +284,7 @@ Page({
       this.menuShown.value = false
       this.setData({ saveButtonState:'idle' })
       this._saveMorph.value = timing(0, { duration:220, easing:Curves.easeOutCubic })
-      wx.showToast({ title:error.message || '保存失败，请重试', icon:'none' })
+      showErrorNotice({ title:error.message || '保存失败，请重试' })
     }
   }
 })

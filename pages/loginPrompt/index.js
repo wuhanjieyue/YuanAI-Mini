@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 import { createStoreBindings } from 'mobx-miniprogram-bindings'
 import { store } from '../../store/index'
@@ -139,7 +140,7 @@ Page({
       this.getOpenerEventChannel()?.emit('loginSuccess')
       wx.navigateBack()
     } catch (error) {
-      wx.showToast({ title: error.message || '登录失败，请重试', icon: 'none' })
+      showErrorNotice({ title: error.message || '登录失败，请重试' })
     } finally {
       wx.hideLoading()
       this.setData({ loginPending: false })

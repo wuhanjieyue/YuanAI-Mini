@@ -28,6 +28,8 @@ page { background-color: transparent; }
   overflow: hidden;
 }
 .skill-logo-image { width: 100%; height: 100%; }
+.skill-skeleton-title { height: 48rpx; border-radius: 8rpx; }
+.skill-skeleton-description { height: 36rpx; border-radius: 8rpx; }
 .skill-copy {
   flex: 1;
   min-width: 0;
@@ -98,3 +100,5 @@ page { background-color: transparent; }
   line-height: 96rpx;
 }
 .skill-try-button-disabled { opacity: 0.5; }
+.skill-try-loading { animation: skill-try-spin 1.5s linear infinite; }
+@keyframes skill-try-spin { to { transform: rotate(360deg); } }

@@ -2,3 +2,5 @@
 @import '/static_wxss/skycolor.wxss';
 @import '/static_wxss/skyother.wxss';
 @import '/static_wxss/skyfontline.wxss';
+
+.knowledge-chunk-skeleton-line { height: 32rpx; margin-bottom: 24rpx; border-radius: 8rpx; }

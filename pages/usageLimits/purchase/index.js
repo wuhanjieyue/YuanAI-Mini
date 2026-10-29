@@ -1,3 +1,4 @@
+const { showNotice } = require('../../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../../static_utils/themeBinding')
 const { messages } = require('../../../static_utils/i18n/index')
 const { store } = require('../../../store/index')
@@ -42,7 +43,7 @@ Page({
       if (this._unloaded) return
       const status = order.status === 'paid' ? { fulfilled: true } : await waitBillingOrder(order.orderId, () => !this._unloaded)
       if (this._unloaded) return
-      wx.showToast({ title: status.fulfilled ? copy.paymentConfirmed : copy.paymentPending, icon: 'none' })
+      showNotice({ title: status.fulfilled ? copy.paymentConfirmed : copy.paymentPending })
       if (status.fulfilled) this._purchaseRequestId = null
     } catch (error) {
       if (!this._unloaded && !String(error.errMsg || '').includes('cancel')) {

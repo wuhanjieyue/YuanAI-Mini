@@ -1,3 +1,4 @@
+const { showErrorNotice, showNotice } = require('../../static_utils/errorNotice')
 import { getDataExport, getAccountDeletion, shareDataExport } from '../../request/userData'
 import { openErrorReport } from '../../static_utils/errorReporting'
 const { memorySections } = require('../../static_utils/longTermMemoryView')
@@ -231,7 +232,7 @@ function buildStaticSets(language) {
     accountSets: [
       { key:'phone', name:t(language, 'settings.phone'), icon:'icon-phone', rightValue:true },
       { key:'subscription', name:t(language, 'settings.subscription'), icon:'icon-upgrade', rightValue:true },
-      { key:'upgrade_pro', name:t(language, 'settings.upgrade'), icon:'icon-upgrade' },
+      { key:'upgrade_pro', name:t(language, 'settings.upgrade'), icon:'icon-upgrade', rightSet:true },
       { key:'usage_limits', name:t(language, 'usageLimits.title'), icon:'icon-gauge', rightSet:true }
     ],
     aboutSets: [
@@ -615,6 +616,7 @@ Page({
     i18n: messages(DEFAULT_LANGUAGE),
     customSectionTitle: t(DEFAULT_LANGUAGE, 'settings.sections.custom', { app:AI_MODEL_NAME }),
     miniProgramLabel: '',
+    appVersion: '',
     // Panel state
     activePanel: '',
     panelTitle: '',
@@ -705,7 +707,8 @@ Page({
       {
         key: 'upgrade_pro',
         name: t(DEFAULT_LANGUAGE, 'settings.upgrade'),
-        icon: 'icon-upgrade'
+        icon: 'icon-upgrade',
+        rightSet: true
       },
       {
         key: 'usage_limits',
@@ -826,6 +829,7 @@ Page({
 
   onLoad() {
     bindPageTheme(this)
+    this.setData({ appVersion: wx.getAccountInfoSync().miniProgram.version || '' })
     settingRouterBuilder()
 
     this.routeContext = wx.router.getRouteContext(this)
@@ -907,7 +911,7 @@ Page({
   async handleGetPhoneNumber(e) {
     const { errMsg, code } = e.detail || {}
     if (errMsg !== 'getPhoneNumber:ok' || !code) {
-      wx.showToast({ title: this.data.i18n.auth.phoneAuthIncomplete, icon: 'none' })
+      showErrorNotice({ title: this.data.i18n.auth.phoneAuthIncomplete })
       return
     }
 
@@ -920,10 +924,10 @@ Page({
       }
       await this.refreshRemoteData({ force: true, silent: true })
       wx.hideLoading()
-      wx.showToast({ title: this.data.i18n.auth.loggedIn, icon: 'success' })
+      showNotice({ title: this.data.i18n.auth.loggedIn })
     } catch (error) {
       wx.hideLoading()
-      wx.showToast({ title: error.message || this.data.i18n.auth.loginFailed, icon: 'none' })
+      showErrorNotice({ title: error.message || this.data.i18n.auth.loginFailed })
     }
   },
 
@@ -938,10 +942,10 @@ Page({
       this.setUser({ ...DEFAULT_USER })
       await this.refreshRemoteData({ force: true, silent: true })
       wx.hideLoading()
-      wx.showToast({ title: this.data.i18n.auth.loggedOut, icon: 'success' })
+      showNotice({ title: this.data.i18n.auth.loggedOut })
     } catch (error) {
       wx.hideLoading()
-      wx.showToast({ title: error.message || this.data.i18n.auth.logoutFailed, icon: 'none' })
+      showErrorNotice({ title: error.message || this.data.i18n.auth.logoutFailed })
     }
   },
 
@@ -1374,7 +1378,7 @@ Page({
         await savePersonalization(draft)
         saved = true
         this.setPersonalization(draft)
-        wx.showToast({ title: this.data.i18n.common.saved, icon: 'success' })
+        showNotice({ title: this.data.i18n.common.saved })
       } catch (error) {
         // savePersonalization already reports the request error.
       } finally {
@@ -1578,7 +1582,7 @@ Page({
     } catch (error) {
       if (pollingToken !== this._longTermMemoryPollingToken || this.data.panelConfigKey !== 'long_term_memory' || !this.isPanelOpen.value) return
       this.setData({ longTermMemoryLoading: false, longTermMemoryError: error?.message || this.data.i18n.memory.tryLater })
-      wx.showToast({ title: this.data.longTermMemoryError, icon: 'none' })
+      showErrorNotice({ title: this.data.longTermMemoryError })
     }
   },
 
@@ -1595,7 +1599,7 @@ Page({
     } catch (error) {
       if (token !== this._longTermMemoryPollingToken) return
       this.setData({ longTermMemoryLoadingMore: false, longTermMemoryError: error?.message || this.data.i18n.memory.tryLater })
-      wx.showToast({ title: this.data.longTermMemoryError, icon: 'none' })
+      showErrorNotice({ title: this.data.longTermMemoryError })
       if (Number(error?.statusCode) === 409) {
         this.setData({ longTermMemoryRevision: null })
         await this.loadLongTermMemory()
@@ -1665,10 +1669,10 @@ Page({
         longTermMemoryRevision: null, longTermMemorySections: [], longTermMemoryItems: [],
         longTermMemoryNextCursor: null, longTermMemoryCanRefresh: false, longTermMemoryError: '' })
       if (this.data.panelConfigKey === 'long_term_memory' && this.isPanelOpen.value) await this.loadLongTermMemory()
-      wx.showToast({ title: this.data.i18n.memory.deleted, icon: 'success' })
+      showNotice({ title: this.data.i18n.memory.deleted })
     } catch (error) {
       this.setData({ longTermMemoryDeleting: false, longTermMemoryError: error?.message || this.data.i18n.memory.deleteFailed })
-      wx.showToast({ title: this.data.longTermMemoryError, icon: 'none' })
+      showErrorNotice({ title: this.data.longTermMemoryError })
     }
   },
 
@@ -1792,13 +1796,12 @@ Page({
       if (action === 'archive_all' || action === 'delete_all') {
         this.resetChatForAccount(action)
       }
-      wx.showToast({
-        title:action === 'archive_all' ? this.data.i18n.archive.archived : action === 'delete_all' ? this.data.i18n.archive.deleted : this.data.i18n.archive.completed,
-        icon:'success'
+      showNotice({
+        title:action === 'archive_all' ? this.data.i18n.archive.archived : action === 'delete_all' ? this.data.i18n.archive.deleted : this.data.i18n.archive.completed
       })
     }).catch(() => {
       if (action === 'delete_all') this.resetChatForAccount(action)
-      wx.showToast({ title:this.data.i18n.common.operationFailed, icon:'error' })
+      showErrorNotice({ title:this.data.i18n.common.operationFailed })
     })
   },
 
@@ -1846,7 +1849,7 @@ Page({
           this.archivedConversationChanged({ detail: { ...detail, action: 'unarchive' } })
         }
       },
-      fail: () => wx.showToast({ title: this.data.i18n.common.loadFailed, icon: 'none' }),
+      fail: () => showErrorNotice({ title: this.data.i18n.common.loadFailed }),
       complete: () => { this._openingArchiveView = false }
     })
   },
@@ -1857,13 +1860,13 @@ Page({
     wx.navigateTo({
       url: '/pages/usageLimits/purchase/index',
       routeType: 'upRouterBuilder',
-      fail: () => wx.showToast({ title: this.data.i18n.common.loadFailed, icon: 'none' }),
+      fail: () => showErrorNotice({ title: this.data.i18n.common.loadFailed }),
       complete: () => { this._openingQuotaPurchase = false }
     })
   },
 
   openUpgradePage() {
-    if (this._openingUpgradePage || store.user?.subscription === 'pro') return
+    if (this._openingUpgradePage) return
     this._openingUpgradePage = true
     wx.navigateTo({
       url: '/pages/upgrade/index',
@@ -1930,7 +1933,7 @@ Page({
   tapSetItem(e) {
     const { name, key, rightSet } = e.currentTarget.dataset
 
-    if (key === 'upgrade_pro') {
+    if (key === 'upgrade_pro' || key === 'subscription') {
       this.openUpgradePage()
       return
     }

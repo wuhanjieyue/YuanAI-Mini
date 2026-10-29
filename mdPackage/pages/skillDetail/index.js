@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../../static_utils/themeBinding')
 const { messages } = require('../../../static_utils/i18n/index')
 const { store } = require('../../../store/index')
@@ -54,7 +55,7 @@ Page({
   presentItem(item, language) {
     const english = ['English', 'en-US'].includes(language)
     const description = this.data.kind === 'mcp' && english ? item.descriptionEn || item.description : item.description
-    const markdown = this.data.kind === 'mcp' && english ? item.markdownEn || item.markdown : item.markdown
+    const markdown = this.data.kind === 'mcp' ? description : item.markdown
     const patch = { item, skillTitle:getSkillTitle(item, language), description }
     if (!this.data.article || this.data.kind === 'mcp') patch.article = parseMarkdown(markdown, 'markdown', { theme:this.data.effectiveTheme })
     this.setData(patch)
@@ -87,7 +88,7 @@ Page({
     } catch (error) {
       if (!this._closing && !this._unloaded && this._assetEpoch === store.assetCacheEpoch) {
         this.setData({ removing: false })
-        wx.showToast({ title: error.message || this.data.i18n.common.operationFailed, icon: 'none' })
+        showErrorNotice({ title: error.message || this.data.i18n.common.operationFailed })
       }
     }
   },
@@ -103,7 +104,7 @@ Page({
     } catch (error) {
       if (!this._closing && !this._unloaded && this._assetEpoch === store.assetCacheEpoch) {
         this.setData({ trying: false })
-        wx.showToast({ title: error.message || this.data.i18n.common.loadFailed, icon: 'none' })
+        showErrorNotice({ title: error.message || this.data.i18n.common.loadFailed })
       }
     }
   }

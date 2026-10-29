@@ -1,3 +1,4 @@
+const { showErrorNotice, showNotice } = require('../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 import { createStoreBindings } from 'mobx-miniprogram-bindings'
 import { store } from '../../store/index'
@@ -114,7 +115,7 @@ Page({
     const userName = (form.userName || '').trim()
     const nickName = (form.nickName || '').trim()
     if (!userName || !nickName) {
-      wx.showToast({ title: this.data.i18n.profile.required, icon: 'none' })
+      showErrorNotice({ title: this.data.i18n.profile.required })
       return
     }
 
@@ -140,11 +141,10 @@ Page({
         this.eventChannel.emit('profileUpdated', { user: nextUser })
       }
       wx.hideLoading()
-      wx.showToast({ title: this.data.i18n.common.saved, icon: 'success' })
-      wx.navigateBack()
+      wx.navigateBack({ success: () => showNotice({ title: this.data.i18n.common.saved }) })
     } catch (error) {
       wx.hideLoading()
-      wx.showToast({ title: error.message || this.data.i18n.profile.saveFailed, icon: 'none' })
+      showErrorNotice({ title: error.message || this.data.i18n.profile.saveFailed })
     }
   }
 })

@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 // components/_self/yb-left-center/index.js
 import { createStoreBindings } from 'mobx-miniprogram-bindings'
 import { store } from '../../../store/index'
@@ -15,10 +16,11 @@ import {
 } from '../../../request/chatStream'
 const {
   DEFAULT_POINT_COLOR,
+  getAccentTheme,
   getAccentStyle
 } = require('../../../static_utils/accentColor')
 const { HOME_FEATURES } = require('../../../static_utils/homeFeature')
-const { filterVisibleConversations } = require('../../../static_utils/chatModes')
+const { CHAT_MODE_IDS, filterVisibleConversations } = require('../../../static_utils/chatModes')
 const i18nBehavior = require('../../../static_utils/i18n/behavior')
 const { t } = require('../../../static_utils/i18n/index')
 const { shared, timing } = wx.worklet
@@ -105,6 +107,7 @@ Component({
           pinnedHasMore: (state) => state.pinnedChatHistory?.hasMore === true,
           applicationSettings: 'applicationSettings',
           effectiveTheme: (state) => state.effectiveTheme,
+          botIcon: (state) => `/static/logs/yuan-bot/cloud-first-frame-${getAccentTheme(state.applicationSettings?.pointColor).color.slice(1)}.svg`,
           temporaryAccentStyle: (state) => getAccentStyle(DEFAULT_POINT_COLOR, state.effectiveTheme),
           accentStyle: (state) => getAccentStyle(state.applicationSettings?.pointColor, state.effectiveTheme)
         },
@@ -760,7 +763,7 @@ Component({
         this.replaceConversationInViews(conversationId, conversation)
         this.refreshConversations()
       } catch (error) {
-        wx.showToast({ title: error?.message || t(this.properties.language, pinned ? 'sidebar.pinFailed' : 'sidebar.unpinFailed'), icon: 'none' })
+        showErrorNotice({ title: error?.message || t(this.properties.language, pinned ? 'sidebar.pinFailed' : 'sidebar.unpinFailed') })
       }
     },
 
@@ -773,7 +776,7 @@ Component({
         this.replaceConversationInViews(conversationId, conversation)
         this.triggerEvent('conversationrenamed', { conversationId, title: conversation.title })
       } catch (error) {
-        wx.showToast({ title: error?.message || t(this.properties.language, 'sidebar.renameFailed'), icon: 'none' })
+        showErrorNotice({ title: error?.message || t(this.properties.language, 'sidebar.renameFailed') })
       }
     },
 
@@ -784,7 +787,7 @@ Component({
         this.removeConversationFromViews(conversationId)
         this.triggerEvent('conversationdeleted', { conversationId })
       } catch (error) {
-        wx.showToast({ title: error?.message || t(this.properties.language, 'sidebar.deleteFailed'), icon: 'none' })
+        showErrorNotice({ title: error?.message || t(this.properties.language, 'sidebar.deleteFailed') })
       }
     },
 
@@ -795,8 +798,13 @@ Component({
         this.removeConversationFromViews(conversationId)
         this.triggerEvent('conversationarchived', { conversationId })
       } catch (error) {
-        wx.showToast({ title: error?.message || t(this.properties.language, 'sidebar.archiveFailed'), icon: 'none' })
+        showErrorNotice({ title: error?.message || t(this.properties.language, 'sidebar.archiveFailed') })
       }
+    },
+
+    openBot(){
+      this.triggerEvent('selectfeature', { feature: HOME_FEATURES.CHAT, modeId: CHAT_MODE_IDS.WORK })
+      this.triggerEvent('requestclose')
     },
 
     openFeature(e){

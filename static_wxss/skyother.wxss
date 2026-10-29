@@ -51,9 +51,6 @@
 .lradius{
   border-radius: 24rpx;
 }
-.xlradius{
-  border-radius: 36rpx;
-}
 .cradius{
   border-radius: 50%;
 }
@@ -801,6 +798,10 @@
   align-items: center;
   box-sizing: border-box;
   box-shadow: 0 12rpx 36rpx rgba(0, 0, 0, 0.08);
+}
+
+.xlradius{
+  border-radius: 36rpx;
 }
 
 .floating-search-icon{

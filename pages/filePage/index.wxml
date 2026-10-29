@@ -24,9 +24,15 @@
       >
 
 
-        <view wx:if="{{utilsLoading}}" list-item class="ptb48 plr36 text-l2 ft24">{{i18n.common.loading}}</view>
+        <view wx:if="{{utilsLoading}}" list-item class="dr ac plr36 mt48 mb48" aria-hidden="true">
+          <view class="util-logo skeleton-clip"><view class="skeleton-shimmer"></view></view>
+          <view class="ml36 util-copy">
+            <view class="util-skeleton-title mb8 skeleton-clip"><view class="skeleton-shimmer"></view></view>
+            <view class="util-skeleton-description skeleton-clip"><view class="skeleton-shimmer"></view></view>
+          </view>
+        </view>
         <view wx:elif="{{utilsFailed}}" list-item class="asset-failure-state ptb48 plr36" bind:tap="loadEnabledSkills" aria-role="button"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{i18n.common.loadFailed}} · {{i18n.common.retry}}</text></view>
-        <view wx:elif="{{!utils.length}}" list-item class="ptb48 plr36 text-l2 ft24">{{i18n.plugins.empty}}</view>
+        <view wx:elif="{{!utils.length}}" list-item class="asset-empty-state ptb48 plr36"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{i18n.plugins.empty}}</text></view>
         <view wx:for="{{utils}}" wx:key="id" list-item data-id="{{item.id}}" bind:tap="selectUtil" aria-role="button" aria-label="{{item.name}}" class="dr ac plr36 mb48 {{index == 0 ? 'mt48' : ''}}  {{model == item.id ? 'text-main-l1' :''}}" >
           <image class="util-logo" src="{{item.logoUrl}}" mode="aspectFill" aria-hidden="true" />
           <view class="ml36 util-copy">
@@ -38,3 +44,4 @@
         </view>
       </scroll-view>
 </draggable-sheet>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

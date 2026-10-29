@@ -35,8 +35,7 @@ export const DEFAULT_USER = {
 }
 
 const DEFAULT_APP_INFO = {
-  appName: 'YuanAI',
-  appVersion: '1.0.0(版权归属杰跃信息技术有限公司)'
+  appName: 'YuanAI'
 }
 
 const DEFAULT_APPLICATION_SETTINGS = {

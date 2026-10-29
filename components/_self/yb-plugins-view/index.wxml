@@ -1,10 +1,10 @@
 <view class="plugins-page full-view bg-l0">
   <yb-title-nav id="titleNav" class="z99" feature-name="{{categoryName}}"
     bind:heightchange="handleNavHeightChange" catch:showFeatures="showCategories" catch:openLeft="openLeft"></yb-title-nav>
-  <scroll-view class="plugins-scroll" type="list" scroll-y="{{!menuOpen}}" enable-passive style="height: {{viewportHeight}};"
+  <scroll-view class="plugins-scroll" type="list" scroll-y="{{!menuOpen && !filterMenuOpen}}" enable-passive style="height: {{viewportHeight}};"
     lower-threshold="100" bind:scrolltolower="loadMoreSkills">
     <view list-item style="height: {{navHeight}}px;" aria-hidden="true"></view>
-    <view wx:if="{{installedLoading || installedItems.length || installedFailed}}" list-item class="plugins-heading wt6 text-muted ft32"><text>{{i18n.plugins.installed}}</text></view>
+    <view wx:if="{{installedLoading || installedItems.length}}" list-item class="plugins-heading wt6 text-muted ft32"><text>{{i18n.plugins.installed}}</text></view>
     <scroll-view wx:if="{{installedLoading || installedItems.length}}" list-item class="plugins-installed-scroll" type="list" scroll-x enable-flex enable-passive show-scrollbar="{{false}}">
       <view list-item class="plugins-installed-edge" aria-hidden="true"></view>
       <view wx:if="{{installedLoading}}" list-item class="plugin-installed-item" aria-label="{{i18n.common.loading}}">
@@ -15,25 +15,23 @@
       <view list-item wx:for="{{installedItems}}" wx:key="id" class="plugin-installed-item"
         data-id="{{item.id}}" bind:tap="openSkill" hover-class="plugin-pressed" aria-role="button" aria-label="{{item.displayTitle}}">
         <view class="plugin-icon ac jc">
-          <image class="plugin-logo" src="{{item.logoUrl}}" mode="aspectFill" show-menu-by-longpress="{{false}}" aria-hidden="true" />
+          <image wx:if="{{item.logoUrl}}" class="plugin-logo" src="{{item.logoUrl}}" mode="aspectFill" show-menu-by-longpress="{{false}}" aria-hidden="true" />
+          <text wx:else class="plugin-initial ft40 wt6" aria-hidden="true">{{item.iconInitial}}</text>
         </view>
       </view>
       <view list-item class="plugins-installed-edge" aria-hidden="true"></view>
     </scroll-view>
-    <view wx:if="{{installedFailed}}" list-item class="plugins-status text-muted asset-failure-state">
-      <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
-      <text class="asset-empty-copy">{{i18n.common.loadFailed}}</text>
-      <view class="plugins-retry pt16 text-strong" bind:tap="loadInstalledSkills" aria-role="button">{{i18n.common.retry}}</view>
-    </view>
     <view wx:if="{{category !== 'plugins'}}" list-item class="plugins-heading wt6 text-muted ft32"><text>{{i18n.plugins.recommended}}</text></view>
     <view list-item wx:for="{{recommendedItems}}" wx:key="id" class="plugin-row dr ac"
       data-id="{{item.id}}" bind:tap="openSkill" hover-class="plugin-pressed" aria-role="button" aria-label="{{item.displayTitle}}">
         <view class="plugin-icon ac jc">
-          <image class="plugin-logo" src="{{item.logoUrl}}" mode="aspectFill" show-menu-by-longpress="{{false}}" aria-hidden="true" />
+          <image wx:if="{{item.logoUrl}}" class="plugin-logo" src="{{item.logoUrl}}" mode="aspectFill" show-menu-by-longpress="{{false}}" aria-hidden="true" />
+          <text wx:else class="plugin-initial ft40 wt6" aria-hidden="true">{{item.iconInitial}}</text>
         </view>
         <view class="plugin-copy">
           <text class="plugin-title ft32 text-strong" max-lines="1" overflow="ellipsis">{{item.displayTitle}}</text>
           <text class="plugin-description ft24 text-muted" max-lines="1" overflow="ellipsis">{{item.displayDescription}}</text>
+          <text wx:if="{{item.quotaLabel}}" class="ft24 text-muted">{{item.quotaLabel}}</text>
         </view>
         <view class="plugin-action-host" catch:tap="ignoreAction" hover-stop-propagation="{{true}}">
           <view wx:if="{{pendingIds[item.id]}}" class="plugin-action ac jc" aria-busy="true" aria-label="{{i18n.common.loading}}">
@@ -82,23 +80,43 @@
     <view list-item class="plugins-bottom-space" aria-hidden="true"></view>
   </scroll-view>
   <view wx:if="{{!loading && !loadingMore && !recommendedItems.length}}" class="asset-empty-overlay plugins-empty-overlay"
-    style="top: {{navHeight}}px; padding-top: {{category === 'plugins' ? 0 : installedFailed ? 624 : installedLoading || installedItems.length ? 394 : 122}}rpx;">
+    style="top: {{navHeight}}px; padding-top: {{category === 'plugins' ? 0 : installedLoading || installedItems.length ? 394 : 122}}rpx;">
     <image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" />
     <text class="asset-empty-copy">{{recommendedFailed ? i18n.common.loadFailed : categoryCopy.empty}}</text>
     <view wx:if="{{recommendedFailed}}" class="asset-retry asset-error-action" bind:tap="retrySkills" aria-role="button">{{i18n.common.retry}}</view>
   </view>
-  <view hidden="{{category === 'plugins'}}" class="plugins-search-row">
-    <view class="plugins-search floating-search" aria-role="searchbox" aria-label="{{categoryCopy.search}}">
+  <view hidden="{{!searchRowVisible}}" class="plugins-search-row" style="pointer-events:{{category === 'plugins' ? 'none' : 'auto'}};">
+    <view class="plugins-search-area">
+      <view class="plugins-search floating-search" aria-role="searchbox" aria-label="{{categoryCopy.search}}">
       <text class="iconfont icon-search floating-search-icon" aria-hidden="true"></text>
       <input class="floating-search-input" value="{{query}}" maxlength="128" focus="{{inputFocus}}"
         adjust-position="{{false}}" confirm-type="search" hold-keyboard="{{true}}"
         placeholder="{{categoryCopy.search}}" placeholder-class="floating-search-placeholder"
         bind:focus="handleSearchFocus" bind:blur="handleSearchBlur" bind:input="handleSearch"
         bind:keyboardheightchange="handleSearchKeyboardHeightChange" worklet:onkeyboardheightchange="handleSearchKeyboardUpdate" />
+      </view>
+      <view class="plugins-clear floating-search-clear" style="pointer-events:{{query ? 'auto' : 'none'}};"
+        bind:tap="clearSearch" aria-role="button" aria-label="{{i18n.plugins.clearSearch}}">
+        <text class="iconfont icon-x floating-search-clear-icon" aria-hidden="true"></text>
+      </view>
     </view>
-    <view class="plugins-clear floating-search-clear" style="pointer-events:{{query ? 'auto' : 'none'}};"
-      bind:tap="clearSearch" aria-role="button" aria-label="{{i18n.plugins.clearSearch}}">
-      <text class="iconfont icon-x floating-search-clear-icon" aria-hidden="true"></text>
+    <view class="plugins-filter" aria-hidden="{{category === 'plugins'}}" style="pointer-events:{{category !== 'plugins' ? 'auto' : 'none'}};">
+      <yb-flyout id="mcpFilter" open-on-trigger-tap="{{false}}" animate-trigger="{{true}}" scrollable="{{true}}"
+        popup-width-rpx="420" edge-gap-rpx="0" popup-transform-origin="100% 100%"
+        popup-class="setting-option-pop-surface" bind:afterclose="mcpFilterClosed" theme-style="{{themeStyle}}">
+        <view slot="trigger" class="plugins-filter-trigger floating-search-clear floating-search-clear-active {{filterMenuOpen ? 'plugins-filter-inactive' : ''}}"
+          catch:tap="openMcpFilter" aria-role="button" aria-label="{{category === 'tools' ? i18n.plugins.mcpFilter : i18n.plugins.skillFilter}}" aria-expanded="{{filterMenuOpen}}">
+          <text class="iconfont {{category === 'tools' ? mcpCategoryIcon : skillCategoryIcon}} floating-search-clear-icon" aria-hidden="true"></text>
+        </view>
+        <view slot="popup" class="setting-option-pop-list">
+          <view wx:for="{{category === 'tools' ? mcpCategoryOptions : skillCategoryOptions}}" wx:key="id" class="setting-option-pop-item dr ac"
+            data-id="{{item.id}}" catch:tap="selectMcpCategory" aria-role="button" aria-label="{{item.name}}" aria-checked="{{(category === 'tools' ? mcpCategory : skillCategory) === item.id}}">
+            <text class="iconfont {{item.icon}} ft36 mr24" aria-hidden="true"></text>
+            <text class="plugins-filter-label ft32" max-lines="1" overflow="ellipsis">{{item.name}}</text>
+            <text class="iconfont icon-check plugins-filter-check {{(category === 'tools' ? mcpCategory : skillCategory) !== item.id ? 'plugins-filter-unchecked' : ''}}" aria-hidden="true"></text>
+          </view>
+        </view>
+      </yb-flyout>
     </view>
   </view>
   <yb-feature-popup id="categoryPopup" theme-style="{{themeStyle}}" mode-options="{{categoryOptions}}"

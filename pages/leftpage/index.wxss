@@ -1,7 +1,42 @@
 @import "/static_wxss/asset-cards.wxss";
 /* pages/leftpage/index.wxss */
 @import '/static_wxss/skeleton.wxss';
+@import '/static_wxss/drawer-card.wxss';
 page { background-color: transparent; }
+.drawer-shell { position: relative; }
+.drawer-page-background {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  border-color: transparent;
+  /* 填满主卡片圆角外侧，内部继续显示首页内容。 */
+  box-shadow: 0 0 0 100vw var(--bg-gray);
+  pointer-events: none;
+}
+.drawer-viewport {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  overflow: hidden;
+}
+.drawer-close-area {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+.drawer-close-hitbox {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 0;
+  height: 100vh;
+  z-index: 2;
+}
 .leftview {
   position: absolute;
   left: -50vw;

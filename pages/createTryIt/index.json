@@ -1,4 +1,6 @@
 {
-  "usingComponents": {},
+  "usingComponents": {
+    "yb-notice-capsule": "/components/yb-notice-capsule/index"
+  },
   "backgroundColorContent": "#ffffff00"
 }

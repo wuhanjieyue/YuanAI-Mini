@@ -5,7 +5,10 @@
         worklet:should-accept-gesture="shouldHorAccept" 	
         worklet:ongesture="onSwipeBack"  >
 
-<view class="leftview full-view dr" style="{{themeStyle}}">
+<view class="drawer-shell full-view" style="{{themeStyle}}">
+  <view class="drawer-page-background drawer-card-surface full-view" aria-hidden="{{true}}"></view>
+  <view class="drawer-viewport full-view">
+    <view class="leftview full-view dr">
       <yb-left-center
         id="leftCenter"
         history-controller="{{false}}"
@@ -26,8 +29,11 @@
         bind:contentready="drawerContentReady"
       >
       </yb-left-center>
-      <view style="width: 20vw;height: 100vh;" bind:tap="closePage"></view>
     </view>
+  </view>
+  <view class="drawer-close-area drawer-card-surface full-view" aria-hidden="{{true}}"></view>
+  <view class="drawer-close-hitbox" bind:tap="closePage" aria-role="button" aria-label="{{i18n.archive.close}}"></view>
+</view>
 </horizontal-drag-gesture-handler>
 
 <yb-flyout
@@ -49,7 +55,7 @@
         <view class="skeleton-shimmer"></view>
       </view>
     </view>
-    <view wx:elif="{{conversationPreviewFailed || !conversationPreview.length}}" class="conversation-preview-empty dc ac jc text-l2 ft28"><image wx:if="{{conversationPreviewFailed}}" class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="{{conversationPreviewFailed ? 'asset-empty-copy' : ''}}">{{conversationPreviewFailed ? i18n.chat.sessionLoadFailed : i18n.archive.noMessages}}</text></view>
+    <view wx:elif="{{conversationPreviewFailed || !conversationPreview.length}}" class="conversation-preview-empty dc ac jc text-l2 ft28"><image class="asset-empty-logo" src="/static/logs/glog.png" mode="aspectFit" aria-hidden="true" /><text class="asset-empty-copy">{{conversationPreviewFailed ? i18n.chat.sessionLoadFailed : i18n.archive.noMessages}}</text></view>
     <view wx:else class="conversation-preview-messages">
       <assis-done wx:for="{{conversationPreview}}" wx:key="messageId" item="{{item}}" index="{{index}}" language="{{applicationSettings.language}}" theme="{{effectiveTheme}}" show-actions="{{false}}" />
     </view>
@@ -89,3 +95,4 @@
   validation-text="{{i18n.validation.nameRequired}}"
   bind:confirm="confirmConversationAction"
   bind:close="conversationDialogClosed" theme-style="{{themeStyle}}"></yb-confirm-dialog>
+<yb-notice-capsule id="errorNotice" notice="{{errorNotice}}" duration="{{2500}}" closable="{{true}}" alert="{{true}}" theme-style="{{themeStyle}};{{accentStyle}}" close-label="{{i18n.common.close}}" />

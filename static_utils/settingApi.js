@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('./errorNotice')
 import { startDataExport, deleteAccount as requestDeleteAccount } from '../request/userData'
 import eventBus from './eventBus'
 import {
@@ -23,14 +24,6 @@ const BATCHED_DOMAINS = {
 }
 const pendingDomainSaves = {}
 
-function showErrorToast(message) {
-  wx.showToast({
-    title: message || '请求失败',
-    icon: 'none',
-    duration: 2500
-  })
-}
-
 function isPlainObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value)
 }
@@ -54,7 +47,7 @@ function unwrapCloudResult(requestPromise, { silent = false } = {}) {
     }
     throw new Error(body.msg || '请求失败')
   }).catch((error) => {
-    if (!silent) showErrorToast(error.message)
+    if (!silent) showErrorNotice({ title: error.message || '请求失败' })
     throw error
   })
 }
@@ -134,7 +127,7 @@ export function fetchModelCatalog(options = {}) {
     if (res && res.code === 200) return res.data
     throw new Error(res?.msg || '模型目录加载失败')
   }).catch((error) => {
-    if (!options.silent) showErrorToast(error.message)
+    if (!options.silent) showErrorNotice({ title: error.message || '请求失败' })
     throw error
   })
 }

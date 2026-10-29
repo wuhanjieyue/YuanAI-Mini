@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../../static_utils/errorNotice')
 import { triggerHaptic } from '../../../static_utils/haptic'
 
 const { sourceIcons } = require('../../../static_utils/sourceIcons')
@@ -166,13 +167,13 @@ Component({
       this.selectComponent('#feedbackFlyout')?.close()
       const item = this.data.item || {}
       if(!item.messageId){
-        wx.showToast({ title:t(this.properties.language, 'chat.feedbackLocalUnsupported'), icon:'none' })
+        showErrorNotice({ title:t(this.properties.language, 'chat.feedbackLocalUnsupported') })
         return
       }
       const nextValue = this.data.feedbackValue === value ? null : value
       const request = wx.yuanAI && wx.yuanAI.updateChatFeedback
       if(!request){
-        wx.showToast({ title:t(this.properties.language, 'chat.feedbackUnavailable'), icon:'none' })
+        showErrorNotice({ title:t(this.properties.language, 'chat.feedbackUnavailable') })
         return
       }
       this._feedbackPending = true
@@ -180,7 +181,7 @@ Component({
         await request({ messageId:item.messageId, value:nextValue })
         if(this.data.item?.messageId === item.messageId) this.setData({ feedbackValue:nextValue })
       }catch(error){
-        wx.showToast({ title:t(this.properties.language, 'chat.feedbackFailed'), icon:'none' })
+        showErrorNotice({ title:t(this.properties.language, 'chat.feedbackFailed') })
       }finally{
         this._feedbackPending = false
       }

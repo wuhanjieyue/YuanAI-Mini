@@ -7,6 +7,10 @@
 .task-copy { flex: 1; min-width: 0; }
 .task-title { display: block; line-height: 44rpx; }
 .task-subtitle { display: block; padding-top: 24rpx; line-height: 36rpx; }
+.task-skeleton-title { width: 55%; height: 44rpx; border-radius: 8rpx; }
+.task-skeleton-subtitle { width: 85%; height: 36rpx; border-radius: 8rpx; }
+.task-skeleton-menu { width: 84rpx; height: 84rpx; }
+.task-skeleton-icon { width: 40rpx; height: 40rpx; border-radius: 8rpx; }
 .task-create { position: absolute; right: 58rpx; bottom: calc(30rpx + env(safe-area-inset-bottom)); padding: 24rpx 38rpx; border-radius: 60rpx; background: var(--accent-action-bg); color: var(--accent-action-text); font-size: 32rpx; font-weight: 600; }
 .tasks-bottom-space { height: 180rpx; }
 

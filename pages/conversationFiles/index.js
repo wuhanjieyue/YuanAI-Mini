@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('../../static_utils/errorNotice')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 const { getConversationMessages } = require('../../request/chatStream')
 const { collectConversationFiles } = require('../../static_utils/conversationFiles')
@@ -50,7 +51,7 @@ Page({
         this.setData({ files:files.map(item => presentAsset(item, messages(language), language)) })
       }
     } catch (error) {
-      if (current()) wx.showToast({ title:error?.message || t(language, 'common.loadFailed'), icon:'none' })
+      if (current()) showErrorNotice({ title:error?.message || t(language, 'common.loadFailed') })
     } finally {
       if (version === this._loadVersion) this.setData({ loading:false, ...(epoch !== store.assetCacheEpoch ? { files:[] } : {}) })
     }

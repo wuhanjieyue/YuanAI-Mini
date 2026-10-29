@@ -299,9 +299,8 @@
   flex: 1;
 }
 
-.long-term-memory-empty-logo{
-  width: 96rpx;
-}
+.memory-skeleton-title { width: 45%; height: 48.6rpx; margin-bottom: 18rpx; border-radius: 8rpx; }
+.memory-skeleton-body { height: 40rpx; margin-bottom: 16rpx; border-radius: 8rpx; }
 
 .long-term-memory-section{
   margin-bottom: 56rpx;

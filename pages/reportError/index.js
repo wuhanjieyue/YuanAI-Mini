@@ -1,3 +1,4 @@
+const { showNotice } = require('../../static_utils/errorNotice')
 const { getSettingSheetMetrics } = require('../../static_router/settingRouter')
 const { bindPageTheme, unbindPageTheme, syncThemeNavigation } = require('../../static_utils/themeBinding')
 const { store } = require('../../store/index')
@@ -74,7 +75,7 @@ Page({
     try {
       await submitErrorReport(this._pending)
       if (this._unloaded) return
-      wx.showToast({ title: this.data.i18n.common.sent, icon: 'success' })
+      this._sent = true
       this.setData({ sending: false })
       this.closePage()
     } catch (_) {
@@ -84,6 +85,9 @@ Page({
   closePage() {
     if (this._closing || this._unloaded) return
     this._closing = true
-    wx.navigateBack({ fail: () => { this._closing = false } })
+    wx.navigateBack({
+      success: () => { if (this._sent) showNotice({ title: this.data.i18n.common.sent }) },
+      fail: () => { this._closing = false }
+    })
   }
 })

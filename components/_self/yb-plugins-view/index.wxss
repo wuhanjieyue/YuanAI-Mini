@@ -30,6 +30,7 @@
   overflow: hidden;
 }
 .plugin-logo { width: 100%; height: 100%; }
+.plugin-initial { color: var(--accent-action-bg); }
 .plugin-copy { flex: 1; min-width: 0; padding-left: 30rpx; }
 .plugin-title {
   display: block;
@@ -70,3 +71,10 @@
 .plugins-empty-overlay { bottom: 154rpx; }
 .plugins-bottom-space { height: 154rpx; }
 .plugins-search-row { position: absolute; left: 7%; right: 7%; bottom: 42rpx; height: 96rpx; z-index: 20; }
+.plugins-search-area { position: absolute; top: 0; left: 0; right: 0; height: 96rpx; }
+.plugins-filter { position: absolute; top: 0; right: 0; width: 96rpx; height: 96rpx; opacity: 0; transform-origin: 100% 50%; transform: scale(0); }
+.plugins-filter-trigger { position: relative; top: 0; width: 96rpx; height: 96rpx; }
+.plugins-filter-inactive { pointer-events: none; }
+.plugins-filter-label { flex: 1; min-width: 0; }
+.plugins-filter-check { width: 48rpx; text-align: right; flex-shrink: 0; }
+.plugins-filter-unchecked { opacity: 0; }

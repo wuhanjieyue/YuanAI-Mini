@@ -6,7 +6,6 @@
     "yb-subsetting-data-control": "/components/_self/yb-subsetting-data-control/index",
     "yb-archived-chats": "/components/_self/yb-archived-chats/index",
     "yb-confirm-dialog": "/components/yb-confirm-dialog/index",
-    "yb-dot-matrix-loading": "/components/yb-dot-matrix-loading/index",
     "yb-notice-capsule": "/components/yb-notice-capsule/index"
   },
   "backgroundColorContent": "#ffffff00",

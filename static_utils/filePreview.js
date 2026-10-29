@@ -1,3 +1,4 @@
+const { showErrorNotice } = require('./errorNotice')
 const { resolveAssetUrls, downloadStorageFile } = require('../request/request')
 const { TEXT_EXTENSIONS, getFileExtension, isImageFile } = require('./chatAttachment')
 const { messages } = require('./i18n/index')
@@ -17,7 +18,7 @@ function isImageAsset(item) {
 }
 
 function showPreviewFailed(language) {
-  wx.showToast({ title: messages(language).assets.previewFailed, icon: 'none' })
+  showErrorNotice({ title: messages(language).assets.previewFailed })
 }
 
 function openStorageUpgrade() {
@@ -78,7 +79,7 @@ async function previewStorageFile(item, options = {}) {
   const isText = TEXT_EXTENSIONS.has(extension) || String(item?.mimeType || '').startsWith('text/')
 
   if (!isImage && !isOffice && !isText) {
-    wx.showToast({ title: messages(language).assets.previewUnsupported, icon: 'none' })
+    showErrorNotice({ title: messages(language).assets.previewUnsupported })
     return false
   }
 

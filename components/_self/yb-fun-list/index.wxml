@@ -8,7 +8,7 @@
     <view wx:if="{{thinking}}" class="feature-chip plr16 accent-user-bubble tc ac xlradius" bind:tap="startThink">
       <image class="feature-logo sradius" src="{{featureLogos.thinking}}" mode="aspectFill" aria-hidden="true" />
       <view class="feature-label plr16 ft28 think-text">
-        <text>{{thinkingName}}</text>
+        <text max-lines="1" overflow="ellipsis">{{thinkingName}}</text>
       </view>
       <text class="close-icon ft32 iconfont icon-x" catch:tap="closeFun"></text>
     </view>
@@ -16,7 +16,7 @@
     <view wx:if="{{searching}}" class="feature-chip plr16 accent-user-bubble tc ac xlradius" bind:tap="startSearch">
       <image class="feature-logo sradius" src="{{featureLogos.searching}}" mode="aspectFill" aria-hidden="true" />
       <view class="feature-label plr16 ft28 search-text">
-        <text>{{searchingName}}</text>
+        <text max-lines="1" overflow="ellipsis">{{searchingName}}</text>
       </view>
       <text class="close-icon ft32 iconfont icon-x" catch:tap="closeFun"></text>
     </view>
@@ -24,7 +24,7 @@
     <view wx:if="{{imging}}" class="feature-chip plr16 accent-user-bubble tc ac xlradius" bind:tap="startImage">
       <image class="feature-logo sradius" src="{{featureLogos.imging}}" mode="aspectFill" aria-hidden="true" />
       <view class="feature-label plr16 ft28 image-text">
-        <text>{{imgingName}}</text>
+        <text max-lines="1" overflow="ellipsis">{{imgingName}}</text>
       </view>
       <text class="close-icon ft32 iconfont icon-x" catch:tap="closeFun"></text>
     </view>
@@ -32,7 +32,7 @@
     <view wx:if="{{studying}}" class="feature-chip plr16 accent-user-bubble tc ac xlradius">
       <image class="feature-logo sradius" src="{{featureLogos.studying}}" mode="aspectFill" aria-hidden="true" />
       <view class="feature-label plr16 ft28">
-        <text>{{studyingName}}</text>
+        <text max-lines="1" overflow="ellipsis">{{studyingName}}</text>
       </view>
       <text class="close-icon ft32 iconfont icon-x" catch:tap="closeFun"></text>
     </view>
