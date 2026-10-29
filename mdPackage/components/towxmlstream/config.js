@@ -1,8 +1,8 @@
-const { markdownRenderHost: MARKDOWN_RENDER_HOST } = require('../../../app_config.private');
+const { markdownRenderHost: MARKDOWN_RENDER_HOST } = require('../../../app_config');
 const MARKDOWN_RENDER_VERSION = '3';
 
 module.exports = {
-    // 由 CloudBase markdownRender 函数提供，不依赖第三方图片服务。
+    // 由后端内嵌渲染服务提供，与业务 API 共用地址。
     version:MARKDOWN_RENDER_VERSION,
 
     // 数学公式解析API

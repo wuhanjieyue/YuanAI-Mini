@@ -1,6 +1,6 @@
 # 第三方软件来源与许可证说明
 
-YuanAI 自有代码采用 Apache-2.0。以下代码仍适用各自许可证；修改名称、包元数据或界面不改变第三方许可。许可证全文见 [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)，Apache-2.0 全文见 [LICENSE](LICENSE)，上游归属声明见 [NOTICE](NOTICE)。
+本版本 YuanAI 自有代码采用 [PolyForm Noncommercial 1.0.0](LICENSE)。此前以 Apache-2.0 发布的版本保留其已授予的许可。以下第三方代码仍适用各自许可证；修改名称、包元数据或界面不改变第三方许可。第三方许可证全文（包括 Apache-2.0）见 [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)，上游归属声明见 [NOTICE](NOTICE)。
 
 ## 随客户端交付的直接依赖
 
@@ -45,7 +45,7 @@ Monokai 高亮主题中的原始注释注明 Luigi Maselli 移植，保留该归
 
 ## 平台、服务与素材
 
-微信小程序、Skyline、Worklet 和开发者工具是平台能力，适用微信平台条款；本仓库的 Apache-2.0 不覆盖它们。后端、模型 API、COS 等服务未作为源码包含，不因客户端开源而授予服务访问权限。
+微信小程序、Skyline、Worklet 和开发者工具是平台能力，适用微信平台条款；本仓库的代码许可不覆盖它们。后端、模型 API、COS 等服务未作为源码包含，不因客户端源码公开而授予服务访问权限。
 
 项目维护者确认仓库中的图标字体、Logo 和创作示例图片为自制或已获允许开源再分发的授权。项目名称、Logo 和第三方商标不因代码许可而授予商标权；二次发布应使用自己的品牌与服务配置。
 

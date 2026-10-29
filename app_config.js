@@ -3,10 +3,10 @@ const privateConfig = require('./app_config.private')
 
 const apiBaseUrl = String(privateConfig.apiBaseUrl || "").replace(/\/+$/, "")
 if (!/^https?:\/\/[^/?#]+(?:\/[^?#]*)?$/.test(apiBaseUrl)) throw new Error("请配置后端 HTTP 地址")
-const markdownRenderHost = privateConfig.markdownRenderHost
+const markdownRenderHost = `${apiBaseUrl}/markdown-render`
 const appStaticRoot = String(privateConfig.appStaticRoot || '').replace(/\/$/, '')
 if (!/^https:\/\//.test(appStaticRoot)) throw new Error('请配置 COS 静态资源 HTTPS 地址')
-export {
+module.exports = {
   apiBaseUrl,
   appStaticRoot,
   markdownRenderHost

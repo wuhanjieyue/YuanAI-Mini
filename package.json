@@ -7,7 +7,7 @@
     "url": "https://github.com/wuhanjieyue/YuanAI-Mini.git"
   },
   "author": "",
-  "license": "Apache-2.0",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "dependencies": {
     "mobx-miniprogram": "^6.12.3",
     "mobx-miniprogram-bindings": "^5.0.0"
