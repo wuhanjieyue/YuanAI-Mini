@@ -32,53 +32,23 @@
 - 完善聊天恢复、处理过程与耗时展示，以及文件交付和来源预览。
 - 完善 MCP / Skill 市场和试用加载；Yuan Bot 目前仅提供本地占位回复，尚未接入云端助理。
 
-## 开始开发
+## 必要配置
 
-### 1. 准备环境
-
-- Git、Node.js 与 npm。建议使用 Node.js 22 LTS，供依赖安装使用。
-- 支持 Skyline、Worklet 的微信开发者工具，建议使用当前稳定版。
-- 自己的微信小程序 AppID 和开发者权限。项目基础库配置为 `3.15.3`，Skyline 版本范围以 `app.json` 为准。
-
-### 2. 获取代码与安装依赖
-
-```bash
-git clone --branch main https://github.com/wuhanjieyue/YuanAI-Mini.git
-cd YuanAI-Mini
-npm ci
-cp app_config.private.example.js app_config.private.js
-cp project.private.config.example.json project.private.config.json
-```
-
-编辑本地 `app_config.private.js`：
-
-```js
-module.exports = {
-  apiBaseUrl: 'http://127.0.0.1:9000',
-  markdownRenderHost: 'http://127.0.0.1:9000/markdown-render',
-  appStaticRoot: 'https://your-cos-domain.example/your-project-prefix/your-app-id/app_static'
-}
-```
-
-| 字段 | 用途 |
+| 文件 | 配置说明 |
 | --- | --- |
-| `apiBaseUrl` | 获授权的后端地址；真机及正式环境应配置合法域名和 HTTPS |
+| `app_config.private.js` | 复制 `app_config.private.example.js` 后填写下方服务地址 |
+| `project.config.json` | 将公开配置中的 `touristappid` 替换为自己的微信小程序 AppID |
+| `project.private.config.json` | 复制 `project.private.config.example.json`，保留 `compileHotReLoad: false` |
+
+| 服务字段 | 用途 |
+| --- | --- |
+| `apiBaseUrl` | 获授权的后端服务地址 |
 | `markdownRenderHost` | 公式、流程图等内容的渲染服务地址 |
-| `appStaticRoot` | 由你管理的 HTTPS 静态资源目录，用于界面图片和品牌素材 |
+| `appStaticRoot` | 界面图片与品牌素材的 HTTPS 静态资源目录 |
 
-示例仅提供占位地址，不提供实际业务。云素材文件名请按源码中 `appStaticRoot` 的引用准备；仓库内 `static/` 提供部分 Logo 和图片，并非全部云素材的镜像。缺少资源时，对应图片不能显示。
+示例配置仅提供占位地址。完整功能需要获授权的后端、渲染服务和静态资源；仓库内 `static/` 不包含全部云素材。真机和正式环境需使用 HTTPS，并配置微信小程序合法域名。
 
-私有配置、环境文件与开发者工具私有设置已加入忽略规则，勿强制提交。小程序代码会分发到设备，不能在其中保存模型 API Key、微信 AppSecret 或服务端密钥。
-
-### 3. 导入微信开发者工具
-
-1. 导入仓库根目录，填写自己的 AppID。公开配置使用 `touristappid` 占位，游客模式不能替代真实 AppID 的全部能力。
-2. 开启 npm 模块支持，执行“工具 → 构建 npm”。项目已配置手动 npm 构建关系。
-3. 确认 Skyline 和 Worklet 编译可用；项目使用 `glass-easel` 组件框架。
-4. 配置请求、上传与下载的合法域名。模拟器临时关闭域名校验不等于真机或正式版本可用。
-5. 修改后手动编译。Skyline 热重载存在限制，本地 `project.private.config.json` 的 `compileHotReLoad` 请保持 `false`。
-
-不启动后端也可以阅读源码并进行部分界面调试。完整业务需要获授权的后端和可用静态资源；后端搭建与接口协议不属于本次开源范围。
+本地私有配置已加入忽略规则，请勿提交。小程序代码会分发到设备，不应存放模型 API Key、微信 AppSecret 或服务端密钥。
 
 ## 使用
 
