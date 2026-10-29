@@ -9,6 +9,14 @@ YuanAI UI 是一个基于微信小程序原生 Skyline 和 Worklet 构建的 AI 
 
 本仓库提供小程序客户端，后端、模型服务和线上服务权限不包含在内。聊天、文件、知识库、工具等完整能力依赖配套服务及相应授权；需要联调或商业合作，请通过 [GitHub Issues](https://github.com/wuhanjieyue/YuanAI-Mini/issues) 联系作者，请勿在公开 Issue 中发送密钥、Token 或个人数据。
 
+## 界面预览
+
+以下画面截取自微信开发者工具。聊天展示首页，弹窗展示模式选择；侧边栏中的历史聊天记录已模糊处理。
+
+| 聊天界面 | 模式选择弹窗 | 侧边栏 |
+| --- | --- | --- |
+| ![聊天首页](docs/screenshots/home.png) | ![模式选择浮层](docs/screenshots/flyout.png) | ![侧边栏，历史记录已模糊](docs/screenshots/sidebar.png) |
+
 ## 界面与交互
 
 ### 弹窗页面路由
